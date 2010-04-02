@@ -3,10 +3,10 @@ CFLAGS=-g -Wall -Werror -Iinclude/
 LDFLAGS=-g
 #EDIT THIS:
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
-OBJECTS= .bin/graph.o .bin/parser.o .bin/ronda.o .bin/file_utils.o
+SOURCES= src/graph.cpp src/parser.cpp src/ronda.cpp src/file_utils.cpp
 BINARY=ronda
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
-SOURCES=$(OBJECTS:.bin/%.o=src/%.cpp)
+OBJECTS=$(SOURCES:src/%.cpp=.bin/%.o)
 
 
 all: $(BINARY)
