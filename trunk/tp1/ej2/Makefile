@@ -4,14 +4,20 @@ LDFLAGS=-g
 #EDIT THIS:
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
 OBJECTS= .bin/graph.o .bin/parser.o .bin/ronda.o .bin/file_utils.o
+BINARY=ronda
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
 SOURCES=$(OBJECTS:.bin/%.o=src/%.cpp)
-BINARY=ronda
+
 
 all: $(BINARY)
 
 $(BINARY): deps $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJECTS)
+
+$(OBJECTS): .bin
+
+.bin:
+	mkdir .bin
 
 deps: Makefile
 	$(CC) $(CFLAGS) -MM $(SOURCES) > $@
