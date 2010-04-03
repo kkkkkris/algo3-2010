@@ -1,10 +1,19 @@
 #ifndef __GRAPH__
 #define __GRAPH__
-
+#include <string>
+#include <list>
+#include <map>
 using namespace std;
-class Graph {
-    Graph(list<string>);
-    bool isHamilton();
+
+class Nodo;
+class Grafo {
+    public:
+        Grafo(map<int, list<int> >);
+        bool esHamilton();
+    private:
+        Nodo & getNodo(int nodo_id);
+        Nodo * nodos;
+        int size;
     
 };
 
