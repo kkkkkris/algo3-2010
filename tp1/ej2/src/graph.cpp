@@ -17,7 +17,7 @@ using namespace std;
 class Nodo{
     public:
         Nodo(){};
-        Nodo(const nodo_id id, list<int> links):links(links), id(id) {};
+        Nodo(const nodo_id id, list<int> links):links(links), id(id), visitada(false) {};
         string toString() {
             stringstream ss;
             ss << "nodo #" << id << " [";
@@ -31,6 +31,7 @@ class Nodo{
         }
         list<int> links;
         nodo_id id;
+        bool visitada;
 };
 
 Grafo::Grafo(map<int, list<int> > nodos_p){
@@ -61,7 +62,7 @@ bool Grafo::esHamilton() {
     //ultimo nodo que visite en cada instancia del camino
     it_list* restantes = new it_list[this->size];
     //nodos que visite (1 a 1 con path)
-    bool * visitadas = new bool[this->size];
+    //bool * visitadas = new bool[this->size];
     //proximo nodo.
     it_list amiga;
     //nodo inicial
@@ -69,9 +70,9 @@ bool Grafo::esHamilton() {
     
     inicio = &getNodo(1);
     path.push(inicio);
-    for(int i = 0; i < this->size; i++)
-        visitadas[i] = false;
-    visitadas[0] = true;
+    /*for(int i = 0; i < this->size; i++)
+        visitadas[i] = false;*/
+    inicio->visitada = true;
     print("Visito 1");
     restantes[0] = inicio->links.begin();
     while(path.size() > 0){
@@ -80,25 +81,25 @@ bool Grafo::esHamilton() {
         
         //APILO
         // si no termine los proximos de actual
-        while(!actual->links.empty() && !visitadas[*amiga - 1]) {
+        while(!actual->links.empty() && !getNodo(*amiga).visitada) {//!visitadas[*amiga - 1]) {
             //mientras queden no haya visitado el proximo. Y 
             //apilar nodo.
             actual = &getNodo(*amiga);
             amiga = actual->links.begin();
             print("Visito " << actual->id);
-            visitadas[actual->id - 1] = true;
+            actual->visitada = true;
             restantes[path.size()] = amiga;
             path.push(actual);
         }
         
         //DESAPILO
-        while(actual->links.empty() || amiga == actual->links.end() || visitadas[*amiga - 1]) {
+        while(actual->links.empty() || amiga == actual->links.end() || getNodo(*amiga).visitada) { //visitadas[*amiga - 1]) {
             //mientras me haya bloqueado o sea un nodo ya visitado.
             //desapilo/avanzo  nodos
             if(actual->links.empty() || amiga == actual->links.end()){
                 //si consumi este nodo lo desapilo
                 print("Desvisito " << actual->id);
-                visitadas[actual->id - 1] = false;
+                actual->visitada = false;
                 path.pop();
                 if(!path.empty()){
                     actual = path.top();
@@ -106,15 +107,15 @@ bool Grafo::esHamilton() {
                     amiga = restantes[path.size() - 1];
                 } else {
                     delete [] restantes;
-                    delete [] visitadas;
+                    //delete [] visitadas;
                     return false;
                 }
-            } else if(visitadas[*amiga - 1]){
+            } else {
                 //fue visitada pero no es la ultima
                 if(path.size() == (unsigned int)this->size && *amiga == inicio->id){
                     //si llene el camino y la amiga es la primera
                     delete [] restantes;
-                    delete [] visitadas;
+                    //delete [] visitadas;
                     return true;
                 }
                 restantes[path.size() - 1]++;
@@ -124,6 +125,6 @@ bool Grafo::esHamilton() {
         
     }
     delete [] restantes;
-    delete [] visitadas;
+    //delete [] visitadas;
     return false;
 }
