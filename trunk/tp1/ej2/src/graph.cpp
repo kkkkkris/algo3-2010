@@ -33,8 +33,6 @@ class Nodo{
         nodo_id id;
 };
 
-bool chequeeListaEnN(const it_list *restantes , it_list ultimo, int n);
-
 Grafo::Grafo(map<int, list<int> > nodos_p){
     this->size = nodos_p.size();
     this->nodos = new Nodo[nodos_p.size()];
@@ -128,11 +126,4 @@ bool Grafo::esHamilton() {
     delete [] restantes;
     delete [] visitadas;
     return false;
-}
-bool chequeeListaEnN(const it_list *restantes , it_list ultimo, int n){
-    print("viendo si en el nivel " << n - 1 <<" es el \"proximo\" del ultimo.");
-    it_list ultimo_que_chequee = restantes[n - 1];
-    ultimo_que_chequee--;
-    print("pep");
-    return ultimo_que_chequee == ultimo;
 }
