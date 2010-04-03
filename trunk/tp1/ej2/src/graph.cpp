@@ -47,6 +47,10 @@ Grafo::Grafo(map<int, list<int> > nodos_p){
     }
 }
 
+Grafo::~Grafo() {
+    delete [] nodos;
+}
+
 Nodo &Grafo::getNodo(nodo_id id){
     assert(id <= this->size && id > 0);
     return this->nodos[id - 1];
@@ -54,10 +58,15 @@ Nodo &Grafo::getNodo(nodo_id id){
         
 bool Grafo::esHamilton() {
     assert(size > 1);
+    //camino que hice a cada momento.
     stack<Nodo*> path;
+    //ultimo nodo que visite en cada instancia del camino
     it_list* restantes = new it_list[this->size];
+    //nodos que visite (1 a 1 con path)
     bool * visitadas = new bool[this->size];
+    //proximo nodo.
     it_list amiga;
+    //nodo inicial
     Nodo* inicio;
     
     inicio = &getNodo(1);
@@ -74,8 +83,8 @@ bool Grafo::esHamilton() {
         //APILO
         // si no termine los proximos de actual
         while(!actual->links.empty() && !visitadas[*amiga - 1]) {
-            //mientras no haya visitado el proximo. Y QUEDEN
-            //avanzar nodo
+            //mientras queden no haya visitado el proximo. Y 
+            //apilar nodo.
             actual = &getNodo(*amiga);
             amiga = actual->links.begin();
             print("Visito " << actual->id);
@@ -86,7 +95,10 @@ bool Grafo::esHamilton() {
         
         //DESAPILO
         while(actual->links.empty() || amiga == actual->links.end() || visitadas[*amiga - 1]) {
+            //mientras me haya bloqueado o sea un nodo ya visitado.
+            //desapilo/avanzo  nodos
             if(actual->links.empty() || amiga == actual->links.end()){
+                //si consumi este nodo lo desapilo
                 print("Desvisito " << actual->id);
                 visitadas[actual->id - 1] = false;
                 path.pop();
@@ -95,20 +107,26 @@ bool Grafo::esHamilton() {
                     restantes[path.size() - 1]++;
                     amiga = restantes[path.size() - 1];
                 } else {
+                    delete [] restantes;
+                    delete [] visitadas;
                     return false;
                 }
             } else if(visitadas[*amiga - 1]){
                 //fue visitada pero no es la ultima
-                restantes[path.size() - 1]++;
-                amiga = restantes[path.size() - 1];
                 if(path.size() == (unsigned int)this->size && *amiga == inicio->id){
                     //si llene el camino y la amiga es la primera
+                    delete [] restantes;
+                    delete [] visitadas;
                     return true;
                 }
+                restantes[path.size() - 1]++;
+                amiga = restantes[path.size() - 1];
             }
         }
         
     }
+    delete [] restantes;
+    delete [] visitadas;
     return false;
 }
 bool chequeeListaEnN(const it_list *restantes , it_list ultimo, int n){

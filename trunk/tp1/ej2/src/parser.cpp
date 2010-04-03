@@ -9,8 +9,8 @@ using namespace std;
 
 list<int> parsearNodo(string nodo);
 
-list<Grafo> parsearInstancias(string entrada){
-    list<Grafo> grafos;
+list<Grafo*> parsearInstancias(string entrada){
+    list<Grafo*> grafos;
     map<int, list<int> > nodos;
     stringstream in(entrada);
     int pos = 0,nodos_t = 0, g = 1;
@@ -25,8 +25,7 @@ list<Grafo> parsearInstancias(string entrada){
             if(!nodos.empty()) {
                 cout << "Grafo: #" << g << endl;
                 g++;
-                Grafo grafo = *new Grafo(nodos);
-                grafos.push_back(grafo);
+                grafos.push_back(new Grafo(nodos));
             }
             nodos_t = atoi(line.c_str());
             if(nodos_t != -1) {

@@ -10,6 +10,7 @@ class Grafo {
     public:
         Grafo(map<int, list<int> >);
         bool esHamilton();
+        ~Grafo();
     private:
         Nodo & getNodo(int nodo_id);
         Nodo * nodos;
