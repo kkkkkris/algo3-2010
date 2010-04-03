@@ -7,7 +7,7 @@ using namespace std;
 /**
  * lee un archivo de texto y devuelve su contenido en un string 
  * */
-string readFile(const char* filename){
+string leerArchivo(const char* filename){
     string res = "";
     string line;
     ifstream data(filename);
@@ -24,7 +24,7 @@ string readFile(const char* filename){
 /**
  * escribe content en el archivo, true si fallo
  */
-bool writeFile(const char* filename, string content) {
+bool escribirArchivo(const char* filename, string content) {
     ofstream salida(filename);
     if (salida.is_open()) {
         salida << content;

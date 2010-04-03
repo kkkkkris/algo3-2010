@@ -1,7 +1,8 @@
 #ifndef __FILE_UTILS__
 #define __FILE_UTILS__
 using namespace std;
-string readFile(const char* filename);
-bool writeFile(const char* filename, string content);
+
+string leerArchivo(const char* archivo);
+bool escribirArchivo(const char* archivo, string contenido);
 
 #endif
