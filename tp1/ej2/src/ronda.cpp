@@ -28,10 +28,8 @@ int main(int argc, char* argv[]) {
     string resultados = "";
     int i = 1;
     for(list<Grafo*>::iterator it = instancias.begin(); it != instancias.end(); it++) {
-            print("---------------GRAFO # " << i << "-------------------    -");
             string resultado = ((*it)->esHamilton())?"ronda":"no";
             resultados += resultado + "\n";
-            print("--------------------------------------------");
             print("#" << i << ": Es hamiltoniano: " << resultado);
             print("--------------------------------------------");
             i++;
