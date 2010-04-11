@@ -32,7 +32,7 @@ int main(int argc,char* argv[]) {
     string buf;
     int max;
     /////////////////ciclo principal a tomar tiempos////////////////////
-    Timer timer(false);
+    Timer timer;
     for(list<Planilla*>::iterator it =planillas.begin();it != planillas.end();it++){
         timer.nueva((*it)->size()/2);
         timer.empezar();
@@ -76,7 +76,8 @@ int maxCant(Planilla* planilla){
       
       /////////////////ciclo principal para calcular Complejidad////////////
       //mientras haya entradas puede haber max nuevo ,luego son solo salidas,ya no nos importa contar.
-     
+      //timer->nueva();
+      //timer->empezar();
       while(e<end_e){
                 //cuenta los q entran antes de q salga alguno
                 while(e<end_e && ((*planilla)[e] <= (*planilla)[s])){
@@ -95,6 +96,7 @@ int maxCant(Planilla* planilla){
                     }
                 }
      }
+     //timer->terminar();
        //////////////////////////////////////////////////////////////////////
 
       return max;
