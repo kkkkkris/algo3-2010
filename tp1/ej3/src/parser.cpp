@@ -23,11 +23,6 @@ list<Planilla*> parsearInstancias(string entrada){
         pos++;
         }else{                                  //cierra y guarda anterior instancia si existe e inicia proxima instancia si no se termino
             if(!planilla.empty()){
-//                cout<<"Planilla #"<<(horas_size/2)<<": [";
-//                for(Planilla::iterator it =planilla.begin();it != planilla.end();it++){
-//                    cout<<*it<<",";
-//                }
-//                cout<<"]"<<endl;
                 p++;
                 vector<int>* pl = new vector<int>(planilla);
                 planillas.push_back(pl);
