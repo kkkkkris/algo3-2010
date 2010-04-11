@@ -47,7 +47,7 @@ Grafo::Grafo(map<int, list<int> > nodos_p){
     while(it != nodos_p.end()){
         assert(it->first > 0);
         this->nodos[it->first - 1] = Nodo(it->first, it->second);
-        print(this->nodos[it->first - 1].toString());
+        //print(this->nodos[it->first - 1].toString());
         
         //Detectamos nodos con grado menor que 2
         int gradoDeNodo = (int)this->nodos[it->first - 1].links.size();
@@ -96,6 +96,7 @@ bool Grafo::esHamilton() {
     //comenzamos suponiendo que vale
     bool hipotesisOre = true;
     //como la relacion de amistad es simetrica, preguntar por (i,j) es lo mismo que (j,i)
+    
     for(int i = 1; (i<=size) && hipotesisOre; i++){
         for(int j = i+1; (j<=size) && hipotesisOre; j++){
             if(!sonAdyacentes(i,j)){
@@ -113,6 +114,7 @@ bool Grafo::esHamilton() {
     if(hipotesisOre){
         return true;
     }
+    
     /************************************************/
 
     //camino que hice a cada momento.
@@ -126,6 +128,7 @@ bool Grafo::esHamilton() {
     //print("Visito 1");
     restantes[0] = inicio->links.begin();
     while(path.size() > 0){
+        //cout << "." << flush;
         //nodo actualmente visitado
         Nodo * actual = path.top();
         it_list amiga = restantes[path.size() - 1];

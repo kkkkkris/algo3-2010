@@ -1,9 +1,9 @@
 CC=g++
-CFLAGS=-g -Wall -Werror -pedantic -Iinclude/ 
-LDFLAGS=-g -Wall -Werror -pedantic
+CFLAGS=-g -Wall -Werror -Iinclude/ -I../timer
+LDFLAGS=-g -Wall -Werror -lrt
 #EDIT THIS:
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
-SOURCES= src/graph.cpp src/parser.cpp src/ronda.cpp src/file_utils.cpp
+SOURCES= src/graph.cpp src/parser.cpp src/ronda.cpp src/file_utils.cpp ../timer/timer.cpp
 BINARY=ronda
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
 OBJECTS=$(SOURCES:src/%.cpp=.bin/%.o)
