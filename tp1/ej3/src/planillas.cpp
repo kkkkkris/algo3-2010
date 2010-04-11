@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <list>
+#include "timer.h"
 #include "parser.h"
 #include "file_utils.h"
 #define print(a) cout << a << endl
@@ -26,23 +27,37 @@ int main(int argc,char* argv[]) {
     const char* entrada = argv[1];
     const char* salida = argv[2];
     string contenido = leerArchivo(entrada);
-    ///////////////////////ciclo principal/////////////////////////////
     list<Planilla*> planillas = parsearInstancias(contenido);
-    string resultados="";
+    string resultados="",tiempos;
     string buf;
     int max;
+    /////////////////ciclo principal a tomar tiempos////////////////////
+    Timer timer(false);
     for(list<Planilla*>::iterator it =planillas.begin();it != planillas.end();it++){
+        timer.nueva((*it)->size()/2);
+        timer.empezar();
         max=maxCant(*it);
+        timer.terminar();
         buf=toString(max);
         resultados += buf ;
         delete (*it);
+       
     }
-    ///////////////////////////////////////////////////////////////////
+    tiempos=timer.tiempos();
+    ////////////////////////////////////////////////////////////////////
+    print("");
+    print("Cantidad de programadores     Tiempos ");
+    print(tiempos);
+    print("Resultados :");
     print(resultados);
     if(escribirArchivo(salida, resultados)){
-        print("error escribiendo archivo");
+        print("error escribiendo resultados en archivo");
         return 1;
     }
+//     if(escribirArchivo(salida, tiempos)){
+//        print("error escribiendo tiempos en archivo");
+//        return 1;
+//    }
     return 0;
 }
 
@@ -61,6 +76,7 @@ int maxCant(Planilla* planilla){
       
       /////////////////ciclo principal para calcular Complejidad////////////
       //mientras haya entradas puede haber max nuevo ,luego son solo salidas,ya no nos importa contar.
+     
       while(e<end_e){
                 //cuenta los q entran antes de q salga alguno
                 while(e<end_e && ((*planilla)[e] <= (*planilla)[s])){

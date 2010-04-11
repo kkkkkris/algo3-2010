@@ -6,6 +6,7 @@
 #include <set>
 #include <vector>
 #include <string>
+#include <ctime>
 #define print(a) cout << a << endl
 #define TOT_TIME 86400;
 
@@ -31,22 +32,25 @@ string usage ("uso: ./planillas modo file_out min max \n\n");
  
   switch(modo){  
      case 'r': { 
+        srand ( time(NULL) );
+        cout <<"Generando planillas random ...."<<endl;
         ofstream salida(argv[2]);
         int min =atoi(argv[3]);           
         int max = atoi(argv[4]);
-        if(min<1 || max>50){
-        cerr<<"El minimo debe ser >=1 y el maximo <=50 "<<endl;
+        if(min<1 || max>100){
+        cerr<<"El minimo debe ser >=1 y el maximo <=100 "<<endl;
+        return 1;
         }
         int n,k,time1,time2,p=1,tot_time=TOT_TIME;
         string str_hora;
-        for(n=min;n<=max;n++){
+        for(n=min;n<=max;n+=5){
             set<int> entradas;
             set<int> salidas;
             cout<< "Generando planilla de "<< n <<"programadores ..."<<endl;
             salida <<"   "<<n<<endl;
             for(k=1;k<=n;k++){
-                time1 = randomNumber(tot_time);
-                time2 = randomNumber(tot_time);
+                time1 = rand()%TOT_TIME;//randomNumber(tot_time);
+                time2 = rand()%TOT_TIME;//randomNumber(tot_time);
                 if (time1 <= time2){ //pueden entrar y salir a la misma hora si tuvieron una urgencia o les agarro diarrea
                     entradas.insert(time1);
                     salidas.insert(time2);
@@ -55,14 +59,19 @@ string usage ("uso: ./planillas modo file_out min max \n\n");
                     salidas.insert(time1);
                 } 
              }
-             for( set<int>::const_iterator iter = entradas.begin();iter != entradas.end();++iter ) {
+             if(entradas.size() != salidas.size() ){
+                 cerr<<"NO HAY IGUAL CANTIDAD DE ENTRADAS Y SALIDAS !!!!"<<endl;
+                 cerr<<"entradas"<<entradas.size()<<"salidas"<<salidas.size()<<endl;
+                 return 1;             
+             }
+             for( set<int>::const_iterator iter = entradas.begin();iter != entradas.end();iter++ ) {
               //convertir a string hora
                str_hora = ito_hora(*iter); 
                salida <<str_hora<<" "<<p<<endl;
                p++;
               }
               p=1;   
-              for( set<int>::const_iterator iter = salidas.begin();iter != salidas.end();++iter ) {
+              for( set<int>::const_iterator iter = salidas.begin();iter != salidas.end();iter++ ) {
               //convertir a string hora
               str_hora = ito_hora(*iter); 
               salida<<str_hora<<" "<<p<<endl;
@@ -73,8 +82,9 @@ string usage ("uso: ./planillas modo file_out min max \n\n");
       salida<<"   -1";
       return 0 ;
     }
-    //Worst case , considero aquel en el que cada programador entra y sale al mismo tiempo y alternadamente
+    //Worst case , considero aquel en el que cada programador entra y sale al mismo instante y alternadamente
     case 'w':{
+        cout<<"Generando planillas de peor caso ...";
         ofstream salida(argv[2]);
         int min =atoi(argv[3]);           
         int max = atoi(argv[4]);
@@ -83,7 +93,7 @@ string usage ("uso: ./planillas modo file_out min max \n\n");
         }
         int n,k,time1,time2,p=1,tot_time=TOT_TIME;
         string str_hora;
-        for(n=min;n<=max;n++){
+        for(n=min;n<=max;n+=5){
             set<int> entradas;
             set<int> salidas;
             cout<< "Generando planilla de "<< n <<"programadores ..."<<endl;
@@ -91,13 +101,9 @@ string usage ("uso: ./planillas modo file_out min max \n\n");
             for(k=1;k<=n;k++){
                 time1 = k;
                 time2 = k;
-                if (time1 <= time2){ //pueden entrar y salir a la misma hora si tuvieron una urgencia o les agarro diarrea
                     entradas.insert(time1);
                     salidas.insert(time2);
-                }else{
-                    entradas.insert(time2);
-                    salidas.insert(time1);
-                } 
+               
              }
              for( set<int>::const_iterator iter = entradas.begin();iter != entradas.end();++iter ) {
               //convertir a string hora
@@ -132,7 +138,7 @@ string ito_hora(int secs){
      int min=(secs/60)%60;
      int sec=secs%60;
      char s[9];
-     snprintf (s,9,"%.2d:%.2d:%.2d",hora,min,sec);
+     snprintf (s,8,"%.2d:%.2d:%.2d",hora,min,sec);
      return s;
     
 }

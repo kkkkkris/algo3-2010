@@ -1,9 +1,9 @@
-CC=g++
+CC=g++ -lrt
 CFLAGS=-g -Wall -Werror -pedantic -Iinclude/ 
 LDFLAGS=-g -Wall -Werror -pedantic
 #EDIT THIS:
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
-SOURCES= src/planillas.cpp src/parser.cpp src/file_utils.cpp
+SOURCES= src/planillas.cpp src/parser.cpp src/file_utils.cpp src/timer.cpp
 BINARY=planillas
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
 OBJECTS=$(SOURCES:src/%.cpp=.bin/%.o)
