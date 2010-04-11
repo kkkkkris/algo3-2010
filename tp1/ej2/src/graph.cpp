@@ -40,7 +40,7 @@ Grafo::Grafo(map<int, list<int> > nodos_p){
     this->size = nodos_p.size();
     this->nodos = new Nodo[nodos_p.size()];
     
-    //Empezamos suponiendo que se cumple la hipotesis
+    //Empezamos suponiendo que se cumple la hipotesis del teorema de Dirac
     bool hipotesisDirac = true;
     
     map<int, list<int> >::iterator it = nodos_p.begin();
@@ -55,6 +55,9 @@ Grafo::Grafo(map<int, list<int> > nodos_p){
             cicloDeHamilton = NO_EXISTE;
         }
         
+        //Si el grado de algun nodo no cumple que sea mayor o igual a n/2
+        //entonces no podemos aplicar el teorema de Dirac para asegurar la existecia
+        //de un ciclo de hamilton
         if(gradoDeNodo < (size/2 + size%2)){
             hipotesisDirac = false;
         }
@@ -89,16 +92,35 @@ bool Grafo::esHamilton() {
     }
     
     /** OPTIMIZACION - Probar si se cumplen las hipotesis del teorema de Ore (1960) **/
-        
+    
+    //comenzamos suponiendo que vale
+    bool hipotesisOre = true;
+    //como la relacion de amistad es simetrica, preguntar por (i,j) es lo mismo que (j,i)
+    for(int i = 1; (i<=size) && hipotesisOre; i++){
+        for(int j = i+1; (j<=size) && hipotesisOre; j++){
+            if(!sonAdyacentes(i,j)){
+                int gradoi = (int)nodos[i-1].links.size();
+                int gradoj = (int)nodos[j-1].links.size();
+                if(gradoi + gradoj < size){
+                    //si ocurre que los grados de dos nodos no adyacentes no suman "size" o mas
+                    //entonces no podemos aplicar el teorema
+                    hipotesisOre = false;
+                }
+            }
+        } 
+    }
+    //Si vale la hipotesis, entonces devolvemos true sin encontrar el ciclo
+    if(hipotesisOre){
+        return true;
+    }
     /************************************************/
-
 
     //camino que hice a cada momento.
     stack<Nodo*> path;
     //ultimo nodo que visite en cada instancia del camino
     it_list* restantes = new it_list[this->size];
     //nodo inicial
-    Nodo* inicio = &getNodo(1);;
+    Nodo* inicio = &getNodo(1);
     path.push(inicio);
     inicio->visitada = true;
     //print("Visito 1");
@@ -153,3 +175,36 @@ bool Grafo::esHamilton() {
     delete [] restantes;
     return false;
 }
+
+bool Grafo::sonAdyacentes(nodo_id i, nodo_id j) {
+    Nodo* nodoi = &getNodo(i);
+    Nodo* nodoj = &getNodo(j);
+    //nodo cuya lista se recorre
+    Nodo* nodoMaestro;
+    //ID del nodo cuya lista no recorremos
+    nodo_id nodoEsclavoId;
+   
+    //Si son adyacentes, i figura en la lista de links de j, y viceversa, por lo que 
+    //es lo mismo recorrer cualquiera de las dos listas. Entonces recorro la mas chica
+    //para mejorar un poquito el tiempo de respuesta
+    if(nodoi->links.size() > nodoj->links.size()){
+        nodoMaestro     = nodoj;
+        nodoEsclavoId   = i;
+    }    
+    else{
+        nodoMaestro     = nodoi;
+        nodoEsclavoId   = j;
+    }
+    
+    //asumimos que no son adyacentes
+    bool adyacentes = false;
+    //recorremos la lista para ver si efectivametne son o no son adyacentes
+    for(list<int>::iterator it = nodoMaestro->links.begin(); it != nodoMaestro->links.end() && !adyacentes; it++){
+        if(*it == nodoEsclavoId){
+            adyacentes = true;
+        }
+    }
+    
+    return adyacentes;
+}
+
