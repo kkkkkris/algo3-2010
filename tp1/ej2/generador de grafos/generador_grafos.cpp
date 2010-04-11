@@ -5,13 +5,13 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <set>
+#include <vector>
 
 using namespace std;
 
 int main(int argc, char* argv[]){
     if(argc < 4){
-        cout << "usage: " << argv[0] << " salida min max" << endl;
+        cout << "usage: " << argv[0] << " salida min max proba" << endl;
         return 1;
     }
     
@@ -20,7 +20,12 @@ int main(int argc, char* argv[]){
     //cantidad minima de vertices
     int min = atoi(argv[2]);
     //cantidad maxima de vertices
-    int max = atoi(argv[3]);    
+    int max = atoi(argv[3]);
+    //probabilidad de que el par de vertices v,u sean adyacentes
+    int proba = 50;
+    if(argc > 4){
+        proba = atoi(argv[4]);
+    }
     //archivo de salida
     ofstream salida(argv[1]);
     
@@ -28,24 +33,34 @@ int main(int argc, char* argv[]){
     for(int n = min; n <= max ; n++){
         cout << "Generando grafo de " << n << " vertices" << flush;
         //generamos 10 grafos con n vertices
-        for(int i = 0; i < 10; i++){
-            cout << "." << flush;
+        for(int k = 0; k < 1; k++){
             //coloco la cantidad de vertices del grafo
             salida << "   " << n << endl;
-            //Colocamos los n vertices
-            for(int k = 1; k <= n; k++){
-                //Elegimos al azar la cantidad de vertices adyacentes
-                int adyacentes = rand() % n;
-                salida << adyacentes << "    ";
-                set<int> verticesUsados;
-                while(adyacentes > 0){
-                    int nodoAdyacente = (rand()%n) +1;
-                    //evitamos las aristas que salen y vuelven al mismo vertice, ya que no queremos alumnas con problemas psicologicos
-                    //ademas verificamos que no hayamos usado el vertices para no hacer un multigrafo (que entre dos vertices haya mas de 1 arista)
-                    if( (nodoAdyacente != k) && (verticesUsados.find(nodoAdyacente) == verticesUsados.end()) ){
-                        salida << nodoAdyacente << " ";
-                        verticesUsados.insert(nodoAdyacente);
-                        adyacentes--;
+            //generamos el grado
+            bool grafo[n][n];
+            vector<int> grados(n,0);
+            for(int i=0; i<n ;i++){
+                grafo[i][i] = false;
+                for(int j=i+1; j<n; j++){
+                    if((rand() % 100) < proba){
+                        grafo[i][j]=true;
+                        grafo[j][i]=true;
+                        grados[i]++;
+                        grados[j]++;
+                    }
+                    else{
+                        grafo[i][j]=false;
+                        grafo[j][i]=false;
+                    }
+                }
+            }
+            
+            //escribo los nodos
+            for(int i=0; i<n; i++){
+                salida << grados[i] << "    ";
+                for(int j=0; j<n; j++){
+                    if(grafo[i][j]){
+                        salida << j+1 << " ";
                     }
                 }
                 salida << endl;

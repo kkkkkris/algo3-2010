@@ -6,13 +6,13 @@
 #include "graph.h"
 #include "parser.h"
 #include "file_utils.h"
+#include "timer.h"
 
 #define print(a) cout << a << endl
 
 using namespace std;
 
 string usage = "uso:  ./ronda entrada salida";
-
 
 int main(int argc, char* argv[]) {
     
@@ -25,10 +25,16 @@ int main(int argc, char* argv[]) {
     const char* salida = argv[2];
     string contenido = leerArchivo(entrada);
     list<Grafo*> instancias =  parsearInstancias(contenido);
+    Timer timer;
     string resultados = "";
     int i = 1;
+
     for(list<Grafo*>::iterator it = instancias.begin(); it != instancias.end(); it++) {
-            string resultado = ((*it)->esHamilton())?"ronda":"no";
+            timer.nueva();
+            timer.empezar();
+            bool esHamilton = (*it)->esHamilton();
+            timer.terminar();
+            string resultado = (esHamilton)?"ronda":"no";
             resultados += resultado + "\n";
             print("#" << i << ": Es hamiltoniano: " << resultado);
             print("--------------------------------------------");
@@ -36,7 +42,7 @@ int main(int argc, char* argv[]) {
             delete (*it);
     }
     
-    
+    escribirArchivo("tiempos_random", timer.tiempos());
     
     if(escribirArchivo(salida, resultados)){
         print("error escribiendo archivo");
