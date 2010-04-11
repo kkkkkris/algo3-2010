@@ -17,35 +17,36 @@ int randomNumber(int hi);
 
 int main (int argc,char* argv[]){
  
-string usage ("uso: ./planillas modo file_out min max \n\n");
+string usage ("uso: ./planillas modo file_out min max escala \n\n");
        usage +="modo = [r = random, w = worst,a= average]\n";
        usage +="min = cantidad de programadores para la planilla mas chica \n";
        usage +="max = cantidad de programadores para la planilla mas grande \n";
-       
+       usage +="escala = escala para la iteracion de las cantidades por planilla\n";
 
-  if(argc<5){
+  if(argc<6){
     print("bad arguments");
     print(usage);
     return 1;
     } 
-  char modo= *argv[1];
- 
-  switch(modo){  
+    char modo= *argv[1];
+    ofstream salida(argv[2]);
+    int min =atoi(argv[3]);           
+    int max = atoi(argv[4]);
+    int escala =atoi(argv[5]);
+    
+    switch(modo){  
      case 'r': { 
         srand ( time(NULL) );
         cout <<"Generando planillas random ...."<<endl;
-        ofstream salida(argv[2]);
-        int min =atoi(argv[3]);           
-        int max = atoi(argv[4]);
-        if(min<1 || max>1000){
-        cerr<<"El minimo debe ser >=1 y el maximo <=1000 "<<endl;
+        if(min<1 || max>2000){
+        cerr<<"El minimo debe ser >=1 y el maximo <=2000 "<<endl;
         return 1;
         }
-        int n,k,time1,time2,p=1,tot_time=TOT_TIME;
+        int n,k,time1,time2,p=1;
         string str_hora;
-         set<int> entradas;
-         set<int> salidas;
-        for(n=min;n<=max;n+=10){
+        multiset<int> entradas;
+        multiset<int> salidas;
+        for(n=min;n<=max;n+=escala){
            
             cout<< "Generando planilla de "<< n <<"programadores ..."<<endl;
             salida <<"   "<<n<<endl;
@@ -86,27 +87,23 @@ string usage ("uso: ./planillas modo file_out min max \n\n");
       return 0 ;
     }
     //Worst case , considero aquel en el que cada programador entra y sale al mismo instante y alternadamente
-    case 'w':{
+    case 'w': {
         cout<<"Generando planillas de peor caso ...";
-        ofstream salida(argv[2]);
-        int min =atoi(argv[3]);           
-        int max = atoi(argv[4]);
-        if(min<1 || max>50){
-        cerr<<"El minimo debe ser >=1 y el maximo <=50 "<<endl;
+        if(min<1 || max>2000){
+        cerr<<"El minimo debe ser >=1 y el maximo <=2000 "<<endl;
         }
-        int n,k,time1,time2,p=1,tot_time=TOT_TIME;
+        int n,k,time1,p=1;
         string str_hora;
-        for(n=min;n<=max;n+=5){
-            set<int> entradas;
-            set<int> salidas;
+        multiset<int> entradas;
+        multiset<int> salidas;
+        for(n=min;n<=max;n+=escala){
+    
             cout<< "Generando planilla de "<< n <<"programadores ..."<<endl;
             salida <<"   "<<n<<endl;
             for(k=1;k<=n;k++){
                 time1 = k;
-                time2 = k;
-                    entradas.insert(time1);
-                    salidas.insert(time2);
-               
+                entradas.insert(time1);
+                salidas.insert(time1);
              }
              for( set<int>::const_iterator iter = entradas.begin();iter != entradas.end();++iter ) {
               //convertir a string hora
@@ -121,16 +118,15 @@ string usage ("uso: ./planillas modo file_out min max \n\n");
               salida<<str_hora<<" "<<p<<endl;
               p++;
               } 
+              entradas.clear();
+              salidas.clear();
               p=1; 
           }
       salida<<"   -1";
-      return 0 ;
-    
       return 0;
     }
     case 'a':{
-    
-      return 0;
+        return 0;
     }
   }
 }
@@ -141,7 +137,7 @@ string ito_hora(int secs){
      int min=(secs/60)%60;
      int sec=secs%60;
      char s[9];
-     snprintf (s,8,"%.2d:%.2d:%.2d",hora,min,sec);
+     snprintf (s,9,"%.2d:%.2d:%.2d",hora,min,sec);
      return s;
     
 }

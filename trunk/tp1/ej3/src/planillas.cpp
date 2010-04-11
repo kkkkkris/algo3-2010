@@ -14,27 +14,28 @@
 
 using namespace std;
 
-string usage= "uso: ./planillas entrada salida ";
+string usage= "uso: ./planillas entrada salida tiempos";
 int maxCant(Planilla* planilla);
 string toString(int i);
 
 int main(int argc,char* argv[]) {
- if(argc < 3){
+ if(argc < 4){
         print("bad arguments");
         print(usage);
         return 1;
     }
     const char* entrada = argv[1];
     const char* salida = argv[2];
+    const char* tiempos = argv[3];
     string contenido = leerArchivo(entrada);
     list<Planilla*> planillas = parsearInstancias(contenido);
-    string resultados="",tiempos;
+    string resultados="",res_tiempos;
     string buf;
     int max;
     /////////////////ciclo principal a tomar tiempos////////////////////
-    Timer timer;
+    Timer timer(false);
     for(list<Planilla*>::iterator it =planillas.begin();it != planillas.end();it++){
-        timer.nueva((*it)->size()/2);
+        timer.nueva((*it)->size());
         timer.empezar();
         max=maxCant(*it);
         timer.terminar();
@@ -43,21 +44,22 @@ int main(int argc,char* argv[]) {
         delete (*it);
        
     }
-    tiempos=timer.tiempos();
+    res_tiempos="Tamaño de planilla          Tiempo \n";
+    res_tiempos+=timer.tiempos();
     ////////////////////////////////////////////////////////////////////
     print("");
     print("Cantidad de programadores     Tiempos ");
-    print(tiempos);
+    print(res_tiempos);
     print("Resultados :");
     print(resultados);
     if(escribirArchivo(salida, resultados)){
         print("error escribiendo resultados en archivo");
         return 1;
     }
-//     if(escribirArchivo(salida, tiempos)){
-//        print("error escribiendo tiempos en archivo");
-//        return 1;
-//    }
+     if(escribirArchivo(tiempos,res_tiempos)){
+        print("error escribiendo tiempos en archivo");
+        return 1;
+    }
     return 0;
 }
 
@@ -76,9 +78,7 @@ int maxCant(Planilla* planilla){
       
       /////////////////ciclo principal para calcular Complejidad////////////
       //mientras haya entradas puede haber max nuevo ,luego son solo salidas,ya no nos importa contar.
-      //timer->nueva();
-      //timer->empezar();
-      while(e<end_e){
+        while(e<end_e){
                 //cuenta los q entran antes de q salga alguno
                 while(e<end_e && ((*planilla)[e] <= (*planilla)[s])){
                     aux++;
@@ -96,7 +96,6 @@ int maxCant(Planilla* planilla){
                     }
                 }
      }
-     //timer->terminar();
        //////////////////////////////////////////////////////////////////////
 
       return max;
