@@ -23,11 +23,11 @@ list<Planilla*> parsearInstancias(string entrada){
         pos++;
         }else{                                  //cierra y guarda anterior instancia si existe e inicia proxima instancia si no se termino
             if(!planilla.empty()){
-                cout<<"Planilla #"<<p<<": [";
-                for(Planilla::iterator it =planilla.begin();it != planilla.end();it++){
-                    cout<<*it<<",";
-                }
-                cout<<"]"<<endl;
+//                cout<<"Planilla #"<<(horas_size/2)<<": [";
+//                for(Planilla::iterator it =planilla.begin();it != planilla.end();it++){
+//                    cout<<*it<<",";
+//                }
+//                cout<<"]"<<endl;
                 p++;
                 vector<int>* pl = new vector<int>(planilla);
                 planillas.push_back(pl);
@@ -44,8 +44,13 @@ list<Planilla*> parsearInstancias(string entrada){
 
 int parsearHora(string hora) {
     int res;
-    res = atoi(hora.substr(0,2).c_str())*3600 ;   //c_str() convierte string a char[]
-    res+= atoi(hora.substr(3,2).c_str())*60;
-    res+= atoi(hora.substr(6,2).c_str());
+    if(hora.size()>8){
+        res = atoi(hora.substr(0,2).c_str())*3600 ;   //c_str() convierte string a char[]
+        res+= atoi(hora.substr(3,2).c_str())*60;
+        res+= atoi(hora.substr(6,2).c_str())*1;
+    }else{
+        cout<<"fuera de rango substr"<<endl;
+        return 1;
+    }
     return res;
 }
