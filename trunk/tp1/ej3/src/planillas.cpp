@@ -35,7 +35,7 @@ int main(int argc,char* argv[]) {
         max=maxCant(*it);
         buf=toString(max);
         resultados += buf ;
-    delete (*it);
+        delete (*it);
     }
     ///////////////////////////////////////////////////////////////////
     print(resultados);
@@ -58,6 +58,8 @@ int maxCant(Planilla* planilla){
       //e y s indexan las subPlanillas de Entradas y Salidas respectivamente dentro de la Planilla
       int e=0,end_e=tam/2,s=tam/2;
       int aux=0,max=0;
+      
+      /////////////////ciclo principal para calcular Complejidad////////////
       //mientras haya entradas puede haber max nuevo ,luego son solo salidas,ya no nos importa contar.
       while(e<end_e){
                 //cuenta los q entran antes de q salga alguno
@@ -68,7 +70,7 @@ int maxCant(Planilla* planilla){
                  //setea el max si corresponde
                 if(aux>max){max=aux;}
                 //cuenta los que salen antes de que entre uno nuevo
-                while(e<end_e && (*planilla)[s]<(*planilla)[e]){
+                while(e<end_e && ((*planilla)[s]<(*planilla)[e])){
                     aux--;
                     s++;
                     if(s>=tam){
@@ -77,6 +79,8 @@ int maxCant(Planilla* planilla){
                     }
                 }
      }
+       //////////////////////////////////////////////////////////////////////
+
       return max;
 }
 string toString(int i) {
