@@ -37,22 +37,23 @@ string usage ("uso: ./planillas modo file_out min max \n\n");
         ofstream salida(argv[2]);
         int min =atoi(argv[3]);           
         int max = atoi(argv[4]);
-        if(min<1 || max>100){
-        cerr<<"El minimo debe ser >=1 y el maximo <=100 "<<endl;
+        if(min<1 || max>1000){
+        cerr<<"El minimo debe ser >=1 y el maximo <=1000 "<<endl;
         return 1;
         }
         int n,k,time1,time2,p=1,tot_time=TOT_TIME;
         string str_hora;
-        for(n=min;n<=max;n+=5){
-            set<int> entradas;
-            set<int> salidas;
+         set<int> entradas;
+         set<int> salidas;
+        for(n=min;n<=max;n+=10){
+           
             cout<< "Generando planilla de "<< n <<"programadores ..."<<endl;
             salida <<"   "<<n<<endl;
             for(k=1;k<=n;k++){
                 time1 = rand()%TOT_TIME;//randomNumber(tot_time);
                 time2 = rand()%TOT_TIME;//randomNumber(tot_time);
-                if (time1 <= time2){ //pueden entrar y salir a la misma hora si tuvieron una urgencia o les agarro diarrea
-                    entradas.insert(time1);
+                if (time1 < time2){ //pueden entrar y salir a la misma hora 
+                    entradas.insert(time1); 
                     salidas.insert(time2);
                 }else{
                     entradas.insert(time2);
@@ -77,6 +78,8 @@ string usage ("uso: ./planillas modo file_out min max \n\n");
               salida<<str_hora<<" "<<p<<endl;
               p++;
               } 
+              entradas.clear();
+              salidas.clear();
               p=1; 
           }
       salida<<"   -1";
