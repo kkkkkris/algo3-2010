@@ -1,0 +1,47 @@
+El algoritmo luego de parsear 'entrada' y convertir cada string hora en  int, guarda los datos  en una \emph{$lista< Planilla*>$},donde Planilla es \emph{$vector<int>$}. (Esto lo realiza la función parsearInstancias(string s),ver \texttt{src/parser.cpp} ).Cada Planilla contiene en la primera mitad de los datos las horas de entrada de todos los programadores y en la segunda mitad las horas de salida .
+\newline
+Una vez hecho ésto, comienza el ciclo principal del algoritmo al cual le tomamos el tiempo usando la clase Timer (ver \texttt{include/timer.h} y \texttt{src/timer.cpp}),que devuelve el resultado expresado en nanosegundos .
+\newline
+El ciclo principal  itera sobre la \emph{$lista<Planillas*>$}  y  está representado por la función maxCant(Planilla* p), que es la que realiza el cálculo principal sobre cada Planilla.
+\newline
+Básicamente maxCant itera simultáneamente sobre los subvectores de cada Planilla, entrada(comienza en el index=0) y salida (comienza en index= planilla.size()/2) y realiza el conteo de programadores que estan en simultáneo en cada momento .
+
+Un pseudocódigo de ésto sería : 
+\begin{verbatim}
+ para toda planilla p de la lista <Planillas*> list  hacer{
+               prender el  timer;                                    O(1)
+               calcular maxCant(Planilla* p)                         O(maxCant(p))
+               guardar resultado en string res                       O(1)
+  }
+  
+ maxCant(Planilla* p) { 
+     inicializo variables                                             O(1)
+     aux =0,res=0;		
+     mientras no haya recorrido todas las entradas de p{              O(p.size())
+            mientras no haya recorrido todas las entradas de p y 
+            la hora de entrada actual sea menor a la hora de salida actual{
+		  
+                     aux++ ;
+                     proxima entrada;		
+	        }
+            si  (aux > res){res = aux}
+            mientras no haya recorrido todas las entradas de p y 
+            la hora de salida actual es menor a la hora de entrada actual{
+			   
+                      aux--;				 	
+                      proxima salida,
+            }
+     }	
+	 devuelvo res 
+  }
+	  
+\end{verbatim}
+Podemos observar un ciclo mientras, que contiene dos subciclos mientras, éstos son los encargados de hacer el merge de las dos sublistas de entrada y salida, el primero hace entrar a todos los programadores antes de que salga alguno incrementando aux y el segundo lo mismo, hace salir a todos los programadores antes de que entre alguno decrementando aux. 
+\newline
+Luego de cada ciclo de entradas,se chequea si el aux superó al res anterior, guardando siempre la máxima cantidad de programadores que estuvieron en simultáneo en la oficina, es importante aclarar que con éste algoritmo, estamos contando al programador que se va de la oficina en un instante dado  como incluído dentro de la cantidad de programadores en ese instante, por eso el primer ciclo cuenta las entradas y las prioriza a las salidas aunque se hagan en el mismo instante .
+\newline
+Claramente se observa que la cantidad de operaciones es lineal al tamaño de la planilla, ya que por cada entrada o salida de la planilla se ejecuta una cantidad constante de operaciones en alguno de los dos subciclos, por lo cual utilizamos el modelo uniforme para el cálculo de la complejidad y decimos que la complejidad del algoritmo es lineal al tamaño de la entrada (O(p.size()).
+\newline
+Podríamos considerar un mejor caso en el que por ejemplo si  todos ingresaran antes de que el primero egrese, el algoritmo realizaría p.size()/2 iteraciones de entrada y ninguna de salida, ya que no nos interesan las salidas una vez que terminaron de ingresar todos, pero de todas formas la complejidad sigue siendo del orden de p.size() por una constante (1/2), o sea lineal al tamaño de la planilla(entrada del algoritmo).
+\newline 
+Respecto de un peor caso, podríamos considerar uno en el que los ingresos y egresos sean alternados uno a uno, de ésta manera el ciclo sería  1) evaluar el mientras ppal, 2)  iterar 1 vez  el mientras de entradas, 3) iterar 1 vez el mientras de salida  y asi sucesivamente, haciendo que  por cada dos elementos de la planilla, se realizan 3 iteraciones de ciclo (cada uno con una cantidad constante de operaciones), sin embargo, la complejidad sigue teniendo el mismo orden (sería p.size()*3/2 que es O(p.size())
