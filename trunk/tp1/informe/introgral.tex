@@ -1,0 +1,18 @@
+\section{Introducción general}
+El cálculo de la complejidad algorítmica es una herramienta fundamental en la programación, en particular si se trabaja con algoritmos que corren con entradas de datos grandes, ya que nos permite estimar teóricamente el tiempo y/o espacio que consumirá nuestro programa.En este trabajo analizaremos solo el tiempo, que puede ser medido en tiempo físico o cantidad de operaciones básicas ejecutadas.
+\newline
+En estos casos de grandes entradas de datos, nos interesa que nuestros algoritmos sean $"$asintóticamente eficientes$"$, y se habla de diferencias en $"$órdenes de magnitud$"$ para marcar diferencias entre algoritmos más y menos eficientes, donde a y b difieren en n órdenes de magnitud si a/b $\sim$ $10^{n}$.
+\newline
+El libro $"$The Design and Analysis of Algorithms$"$ de Aho, Hopcroft y Ullman, Ed. Addison-Wesley, 1979 nos muestra claro una tabla del tiempo estimado para algoritmos de diferentes órdenes de magnitud respecto del tamaño de la entrada, la cual nos da una noción respecto a que complejidades algorítmicas podemos considerar como buenas y cuales no. 
+\newline
+El objetivo del estudio de las complejidades algorítmicas es poder establecer tres cotas ,$\rm O$ cota superior, $\Omega$ cota inferior y  $\Theta$ orden exacto .
+\newline
+Para el presente trabajo nos interesa calcular $\rm O$ ,o sea la cota superior para el peor caso del algoritmo.
+\newline
+Una definición formal de $\rm O$ es la siguiente :
+\newline
+$\rm O$(g) = \{f: N=$>$ $R_+$ \| $\exists$ $n_0$ , c$>$0 tales que $\forall$ (n$>$ $n_0$) f(n)$<$ =c*g(n) \}
+\newline
+El presente trabajo consta de 3 problemas que fueron resueltos con algoritmos diferentes y con los que se realizaron experimentaciones de tiempos de ejecución para diferentes tamaños de entrada.Por otro lado se realizaron los calculos teóricos de sus complejidades y se contrastaron ambos resultados para observar si se correspondían.
+\newline
+Para realizar los calculos teóricos se analizó cada problema y su respectivo algoritmo y se definió el modelo de costo a utilizar, en particular se eligió entre el modelo de costo uniforme y el modelo de costo logarítmico.
