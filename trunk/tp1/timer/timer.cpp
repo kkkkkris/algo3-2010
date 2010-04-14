@@ -76,7 +76,9 @@ time_tt tomar_tiempo() {
 	return nanos;
 }
 
-
+time_tt Timer::getUltimaMedicion(){
+    return mediciones.back().time;
+}
 
 	
 
