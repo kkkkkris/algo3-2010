@@ -2,7 +2,7 @@ El ejercicio compila con el comando \texttt{make} .
 \newline
 El algoritmo recibe como parámetros de entrada tres nombres de archivo \emph{'entrada'},\emph{'salida'} y \emph{'tiempos'}, y se ejecuta \texttt{./planillas entrada.in salida .out tiempos.times}
 \newline
-El archivo \emph{'entrada'} (.in) contiene un conjunto de listas (llamadas planillas en el algoritmo) de las horas de  entradas y salidas de los programadores.
+El archivo \emph{'entrada'} (.in) contiene un conjunto de vectores (llamados planillas en el algoritmo) de las horas de  entradas y salidas de los programadores.
 \newline
 El tamaño de cada planilla es de  2*cantidad de programadores, donde la primera mitad de horas corresponde a las entradas (ordenadas de menor a mayor ) y la segunda mitad corresponde a las salidas también ordenadas .
 \newline
@@ -11,6 +11,6 @@ El archivo \emph{'salida'} (.out)lo genera el algoritmo con los resultados de ca
 Por último el archivo \emph{'tiempos'} (.times)  también generado por el algoritmo, contendrá una tabla con el tamaño de la planilla y tiempo de ejecución correspondiente, para cada instancia .
 \newline
 La generación de planillas 'entrada' se realizó con un generador de planillas (véase \texttt{generador\_de\_planillas/generador\_planillas.cpp} ), éste compila con el comando make y se ejecuta con 
-./planillas modo archivo\_entrada.in  min max escala, donde modo puede ser r=random, w=worst o peor caso, archivo entrada.in es el nombre del archivo donde va a volcar la lista de planillas, min es el valor mínimo de tamaño de planilla, max es el máximo y escala la diferencia de tamaño entre planillas conjuntas en la lista a generar .
+\texttt{./planillas modo archivo\_entrada.in  min max escala}, donde modo puede ser r=random, w=worst o peor caso, archivo entrada.in es el nombre del archivo donde va a volcar la lista de planillas, min es el valor mínimo de tamaño de planilla, max es el máximo y escala la diferencia de tamaño entre planillas conjuntas en la lista a generar .
 \newline
 Agregar el parámetro escala tanto como min y máx fue necesario, ya que en un principio, al probar con planillas de menos de 200 datos, e incrementando a escalas pequeñas no se observaba claramente la relación lineal de los tiempos, luego encontramos un razonable set de datos para las experimentaciones definitivas, listas de planillas de 200 a 2000 programadores (o sea de 400 a 4000 datos) incrementando de a 50.  

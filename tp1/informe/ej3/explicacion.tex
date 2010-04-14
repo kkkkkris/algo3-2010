@@ -1,4 +1,4 @@
-El algoritmo luego de parsear 'entrada' y convertir cada string hora en  int, guarda los datos  en una \emph{$lista< Planilla*>$},donde Planilla es \emph{$vector<int>$}. (Esto lo realiza la función parsearInstancias(string s),ver \texttt{src/parser.cpp} ).Cada Planilla contiene en la primera mitad de los datos las horas de entrada de todos los programadores y en la segunda mitad las horas de salida .
+El algoritmo luego de parsear el archivo de 'entrada' y convertir cada string hora en  int, guarda los datos  en una \emph{$lista< Planilla*>$},donde Planilla es \emph{$vector<int>$}. (Esto lo realiza la función parsearInstancias(string s), ver \texttt{src/parser.cpp} ).Cada Planilla contiene en la primera mitad de los datos las horas de entrada de todos los programadores y en la segunda mitad las horas de salida ambas ordenadas de menor a mayor, y coordinadas de forma de que por cada entrada hay una salida con hora mayor.
 \newline
 Una vez hecho ésto, comienza el ciclo principal del algoritmo al cual le tomamos el tiempo usando la clase Timer (ver \texttt{include/timer.h} y \texttt{src/timer.cpp}),que devuelve el resultado expresado en nanosegundos .
 \newline
@@ -6,26 +6,26 @@ El ciclo principal  itera sobre la \emph{$lista<Planillas*>$}  y  está represen
 \newline
 Básicamente maxCant itera simultáneamente sobre los subvectores de cada Planilla, entrada(comienza en el index=0) y salida (comienza en index= planilla.size()/2) y realiza el conteo de programadores que estan en simultáneo en cada momento .
 
-Un pseudocódigo de ésto sería : 
+Un pseudocódigo de ésto serí­a : 
 \begin{verbatim}
  para toda planilla p de la lista <Planillas*> list  hacer{
                prender el  timer;                                    O(1)
-               calcular maxCant(Planilla* p)                         O(maxCant(p))
-               guardar resultado en string res                       O(1)
+               res = maxCant(Planilla* p)                            O(maxCant(p))
+               guardar res en string                                 O(1)
   }
   
  maxCant(Planilla* p) { 
      inicializo variables                                             O(1)
      aux =0,res=0;		
-     mientras no haya recorrido todas las entradas de p{              O(p.size())
-            mientras no haya recorrido todas las entradas de p y 
+     mientras no haya recorrido todas las 'entradas' de p{            O(p.size())
+            mientras no haya recorrido todas las 'entradas' de p y 
             la hora de entrada actual sea menor a la hora de salida actual{
 		  
                      aux++ ;
                      proxima entrada;		
 	        }
             si  (aux > res){res = aux}
-            mientras no haya recorrido todas las entradas de p y 
+            mientras no haya recorrido todas las 'entradas' de p y 
             la hora de salida actual es menor a la hora de entrada actual{
 			   
                       aux--;				 	
@@ -36,12 +36,23 @@ Un pseudocódigo de ésto sería :
   }
 	  
 \end{verbatim}
-Podemos observar un ciclo mientras, que contiene dos subciclos mientras, éstos son los encargados de hacer el merge de las dos sublistas de entrada y salida, el primero hace entrar a todos los programadores antes de que salga alguno incrementando aux y el segundo lo mismo, hace salir a todos los programadores antes de que entre alguno decrementando aux. 
+Podemos observar un ciclo mientras, que contiene dos subciclos mientras, éstos son los encargados de hacer el merge de los dos subvectores (o subplanillas) de entrada y salida, el primero hace entrar a todos los programadores antes de que salga alguno incrementando aux y el segundo lo mismo, hace salir a todos los programadores antes de que entre alguno decrementando aux. 
 \newline
-Luego de cada ciclo de entradas,se chequea si el aux superó al res anterior, guardando siempre la máxima cantidad de programadores que estuvieron en simultáneo en la oficina, es importante aclarar que con éste algoritmo, estamos contando al programador que se va de la oficina en un instante dado  como incluído dentro de la cantidad de programadores en ese instante, por eso el primer ciclo cuenta las entradas y las prioriza a las salidas aunque se hagan en el mismo instante .
+Luego de cada ciclo de entradas,se chequea si el aux superó al res anterior, guardando siempre la máxima cantidad de programadores que estuvieron en simultáneo en la oficina, es importante aclarar que con éste algoritmo, estamos contando al programador que se va de la oficina en un instante dado  como incluí­do dentro de la cantidad de programadores en ese instante, por eso el primer ciclo cuenta las entradas y las prioriza a las salidas aunque se hagan en el mismo instante .
 \newline
-Claramente se observa que la cantidad de operaciones es lineal al tamaño de la planilla, ya que por cada entrada o salida de la planilla se ejecuta una cantidad constante de operaciones en alguno de los dos subciclos, por lo cual utilizamos el modelo uniforme para el cálculo de la complejidad y decimos que la complejidad del algoritmo es lineal al tamaño de la entrada (O(p.size()).
+Además no nos interesan las salidas luego de haber recorrido todas las entradas, dado que en ese momento ya sabremos el resultado buscado, con lo cual el algoritmo termina una vez que ésto ocurre (ver que ésta condición se evalúa en los 3 mientras).
 \newline
-Podríamos considerar un mejor caso en el que por ejemplo si  todos ingresaran antes de que el primero egrese, el algoritmo realizaría p.size()/2 iteraciones de entrada y ninguna de salida, ya que no nos interesan las salidas una vez que terminaron de ingresar todos, pero de todas formas la complejidad sigue siendo del orden de p.size() por una constante (1/2), o sea lineal al tamaño de la planilla(entrada del algoritmo).
+Claramente se observa que la cantidad de operaciones es lineal al tamaño de la planilla, ya que por cada entrada y salida de la planilla se ejecuta una cantidad constante de operaciones en alguno de los dos subciclos,mas una cantidad constante de evaluar la condición del ciclo principal (que en peor caso es n/2 veces, con n=p.size()) por lo cual utilizamos el modelo uniforme para el cálculo de la complejidad y decimos que la complejidad del algoritmo es lineal al tamaño de la entrada (O(p.size()).
+\newline
+Analizando  un peor caso, podrí­amos considerar uno en el que los ingresos y egresos sean alternados uno a uno, de ésta manera el ciclo serí­a  1) evaluar el mientras ppal, 2)  iterar 1 vez  el mientras de entradas, 3) iterar 1 vez el mientras de salida  y asi sucesivamente, haciendo que  por cada dos elementos de la planilla, se realizan 3 iteraciones de ciclo (cada uno con una cantidad constante de operaciones), sin embargo, la complejidad sigue teniendo el mismo orden (serí­a p.size()*3/2 que es O(p.size())
+\newline
+Es decir según la definición de O de complejidad ,que dice 
+\newline
+si ( $\exists$ k $\in$ R,$n_0$ $\in$ N / $\forall$ n$>$ $n_0$ $=>$(f(n)$<$= k*g(n)) ), entonces f $\in$ O(g(n)) , siendo nuestra f(n) = c*n + n/2 , con c la cantidad constante de operaciones en cada subciclo, y n/2 la evaluación del mientras principal en peor caso, eligiendo un k conveniente, en particular k=c+1 vale que
+\newline
+ f(n)=(c+1/2)*n $<$= k*n = (c+1)*n 
 \newline 
-Respecto de un peor caso, podríamos considerar uno en el que los ingresos y egresos sean alternados uno a uno, de ésta manera el ciclo sería  1) evaluar el mientras ppal, 2)  iterar 1 vez  el mientras de entradas, 3) iterar 1 vez el mientras de salida  y asi sucesivamente, haciendo que  por cada dos elementos de la planilla, se realizan 3 iteraciones de ciclo (cada uno con una cantidad constante de operaciones), sin embargo, la complejidad sigue teniendo el mismo orden (sería p.size()*3/2 que es O(p.size())
+ con lo cual la complejidad de f es lineal al tamaño de la entrada para el modelo de costo uniforme.   
+\newline
+Podrí­amos considerar un mejor caso en el que por ejemplo si  todos ingresaran antes de que el primero egrese, el algoritmo realizarí­a p.size()/2 iteraciones de entrada y ninguna de salida, ya que no nos interesan las salidas una vez que terminaron de ingresar todos, pero de todas formas la complejidad sigue siendo del orden de p.size() por una constante (1/2), o sea lineal al tamaño de la planilla(entrada del algoritmo).
+\newline 
