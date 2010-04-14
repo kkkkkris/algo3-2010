@@ -5,6 +5,6 @@
 
 using namespace std;
 
-list<int> parsearInstancias(string entrada);
+list<long long int> parsearInstancias(string entrada);
 
 #endif //__PARSER__

@@ -30,11 +30,11 @@ int main(int argc, char* argv[]) {
     cout << "Leyendo archivo de entrada ..." << endl;
     string contenido = leerArchivo(argv[1]);
     cout << "Parseando instancias ..." << endl;
-    list<int> instancias = parsearInstancias(contenido);
+    list<long long int> instancias = parsearInstancias(contenido);
     stringstream resultados;
 
     cout << "Realizando calculos ..." << endl;
-    for(list<int>::iterator it = instancias.begin(); it != instancias.end() && (*it) != -1; it++) {
+    for(list<long long int>::iterator it = instancias.begin(); it != instancias.end() && (*it) != -1; it++) {
         b = (*it);
         it++;
         n = (*it);
