@@ -1,0 +1,7 @@
+Para compilar el codigo puede utilizar make.
+
+Para correr el código debe utilizar la siguiente sintaxis: ``./ronda entrada salida'' la entrada debe respetar los formatos dados porla cátedra. El parser de este programa es bastante robusto al formato de la entrada, pero no lo es a las incoherencias del mismo. Si la instancia pasada como argumento no es un grafo válido puede fallar.
+
+Respecto a como implementamos el algoritmo previamente mencionado, decidimos no utilizar la forma recursiva, sino la forma imperativa. Los grafos fueron implementados de forma dinámica, esto quiere decir que no se utilizó una matriz, sino que cada Vértice esta representado con un Nodo, el cual tiene referencia a sus vecinos. Para poder traducir el algoritmo fue necesario utilizar dos estructuras nuevas, las cuales conservan los ordenes en las operaciones solicitadas por la demostracion. Estas dos estructuras son un stack y un array. El stack es utilizado tal cual como se usa la lista en el ejemplo del seudocódigo recursivo. Mientras que el array indica el ultimo nodo visitado para cada elemento del stack, de esta forma al desapilar un elemento de la pila, se avanza al siguiente vecino de su nodo anterior, tal cual se explicó.
+
+Existe un generador de grafos EL CUAL SANTIAGO PIVETTA PASARÁ A EXPLICAR
