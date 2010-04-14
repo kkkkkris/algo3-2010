@@ -1,0 +1,53 @@
+Nuestra algoritmo para solucionar este problema en primer lugar lee el archivo de entrada y parsea los datos, guardándolos finalmente en una lista. Luego recorremos la lista como si fuera una cola, de forma tal que el primer valor que extraemos corresponde a $b$ y el segundo a $n$ para la instancia.
+Luego, llamamos a la función que realiza el cáculo de \emph{$b^n mod n$}, la cual explicaremos en detalle más adelante. Vamos guardando los resultados en un string con el formato pedido para el archivo de salida. Finalmente, después de recorrer y calcular todas las instancias, escribimos el string en un archivo.
+\newline
+Ahora, una vez explicado el tema de la entra/salida, vamos a concentrarnos en el algoritmo central del problema, es decir el que realiza los cálculos pertinentes para obtener \emph{$b^n mod n$} dados un $b$ y un $n$ naturales. La idea surge a partir de las dos siguientes propiedades:
+1) \emph{$b^n = (b^(n/2))^2 b^(n mod 2)$} (la división es entera)
+2) \emph{Si $b mod x = c$, entonces $b^n mod x = c^n mod x$}
+\newline
+El algoritmo realizado es de Divide & Conquer, la división en subproblemas se realiza a partir de la propiedad 1. Se va dividiendo a la mitad el exponente y luego se vuelve a llamar a la misma función recrusivamente con el cociente como nuevo exponente. De esta forma se va reduciendo su valor exponencialmente, hasta llegar al caso en que vale 1, cuando se comienza a utilizar la propiedad 2 para obtener el resultado.
+\newline
+Con el fin de que quede más clara la idea, realizamos el siguiente pseudocódigo:
+\begin{verbatim}
+  
+modulo (Nat b, Nat m, Nat n) { 
+    Nat aux
+    
+    Si m = 1 entonces
+         devolver (b mod n)                         O(1)
+
+    aux := modulo(b, m/2, n)
+    
+    aux := (aux * aux) mod n                        O(1)
+
+    Si m mod 2 = 1 entonces
+        aux := (aux * b) mod n                      O(1)
+
+    devolver (aux mod n)
+}
+	  
+\end{verbatim}
+\newline
+El parámetro $m$ funciona como acumulador, debería comenzar valiendo lo mismo que $n$. Se utiliza en reitaradas ocoaciones la operación de módulo, esto hace referencia al operador $\%$ de C++. Lo usamos nada más en casos muy básicos, a los sumo se lo aplicamos a $b^2$, que está acotado, ya que $b$ es un número natural acotado según el enunciado. 
+\newline
+En cuanto a la complejidad, decidimos que el modelo que más se ajusta en esta caso es el logarítimico, puesto que, como deja implícito el enunciado, no se puede suponer que el valor de $n$ está acotado. En este caso lo que se obtiene es una ecuación recursiva para $C(i)$:
+\begin{verbatim}
+    C(i) = T(n) = T(n/2) + O(1)
+\end{verbatim}
+De donde se deduce que:
+\begin{verbatim}
+    C(i) = O (log n) 	  
+\end{verbatim}
+Luego, como:
+\begin{verbatim}
+    C(i)= O (log n) = O(f(E(i)))  
+\end{verbatim}
+Si
+\begin{verbatim}
+    f(x) = x 	  
+\end{verbatim}
+Entonces la complejidad es lineal en el tamaño de la entrada, es decir de orden logarítimico en $n$.
+\newline
+Nos parece importante remarcar por qué el O(1) en la ecuación de concurrencia, que se desprende de los O(1) en el pseudocódigo. En primer lugar, la multiplicación de dos expresiones que depende de $b$ es de orden constante, ya que $b$ está acotada. Por otro lado, aplicar módulo (la función de C++ para el resto en este caso) a algún valor acotado también es de orden constante, ya que si el valor es menor que $n$ no se debe hacer más que una comparación, y sino una cantidad acotada de restas y comparaciones (esto viendo la idea de módulo de una forma muy simple, se podría optimizar mucho más).
+\newline
+El mejor caso para este algoritmo es que $n$ sea una potencia de $2$, ya que las divisiones nunca van a tener restoy se minimizan los cálculos. El peor es cuando $n = 2^x -1$ con $x$ un natural caulquiera, porque va a haber siempre resto de dividir por $2$. Igualmente, para ambos casos la complejidad es la misma.

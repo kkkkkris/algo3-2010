@@ -1,0 +1,9 @@
+Para compilar este ejercicio hay que ussar el comando \texttt{make} en la carpeta \texttt{ej1}.
+\newline
+El ejecutable se llama \texttt{modulo}, y recibe como parámetros de entrada tres nombres de archivo \emph{'entrada'},\emph{'salida'} y \emph{'tiempos'}. Un ejemplo de como ejecutar el programa es \texttt{./modulo entrada.in salida.out tiempos.times}
+\newline
+El formato del archivo de entrada debe ser el explicado en la Intrudcción, y el de salida será también el que fue enunciado en dicha sección. Por otro lado, el archivo de tiempos tiene un formato similar al de salida, pero en vez de devolver los resultados devuelve el tiempo de ejecución del cálculo en sí del módulo (no tiene en cuenta el tiempo de lectura ni de parseo de la entrada ni de la salida). También se diferencia en que antes de cada dato aparece un índice con el objetivo de facilitar la identificación de cada tiempo.
+\newline
+Sabemos que nuestra implementación no es la mejor, ya que se realizan llamados recursivos a la función \texttt{modulo}, y son sabidos los problemas que esto acarrea (demasiado uso de la memoria, crecimiento de la pila, etc.). Intentamos eliminar la recursión para evitar este problmea, pero no pudimos lograrlo, en parte por falta de tiempo. Igualmente consideramos que en este caso no es imprescindible realizar dicha tarea, ya que la cantidad de llamados que se hacen es de orden logarítimico en $n$, aunque el problema es que no está acotado.
+\newline
+Cabe aclarar que para calcular los tiempos de ejecución de cada instancia se utilizó una clase definida especialmente, que se encuentra en la carpeta \texttt{timer}. No hay nada muy reelevante para decir sobre esta clase, unicamente que utiliza internamente la función \texttt{clock_gettime} para calcular el tiempo.
