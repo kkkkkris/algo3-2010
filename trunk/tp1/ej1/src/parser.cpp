@@ -9,8 +9,8 @@ using namespace std;
 
 void parsearInstancia(string linea, long long int* res);
 
-list<int> parsearInstancias(string entrada){
-    list<int> instancias;
+list<long long int> parsearInstancias(string entrada){
+    list<long long int> instancias;
     stringstream in(entrada);
     while(!in.eof()){
         string line;
