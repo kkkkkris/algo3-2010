@@ -35,39 +35,16 @@ class Nodo{
 };
 
 Grafo::Grafo(map<int, list<int> > nodos_p){
-    cicloDeHamilton = NO_SE_SABE;
-    
     this->size = nodos_p.size();
     this->nodos = new Nodo[nodos_p.size()];
-    
-    //Empezamos suponiendo que se cumple la hipotesis del teorema de Dirac
-    bool hipotesisDirac = true;
     
     map<int, list<int> >::iterator it = nodos_p.begin();
     while(it != nodos_p.end()){
         assert(it->first > 0);
         this->nodos[it->first - 1] = Nodo(it->first, it->second);
         //print(this->nodos[it->first - 1].toString());
-        
-        //Detectamos nodos con grado menor que 2
-        int gradoDeNodo = (int)this->nodos[it->first - 1].links.size();
-        if(gradoDeNodo < 2){
-            cicloDeHamilton = NO_EXISTE;
-        }
-        
-        //Si el grado de algun nodo no cumple que sea mayor o igual a n/2
-        //entonces no podemos aplicar el teorema de Dirac para asegurar la existecia
-        //de un ciclo de hamilton
-        if(gradoDeNodo < (size/2 + size%2)){
-            hipotesisDirac = false;
-        }
         it++;
-    }
-    
-    //Veamos si se cumplen las condiciones del teorema de Dirac
-    if(size >= 3 && hipotesisDirac){
-        cicloDeHamilton = EXISTE;
-    }
+    }  
 }
 
 Grafo::~Grafo() {
@@ -82,25 +59,30 @@ Nodo &Grafo::getNodo(nodo_id id){
 bool Grafo::esHamilton() {
     assert(size > 2);
 
-    //Si ya se que hay o no un ciclo, devuelvo la respuesta sin intentar encontrar el ciclo
-    
-    if(cicloDeHamilton == EXISTE){
-        return true;
-    }
-    else if(cicloDeHamilton == NO_EXISTE){
-        return false;
-    }
-    
-    /** OPTIMIZACION - Probar si se cumplen las hipotesis del teorema de Ore (1960) **/
-    
-    //comenzamos suponiendo que vale
+    /** OPTIMIZACION - Probar si se cumplen las hipotesis del teorema de Ore(1960) y de Dirac(1952) **/
+    //comenzamos suponiendo que valen
     bool hipotesisOre = true;
+    bool hipotesisDirac = true;
+    //hipotesis sobre el grado de los nodos > 1 
+    bool hipotesisGrado = true;
     //como la relacion de amistad es simetrica, preguntar por (i,j) es lo mismo que (j,i)
     
-    for(int i = 1; (i<=size) && hipotesisOre; i++){
+    for(int i = 1; (i<=size); i++){
+        int gradoi = (int)nodos[i-1].links.size();
+        if(gradoi < 2){
+            hipotesisGrado = false;
+        }
+        
+        //Si el grado de algun nodo no cumple que sea mayor o igual a n/2
+        //entonces no podemos aplicar el teorema de Dirac para asegurar la existecia
+        //de un ciclo de hamilton
+        if(gradoi < (size/2 + size%2)){
+            hipotesisDirac = false;
+        }
+        
         for(int j = i+1; (j<=size) && hipotesisOre; j++){
             if(!sonAdyacentes(i,j)){
-                int gradoi = (int)nodos[i-1].links.size();
+                
                 int gradoj = (int)nodos[j-1].links.size();
                 if(gradoi + gradoj < size){
                     //si ocurre que los grados de dos nodos no adyacentes no suman "size" o mas
@@ -111,8 +93,11 @@ bool Grafo::esHamilton() {
         } 
     }
     //Si vale la hipotesis, entonces devolvemos true sin encontrar el ciclo
-    if(hipotesisOre){
+    if(hipotesisOre || hipotesisDirac){
         return true;
+    }
+    else if(!hipotesisGrado){
+        return false;
     }
     
     /************************************************/
@@ -211,3 +196,7 @@ bool Grafo::sonAdyacentes(nodo_id i, nodo_id j) {
     return adyacentes;
 }
 
+
+int Grafo::getCantidadAlumnas(){
+    return size;
+}   

@@ -28,6 +28,7 @@ class Timer{
 		void empezar();
 		void terminar();
 		string tiempos();
+		time_tt getUltimaMedicion();
 };
 
 #endif
