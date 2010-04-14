@@ -47,6 +47,13 @@ Ya que nuestro algoritmo no repite vértices no puede ocurrir que un camino "se 
 
 El algoritmo recorre todos los caminos que se pueden formar desde un vértice sin repetir vértices. Esto significa que si no se terminara cuando se encuentra el ciclo hamiltoniano, terminaria generando todos los caminos posibles que tienen todos sus vértices distintos. Por generar todos los caminos que tienen sus vértices distintos y por terminar, se puede asegurar que el algoritmo encontrará si existe o no un ciclo hamiltoniano, ergo el algoritmo es correcto.
 
-Para medir la complejidad de este algoritmo elejimos el modelo uniforme, ya que el costo de las operaciones elementales no varia cuando cambia el tamaño de la entrada. Tomamos como función para medir el tamaño de la entrada la cantidad de amigas.
+Para medir la complejidad de este algoritmo elejimos el modelo uniforme, ya que el costo de las operaciones elementales no varia cuando cambia el tamaño de la entrada. Tomamos como función para medir el tamaño de la entrada la cantidad de amigas. Suponemos que eligiendo las estructuras de datos adecuadas, agregar, quitar, contiene y proxima(iterar) tiene complejidad constante. Analizando este algoritmo cada vez que avanza sobre un nuevo nodo, ese nodo pasa a estar visitado por el camino, por lo que el camino solo pasará por los nodos restantes. A partir de lo anterior podemos ver que en cada nuevo llamado a la función $hayCamino$, hay un nodo menos que recorrer. Como a la función $hayCamino$ se llama una vez por cada vecino del nodo actual, y las operaciones realizadas dentro de $hayCamino$ son $O(1)$, podemos definir el costo de forma recursiva con la siguiente formula:
+
+$T(n) = (n-1)T(n-1) + k$
+
+Donde $n$ es el tamaño del grafo y $k$ es una constante que no depende de la entrada, son las operaciones nombradas mas arriba. Es facilmente demostrable inducción en los naturales que la función anterior tiene complejidad $O(n!)$.
+
+Hemos decidido agregar ciertas mejoras a este algoritmo, tales son aprovechar las caracterizaciones de grafos que se logran utilizando los teoremas de Dirac y Ore. Estos teoremas plantea cada uno lo siguiente. El teorema de Dirac afirma que: ``Un grafo con $n$ vértices ($n > 3$) es hamiltoniano si cada vértice tiene grado mayor o igual a $n/2$.'' . Mientras que el Teorema de Ore establece que: ``Un grafo con $n$ vértices ($n > 3$) es hamiltoniano si la suma de los grados de $2$ vértices no adyacentes es mayor o igual que $n$.''(cita Wikipedia) Agregar estos pequeños chequeos permiten establecer si el grafo es hamiltoniano (no que no lo sea). Estos algoritmos son de orden polinomial, por lo que utilizarlos antes de utilizar el algoritmo principal no representa un costo mayor y no altera la complejidad de este algoritmo.
+
 
 
