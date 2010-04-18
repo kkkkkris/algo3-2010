@@ -43,13 +43,13 @@ int main(int argc, char* argv[]){
     //generar grafos que no cumplan los casos de optimizacion
     bool considerarOptimizaciones = true;
     if(strcmp("true", argv[5])){
-        cout << "asd" << endl;
+        cout << "NO considerando optimizaciones" << endl;
         considerarOptimizaciones = false;
     }
     //archivo de salida
     ofstream salida(argv[1]);
     
-    //Generamos grafos desde 10 hasta 50 vertices
+    //Generamos grafos entre min y max vertices
     for(int n = min; n <= max ; n++){
         cout << "Generando grafo de " << n << " vertices" << flush;
         //generamos 10 grafos con n vertices
