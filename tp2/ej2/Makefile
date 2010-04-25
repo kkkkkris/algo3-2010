@@ -1,9 +1,11 @@
 CC=g++
-CFLAGS=-g -Wall -Werror -pedantic -Iinclude/ 
-LDFLAGS=-g -Wall -Werror -pedantic
+#CFLAGS=-g -Wall -Werror -pedantic -Iinclude/ 
+#LDFLAGS=-g -Wall -Werror -pedantic
+CFLAGS=-g -Wall  -Iinclude/ 
+LDFLAGS=-g -Wall 
 #EDIT THIS:
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
-SOURCES=src/parser.cpp src/ciudad.cpp src/file_utils.cpp
+SOURCES=src/ciudad.cpp src/grafo.cpp
 BINARY=ciudad
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
 OBJECTS=$(SOURCES:src/%.cpp=.bin/%.o)
