@@ -7,19 +7,17 @@
 
 using namespace std;
 
-list<int> parsearNodo(string nodo);
-
 list<Grafo*> parsearInstancias(string entrada){
     list<Grafo*> grafos;
     list<int> nodos[] = NULL;
     int llaves[] = NULL;
     bool puertas[] = NULL;
     stringstream in(entrada);
-    int i = 0, nodos_t = 0, puertas_t = 0, n = 0, p = 0, m = 0;
-    while(!in.eof() && nodos_t != -1){
+    int i = 0, aristas = 0, puertas_t = 0, n = 0, p = 0, m = 0;
+    while(!in.eof() && aristas != -1){
         string line;
         getline(in, line);
-        if(nodos_t > 0){
+        if(aristas > 0){
             if (puertas_t > 0){
                 stringstream par(line);
                 int indice;
@@ -29,9 +27,13 @@ list<Grafo*> parsearInstancias(string entrada){
                 puertas_t--;
             }
             else{
-                nodos[i] = parsearNodo(line);
-                nodos_t--;
-                i++;
+                stringstream nodo(line);
+                int n1, n2;
+                nodo >> n1;
+                nodo >> n2;
+                nodos[n1].push_back(n2);
+                nodos[n2].push_back(n1);
+                aristas--;
             }
         }
         else {
@@ -42,9 +44,9 @@ list<Grafo*> parsearInstancias(string entrada){
             ss >> n;
             ss >> p;
             ss >> m;
-            nodos_t = n;
+            aristas = n;
             puertas_t = p;
-            if(nodos_t != -1) {
+            if(aristas != -1) {
                 if (nodos != NULL){
                     delete nodos;
                     delete llaves;
@@ -64,16 +66,3 @@ list<Grafo*> parsearInstancias(string entrada){
     return grafos;
 }
 
-list<int> parsearNodo(string nodo) {
-    list<int> res;
-    stringstream ss(nodo);
-    int size;
-    ss >> size;
-    while(size > 0) {
-        int other_node;
-        ss >> other_node;
-        res.push_back(other_node);
-        size--;
-    }
-    return res;
-}

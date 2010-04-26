@@ -1,6 +1,6 @@
 #include <list>
 #include <map>
-#include <stack>
+#include <queue>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -23,7 +23,7 @@ class Nodo{
             for(it_list it = links.begin(); it != links.end(); it++) {
                 if(it != links.begin())
                     ss << ", ";
-                ss << *it;
+                    ss << *it;
             }
             ss << "]";
             return ss.str();
@@ -49,6 +49,26 @@ Grafo::Grafo(int n, int m, int p, list<int>[] nodos, int[] llaves, bool[] puerta
 }
 
 bool bfsMejorado(){
+    bool marcados[this->n];
+    int i;
+    Nodo* nodo;
+    for(i = 0; i < n; i++){
+        marcados[i] = false;
+    }
+    queue<int> cola;
+
+    marcados[0] = true;  
+    cola.push(0);
+    while (!cola.empty()){
+        nodo = nodos[cola.pop()];
+        for(it_list it = (nodo->links).begin(); it != (nodo->links).end(); it++){
+           if (!marcados[(nodo->id)-1]){
+                marcados[(nodo->id)-1]) = true;
+                cola.push((nodo->id)-1);
+           }
+        }
+    }
+
     return false;
 }
 

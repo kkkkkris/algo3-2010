@@ -4,5 +4,6 @@
 
 using namespace std;
 
+list<Grafo*> parsearInstancias(string entrada);
 
 #endif //__PARSER__
