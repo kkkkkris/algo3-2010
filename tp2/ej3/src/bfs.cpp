@@ -9,7 +9,7 @@
 
 using namespace std;
 
-string usage = "uso:  ./unimodal entrada salida";
+string usage = "uso:  ./bfs entrada salida";
 
 
 int main(int argc, char* argv[]) {
