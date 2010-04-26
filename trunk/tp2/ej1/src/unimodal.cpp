@@ -5,21 +5,25 @@
 #include <list>
 #include "parser.h"
 #include "file_utils.h"
+#include "timer.h"
 #define Table int**
 #define print(a) cout << a << endl
 
 using namespace std;
 
-string usage = "uso:  ./unimodal entrada salida";
+string usage = "uso:  ./unimodal entrada salida tiempos";
 string toString(int i);
 int calcularMin(Table t);
 void llenar_up(Table tabla,int i);
 void llenar_down(Table tabla,int i);
 int unimodalMax(Table tabla);
 void tabla_toS(Table t);
+void list_toS(list<Table> tablas);
+void destructor(Table t);
+
 int main(int argc, char* argv[]) {
 
-    if(argc < 3){
+    if(argc < 4){
         print("bad arguments");
         print(usage);
         return 1;
@@ -27,26 +31,41 @@ int main(int argc, char* argv[]) {
 
     const char* entrada = argv[1];
     const char* salida = argv[2];
+    const char* tiempos = argv[3];
+    string res_tiempos;
     string contenido = leerArchivo(entrada);
     string buf;
     int res ;
     list<Table>::iterator it; //en main primero todas las declaraciones antes de funciones!?
 
     list<Table> list =parsearInstancias(contenido);
-   // list_toS(list);
+    Timer timer(false);
 ///oooooooooooooooooooooCICLO PRINCIPALoooooooooooooooooooooooooo///
     contenido="";
     for(it=list.begin();it!=list.end();it++){
+        timer.nueva((*it)[0][number]);
+        timer.empezar();
         res=calcularMin(*it);
+        timer.terminar();
         buf=toString(res);
         contenido+=buf;
         tabla_toS(*it);
         cout<<"Min cant de eliminaciones :"<<buf<<endl;
         destructor(*it);
     }
+    res_tiempos="Tamaño de secuencia     Tiempo \n";
+    res_tiempos+=timer.tiempos();
 ///oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo///
+    print(res_tiempos);
+    print("Resultados :");
+    print(contenido);
+
     if(escribirArchivo(salida, contenido)){
         print("error escribiendo archivo");
+        return 1;
+    }
+    if(escribirArchivo(tiempos,res_tiempos)){
+        print("error escribiendo tiempos en archivo");
         return 1;
     }
     return 0;
@@ -67,7 +86,6 @@ int calcularMin(Table tabla){
         llenar_down(tabla,i);
     }
     maxunimodal=unimodalMax(tabla);
-
     return size-maxunimodal;
 }
 
@@ -109,36 +127,35 @@ void llenar_down(Table tabla,int i){
     }
 }
 int unimodalMax(Table tabla){
-    int size,k,max,aux,maxup_actual,i_maxup_actual;
+    int size,k,max,aux,maxup_actual,i_maxup_actual,i_aux;
     size=tabla[0][number];
-    max=tabla[1][long_down];//seteo 1º caso base
+    max=tabla[1][long_down];   //seteo 1º caso base
     maxup_actual=tabla[1][long_up];
     i_maxup_actual=1;
+
     for(k=1;k<size;k++){
-        if(tabla[k][long_up]>maxup_actual){//si el actual es mayor al maxup_actual (de los tabla[1..k-1][long_up]
+        //si el actual es mayor al maxup_actual (de los tabla[1..k-1][long_up]
+        if(tabla[k][long_up]>maxup_actual){
             maxup_actual=tabla[k][long_up];
             i_maxup_actual=k;
             aux=maxup_actual+tabla[k+1][long_down];
-            if(aux>max){//si supero al max acum
-                if(tabla[k][number] != tabla[k+1][number]){//si extremos a mergear son != acumulo aux
-                max=aux;
-                }else{//si son iguales, el max sera aux-1 ,que en el peor caso sera = al max anterior
-                max=aux-1;
-                }
-            }
+            i_aux=k;
         }else{//si el actual no es mayor, tomo el maxup_actual
-           aux=tabla[i_maxup_actual][long_up]+tabla[k+1][long_down];
-            if(aux>max){//si supero al max acum
-                if(tabla[i_maxup_actual][number] != tabla[k+1][number]){//si extremos a mergear son != acumulo aux
+            aux=tabla[i_maxup_actual][long_up]+tabla[k+1][long_down];
+            i_aux=i_maxup_actual;
+        }
+        //si supero al max acum
+        if(aux>max){
+            //si extremos a mergear son != acumulo aux
+            if(tabla[i_aux][number] != tabla[k+1][number]){
                 max=aux;
-                }else{//si son iguales, el max sera aux-1 ,que en el peor caso sera = al max anterior
+            }else{//si son iguales, el max sera aux-1 ,que en el peor caso sera = al max anterior
                 max=aux-1;
-                }
             }
         }
     }
     if(tabla[size][long_up]>max){  //2º caso base
-      max =tabla[size][long_up];
+        max =tabla[size][long_up];
     }
     return max;
 }
@@ -146,15 +163,34 @@ void tabla_toS(Table t){
     int size=t[0][number],i=1;
     print("tabla -->");
     for(i=1;i<size+1;i++){
-    cout<<t[i][long_down];
+        cout<<t[i][long_down];
     }
     cout<<endl;
     for(i=1;i<size+1;i++){
-    cout<<t[i][number];
+        cout<<t[i][number];
     }
     cout<<endl;
     for(i=1;i<size+1;i++){
-    cout<<t[i][long_up];
+        cout<<t[i][long_up];
     }
     cout<<endl;
+}
+void list_toS(list<Table> tablas){
+     int size;
+     for(list<Table>::iterator it=tablas.begin();it != tablas.end();it++){
+        size=(*it)[0][number];
+        cout<<"tabla -->"<<endl;
+        cout<<"size :"<<size<<endl;
+        for(int i=1;i<size+1;i++){
+            cout<<(*it)[i][number]<<"-";
+        }
+        cout<<endl<<"fin" <<endl;
+     }
+}
+void destructor(Table t){
+    int size=t[0][number]+1;
+    for(int i=0;i<size;i++){
+         delete[] t[i];
+    }
+    delete t;
 }

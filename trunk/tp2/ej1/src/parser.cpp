@@ -10,8 +10,7 @@
 using namespace std;
 
 Table parsearSecu(string secu,int& secu_size);
-void list_toS(list<Table> tablas);
-void destructor(Table t);
+
 
 list<Table> parsearInstancias(string entrada){
     int secu_size=0;
@@ -58,23 +57,4 @@ Table parsearSecu(string secu,int& secu_size) {
 		 i++;
 	 }
     return tabla;
-}
-void list_toS(list<Table> tablas){
-     int size;
-     for(list<Table>::iterator it=tablas.begin();it != tablas.end();it++){
-        size=(*it)[0][number];
-        cout<<"tabla -->"<<endl;
-        cout<<"size :"<<size<<endl;
-        for(int i=1;i<size+1;i++){
-            cout<<(*it)[i][number]<<"-";
-        }
-        cout<<endl<<"fin" <<endl;
-     }
-}
-void destructor(Table t){
-    int size=t[0][number];
-    for(int i=0;i<size;i++){
-         delete[] t[i];
-    }
-    delete[] t;
 }
