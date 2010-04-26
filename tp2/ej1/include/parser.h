@@ -13,6 +13,5 @@
 using namespace std;
 
 list<Table> parsearInstancias(string entrada);
-void list_toS(list<Table> tablas);
-void destructor(Table t);
+
 #endif //__PARSER__
