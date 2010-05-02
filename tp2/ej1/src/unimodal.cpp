@@ -49,8 +49,8 @@ int main(int argc, char* argv[]) {
         timer.terminar();
         buf=toString(res);
         contenido+=buf;
-        tabla_toS(*it);
-        cout<<"Min cant de eliminaciones :"<<buf<<endl;
+        //tabla_toS(*it);
+        //cout<<"Min cant de eliminaciones :"<<buf<<endl;
         destructor(*it);
     }
     res_tiempos="Tamaño de secuencia     Tiempo \n";
