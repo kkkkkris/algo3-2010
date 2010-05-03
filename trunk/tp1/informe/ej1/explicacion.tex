@@ -1,53 +1,93 @@
-Nuestra algoritmo para solucionar este problema en primer lugar lee el archivo de entrada y parsea los datos, guardándolos finalmente en una lista. Luego recorremos la lista como si fuera una cola, de forma tal que el primer valor que extraemos corresponde a $b$ y el segundo a $n$ para la instancia.
-Luego, llamamos a la función que realiza el cáculo de \emph{$b^n mod n$}, la cual explicaremos en detalle más adelante. Vamos guardando los resultados en un string con el formato pedido para el archivo de salida. Finalmente, después de recorrer y calcular todas las instancias, escribimos el string en un archivo.
-\newline
-Ahora, una vez explicado el tema de la entra/salida, vamos a concentrarnos en el algoritmo central del problema, es decir el que realiza los cálculos pertinentes para obtener \emph{$b^n mod n$} dados un $b$ y un $n$ naturales. La idea surge a partir de las dos siguientes propiedades:
-1) \emph{$b^n = (b^(n/2))^2 b^(n mod 2)$} (la división es entera)
-2) \emph{Si $b mod x = c$, entonces $b^n mod x = c^n mod x$}
-\newline
-El algoritmo realizado es de Divide & Conquer, la división en subproblemas se realiza a partir de la propiedad 1. Se va dividiendo a la mitad el exponente y luego se vuelve a llamar a la misma función recrusivamente con el cociente como nuevo exponente. De esta forma se va reduciendo su valor exponencialmente, hasta llegar al caso en que vale 1, cuando se comienza a utilizar la propiedad 2 para obtener el resultado.
-\newline
-Con el fin de que quede más clara la idea, realizamos el siguiente pseudocódigo:
+La estructura soporte utilizada en el algoritmo es una matriz de 3 x n que denominamos Tabla en el algoritmo para mayor claridad.
+La Tabla almacena para cada fila i: en una columna el elemento  i de la secuencia, en otra el tamanio de la máxima subsecuencia creciente desde 1 hasta i que incluye al elemento i de la secuencia, y en la tercera , el tamaño de la máxima subsecuencia decreciente desde  i hasta n que incluye al elemento i de la secuencia.
+Para mejor comprensión indexaremos la tabla como tabla[index\_de\_secuencia][number/up/down] donde la columna number  tiene el elemento en si,la columna up el tamaño de máxima subsecuencia creciente y la columna down el tamaño de máxima subsecuencia decreciente.
+En tabla[0][number] se guardara el tamaño de la secuencia y lo notamos como n en los algoritmos
+
+Pseudocódigo
+$/*$función principal que calcula la cantidad mínima de elementos de una secuencia que hay que eliminar para que la secuencia resultante sea unimodal.$*\$
+
 \begin{verbatim}
-  
-modulo (Nat b, Nat m, Nat n) { 
-    Nat aux
+ calcularMin(Table t)
+    para i=1,i<n                 O(n2)
+	   llenar_tablaup(t,i) 
+	para i=n,i>0                   O(n^2)
+	  llenar_tabladown(t,i)
     
-    Si m = 1 entonces
-         devolver (b mod n)                         O(1)
+    max= unimodalMax(t)            O(n)
+    devolver n-max   
+                                 ____
+                        total:    O(n^2)
+\end{verbatim}                       
+ 
+Los dos O($n^{2}$) de los ciclos que aplican llenar\_tablaup y llenar\_tabladown provienen de la siguientes sumatorias:
+el primer ciclo hace 
+$\sum_{i=1}^{i=n} i $ = n(n+1)$/$2 = O($n^{2}$)
+mientras que el segundo
+$\sum_{i=1}^{i=n}(n-i)$ = $\sum_{i=1}^{i=n}(i-1)$ = (n-1)n$/$2 = O($n^{2}$)
+                       
+$/*$función que llena una fila de la tabla con los tamaños de máxima subsecuencia creciente desde 1 hasta i que incluyen el elemento i  $/*$
 
-    aux := modulo(b, m/2, n)
-    
-    aux := (aux * aux) mod n                        O(1)
+\begin{verbatim}                        
+llenar\_tablaup(tabla,i)           
+   para j=i-1,j>0,j--				O(i)   
+     m= max\_predecesor?(tabla,i,m) 	
+   devolver m+1;
+\end{verbatim}    
+        
 
-    Si m mod 2 = 1 entonces
-        aux := (aux * b) mod n                      O(1)
+$/*$función que llena una fila de la tabla con los tamaños de máxima subsecuencia decreciente desde i hasta n que incluyen el elemento i $/*$ 
+       
+\begin{verbatim}                        
+llenar\_tabladown(tabla,i)             
+   para j=i+1,j$<$n,j++			   O(n-i) 
+      m= max\_predecesor?(tabla,i,m) 	
+   devolver m+1;
+\end{verbatim} 
+max\_predecesor?(tabla,i,m) son comparaciones O(1) que devuelven el maximo predecesor hasta el elemento i. 
 
-    devolver (aux mod n)
-}
-	  
-\end{verbatim}
-\newline
-El parámetro $m$ funciona como acumulador, debería comenzar valiendo lo mismo que $n$. Se utiliza en reitaradas ocoaciones la operación de módulo, esto hace referencia al operador $\%$ de C++. Lo usamos nada más en casos muy básicos, a los sumo se lo aplicamos a $b^2$, que está acotado, ya que $b$ es un número natural acotado según el enunciado. 
-\newline
-En cuanto a la complejidad, decidimos que el modelo que más se ajusta en esta caso es el logarítimico, puesto que, como deja implícito el enunciado, no se puede suponer que el valor de $n$ está acotado. En este caso lo que se obtiene es una ecuación recursiva para $C(i)$:
+$/*$función que una vez obtenidos los tamaños de máxima subsecuencia creciente y máxima subsecuencia decreciente 
+realiza la búsqueda de la combinación de ambas que conforman la máxima secuencia unimodal y devuelve el tamaño de la misma.
+Observar que cuenta con dos casos que analizamos aisladamente fuera de la iteración o "casos base", que son casobase1: que la secuencia unimodal máxima sea toda creciente e incluya al último elemento(n),corresponde al valor de tabla$[n][up]$ y casobase2: que sea toda decreciente e incluya al primero (1), corresponde al valor de tabla$[1][down]$ 
+El maxup\_actual e i\_maxup\_actual son variables que guardan el mayor tamaño de subsecuencia creciente hasta el momento y su respectivo indice sin la condición de que incluyan al elemento actual iterado, ésto es que no necesariamente van a coincidir , por ejemplo para la secuencia 3-4-5-6-1-2  en i=6 tenemos que maxup\_actual es 4 (de la subsecuencia 3-4-5-6) mientras que tabla$[6][up]$ =2 (de la subsecuencia 1-2) $/*$
 \begin{verbatim}
-    C(i) = T(n) = T(n/2) + O(1)
+unimodalMax(tabla)
+    int max,maxup\_actual,i\_maxup\_actual,aux\_max; 	
+    max= si(casobase1 >casobase2) ?casobase1 :casobase2 ;
+	
+	para k=1,k$<$n,k++          							   O(n)
+	   si tabla[k][up]$>$maxup\_actual	
+	      seteo nuevo maxup\_actual
+       finsi 
+       aux\_max=maxup\_actual+tabla[k+1][down]		   
+	   si aux\_max>max
+	      si los extremos de subsecuencias up y down son $\not =$
+	         max=aux
+	      si no 
+	         max=aux-1
+    	  finsi 
+	    finsi
+	 finpara   
+   devolver max
+
 \end{verbatim}
-De donde se deduce que:
-\begin{verbatim}
-    C(i) = O (log n) 	  
-\end{verbatim}
-Luego, como:
-\begin{verbatim}
-    C(i)= O (log n) = O(f(E(i)))  
-\end{verbatim}
-Si
-\begin{verbatim}
-    f(x) = x 	  
-\end{verbatim}
-Entonces la complejidad es lineal en el tamaño de la entrada, es decir de orden logarítimico en $n$.
+
+Lo que hacemos en el algoritmo es mantener actualizada la subsecuencia creciente maxima en maxup\_actual para el i en cuestion y sumarlo sobre todas las subsecuencias decrecientes máximas para ese mismo i. 
+
+Sea  lu$_i$ =$\max_{i\leq k<n}$ l$_k$+ 1 $\forall$i $1\leq i \leq n$ tal que x$_k$ $<$ x$_i$  (lu=long up)
+
+Sea  ld$_i$ =$\max_{i<k\leq n}$ l$_k$+ 1 $\forall$i $1\leq i \leq n$ tal que x$_k$ $<$ x$_i$  (ld=long down)
+
+Luego maxSecUnimodal = max((lu$_i$+ld$_j$),lu$_n$,ld$_1$)\hspace{0.1cm} $\forall$ i,j, $1\leq i<j\leq n$,x${_i} \not =$x${_j}$ 
 \newline
-Nos parece importante remarcar por qué el O(1) en la ecuación de concurrencia, que se desprende de los O(1) en el pseudocódigo. En primer lugar, la multiplicación de dos expresiones que depende de $b$ es de orden constante, ya que $b$ está acotada. Por otro lado, aplicar módulo (la función de C++ para el resto en este caso) a algún valor acotado también es de orden constante, ya que si el valor es menor que $n$ no se debe hacer más que una comparación, y sino una cantidad acotada de restas y comparaciones (esto viendo la idea de módulo de una forma muy simple, se podría optimizar mucho más).
+El principio de optimalidad vale para ambos algoritmos de búsqueda de subsecuencia creciente y decreciente mas larga y se podria enunciar así : 
 \newline
-El mejor caso para este algoritmo es que $n$ sea una potencia de $2$, ya que las divisiones nunca van a tener restoy se minimizan los cálculos. El peor es cuando $n = 2^x -1$ con $x$ un natural caulquiera, porque va a haber siempre resto de dividir por $2$. Igualmente, para ambos casos la complejidad es la misma.
+Si una subsecuencia es óptima, no puede haber elementos entre los elementos de la subsecuencia que formen otra subsecuencia mejor que las subsecuencias que forman los elementos de la óptima, en otras palabras, las subsecuencias formadas por los elementos de la óptima, son óptimas para esa longitud.
+Luego hallando la mejor combinación entre subsecuencia creciente y subsecuencia decreciente, obtenemos la subsecuencia unimodal óptima. 
+\newline
+Llamemos S  a la secuencia a analizar y SC${_i}$ a la subsecuencia creciente maxima para S[1..i] y SD${_i}$ a la subsecuencia decreciente maxima para S[i..n].
+\newline
+Llamemos U${_i}$ a la subsecuencia unimodal máxima que tiene al elemento S${_i}$ como su pico máximo.
+Tenemos entonces que necesariamente U${_i}$ está formada por SC${_i}$ +  SD${_i}{_+}{_1}$ siempre que los elementos ultimo de SC${_i}$ y primero de SD${_i}{_+}{_1}$, es decir los que se concatenan, sean distintos, si son iguales ,U${_i}$ es la concatenacion de ellos eliminando uno de los dos repetidos.
+\newline
+Luego tendremos la subsecuencia unimodal máxima en $\max_{1\leq i\leq n}$ U${_i}$ .
+\newline
