@@ -1,7 +1,7 @@
-%Como era de esperar, el gráfico nos describe una función aproximadamente lineal, observamos que en el que consideramos el peor caso, la pendiente de la 'casi recta' es mas pronunciada que en los casos randoms o casos promedio,se puede observar que alcanza valores del orden de $10^{5}$ para planillas de 4000 datos, contra los de orden de $10^{4}$ de los lotes randoms para la misma cantidad de datos de entrada. 
-%\newline
-%Sin embargo a los efectos del cálculo de la complejidad, ésto no hace diferencia, ya que la diferencia está dada por una constante multiplicativa .
-%\newline
-%Concluímos que el contraste teórico - experimental coincidió tal como lo esperábamos, nos quedaría realizar experimentaciones con lo que consideramos el mejor caso y observar la diferencia respecto del resto.
+Como era esperado, los gráficos describen una función cuadrática para todos los lotes de pruebas.
 
+No existen peores casos ya que la cantidad de iteraciones es constante para una secuencia dada, en función de su longitud, es por ello que no construimos otros lotes de secuencia más que los randoms.
 
+El algoritmo está sujeto a algunas modificaciones posibles, en primer lugar, podría obtenerse además de la longitud, la(o una) secuencia unimodal máxima guardando en la tabla los predecesores de cada elemento tanto para la subsecuencia máxima creciente como para la decreciente.Por otro lado, el algoritmo podría implementarse para obtener una complejidad de O(n*log(n)) mediante una estructura secundaria que permita obtener el predecesor inmediato de cada elemento en O(log(n)).
+
+Concluímos que el contraste teórico-experimental coincidió tal como esperábamos. 
