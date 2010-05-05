@@ -1,10 +1,12 @@
-%En éste ejercicio contamos con el problema de la oficina de programadores, hay una lista con dos sublistas de horarios de entrada y salida de cada uno de los programadores que trabaja en una oficina , por cada entrada hay una salida respectiva y además las sublistas estan ordenadas en orden creciente de tiempo.
-%\newline
-%El problema pide obtener la cantidad máxima de programadores que se encuentran en simultáneo en la oficina en algún instante.
-%\newline
-%La solución tomada fue ir recorriendo simultáneamente las dos sublistas y a modo de mergeo ir comparando las horas de entrada y salida próximas, actualizando un contador que nos termina dando el resultado final.
-%\newline
-%Para el cálculo teórico de la complejidad se eligió el modelo de costo uniforme obteniendo como resultado una complejidad lineal del algoritmo en funcion del tamaño de la entrada.
-%\newline
-%Se realizaron las experimentaciones midiendo el tiempo de procesamiento del algoritmo excluyendo los tiempos de parseo de archivo y escritura de resultados.
-%Finalmente se contrastaron los resultados obtenidos ,con los calculados teoricamente. 
+En éste ejercicio contamos con el problema de la subsecuencia unimodal más larga, dada una secuencia, debemos hallar la cantidad mínima de elementos a eliminar tal que nos quede como resultante la subsecuencia (o una de ellas si hay más de una) unimodal máxima.
+
+Una secuencia es unimodal si es creciente hasta cierto elemento y decreciente a partir del mismo.
+El problema debe ser resuelto en una complejidad menor que O(n$^{3}$).
+
+Consideramos abordar el problema dividiéndolo en dos subproblemas, el de hallar la longitud de la subsecuencia creciente máxima para una instancia de la secuencia (o sea para S[1..i]) y lo mismo para la subsecuencia decreciente máxima (para S[i..n]).Luego calculamos la longitud de la subsecuencia unimodal máxima que tiene como pico máximo a un elemento particular de la secuencia usando las longitudes de las subsecuencias máximas creciente y decreciente correspondientes.
+
+Para el cálculo de la complejidad se eligió el modelo de costo uniforme, dado que no hay aclaraciones respecto de que el tamaño de la entrada pudiera no ser acotado.
+
+Se realizaron las experimentaciones midiendo el tiempo de procesamiento del algoritmo excluyendo los tiempos de parseo de archivo y escritura de resultados.
+
+Finalmente se contrastaron los resultados obtenidos ,con los calculados teoricamente. 

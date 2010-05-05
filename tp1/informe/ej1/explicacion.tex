@@ -33,18 +33,18 @@ Lo que hace es recorrer la tabla y para cada fila de la misma (con sus tres colu
 Finalmente ,resta uno al max obtenido ya que sumamos dos veces el "pico" de la subecuencia unimodal máxima ,ya que tanto up como down incluían a ese elemento. 
 
 \begin{verbatim}
-unimodalMax(tabla t){
-    int max,aux; 	
-    max= 0 ;
-    para k=1,k<n,k++                 O(n)
-	  aux=t[k][up]+t[k][down]
-	  si aux>max 
-	     max=aux
-	  finsi 
-	finpara
-	max-- 
-    devolver max
-}
+  unimodalMax(tabla t){
+      int max,aux; 	
+      max= 0 ;
+      para k=1,k<n,k++                    O(n)
+	    aux=t[k][up]+t[k][down]
+	    si aux>max 
+	       max=aux
+	    finsi 
+	  finpara
+	  max-- 
+      devolver max
+  }
 \end{verbatim}
 
 
