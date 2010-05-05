@@ -49,8 +49,8 @@ int main(int argc, char* argv[]) {
         timer.terminar();
         buf=toString(res);
         contenido+=buf;
-        //tabla_toS(*it);
-        //cout<<"Min cant de eliminaciones :"<<buf<<endl;
+        tabla_toS(*it);
+        cout<<"Min cant de eliminaciones :"<<buf<<endl;
         destructor(*it);
     }
     res_tiempos="Tamaño de secuencia     Tiempo \n";
@@ -127,36 +127,18 @@ void llenar_down(Table tabla,int i){
     }
 }
 int unimodalMax(Table tabla){
-    int size,k,max,aux,maxup_actual,i_maxup_actual,i_aux;
+    int size,k,max,aux;
     size=tabla[0][number];
-    max=tabla[1][long_down];   //seteo 1º caso base
-    maxup_actual=tabla[1][long_up];
-    i_maxup_actual=1;
-
-    for(k=1;k<size;k++){
-        //si el actual es mayor al maxup_actual (de los tabla[1..k-1][long_up]
-        if(tabla[k][long_up]>maxup_actual){
-            maxup_actual=tabla[k][long_up];
-            i_maxup_actual=k;
-            aux=maxup_actual+tabla[k+1][long_down];
-            i_aux=k;
-        }else{//si el actual no es mayor, tomo el maxup_actual
-            aux=tabla[i_maxup_actual][long_up]+tabla[k+1][long_down];
-            i_aux=i_maxup_actual;
-        }
-        //si supero al max acum
-        if(aux>max){
-            //si extremos a mergear son != acumulo aux
-            if(tabla[i_aux][number] != tabla[k+1][number]){
-                max=aux;
-            }else{//si son iguales, el max sera aux-1 ,que en el peor caso sera = al max anterior
-                max=aux-1;
-            }
-        }
+    max=0;   
+   
+    for(k=1;k<=size;k++){
+      aux=tabla[k][long_up]+tabla[k][long_down];
+      max= (aux>max)? aux :max ;
     }
-    if(tabla[size][long_up]>max){  //2º caso base
-        max =tabla[size][long_up];
+    if(max==0){
+      print("error en unimodal Max, no se encontro maximo");
     }
+    max--;//restamos el pico de la unimodal que sumamos dos veces
     return max;
 }
 void tabla_toS(Table t){
