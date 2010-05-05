@@ -1,0 +1,7 @@
+Como era esperado, los gráficos describen una función cuadrática para todos los lotes de pruebas.
+
+No existen peores casos ya que la cantidad de iteraciones es constante para una secuencia dada, en función de su longitud, es por ello que no construimos otros lotes de secuencia más que los randoms.
+
+El algoritmo está sujeto a algunas modificaciones posibles, en primer lugar, podría obtenerse además de la longitud, la(o una) secuencia unimodal máxima guardando en la tabla los predecesores de cada elemento tanto para la subsecuencia máxima creciente como para la decreciente.Por otro lado, el algoritmo podría implementarse para obtener una complejidad de O(n*log(n)) mediante una estructura secundaria que permita obtener el predecesor inmediato de cada elemento en O(log(n)).
+
+Concluímos que el contraste teórico-experimental coincidió tal como esperábamos. 

@@ -1,0 +1,14 @@
+El ejercicio compila con el comando \texttt{make} .
+\newline
+El algoritmo recibe como parámetros de entrada tres nombres de archivo \emph{'entrada'},\emph{'salida'} y \emph{'tiempos'}, y se ejecuta \texttt{./secuencias entrada.in salida .out tiempos.times}
+\newline
+El archivo \emph{'entrada'} (.in) contiene una lista de secuencias de números.
+\newline
+El archivo \emph{'salida'} (.out)lo genera el algoritmo con los resultados de cada secuencia(cantidad de minima de elementos a eliminar de la secuencia tal que la subsecuencia resultante sea unimodal).
+\newline
+Por último el archivo \emph{'tiempos'} (.times)  también generado por el algoritmo, contendrá una tabla con el tamaño de cada secuencia y tiempo de ejecución correspondiente, para cada una.
+\newline
+La generación de secuencias 'entrada' se realizó con un generador de planillas (véase \texttt{generador\_de\_secuencias/generador\_secuencias.cpp} ), éste compila con el comando make y se ejecuta con 
+\texttt{./planillas modo archivo\_entrada.in  min max escala}, donde modo puede ser r=random, w=worst o peor caso, archivo entrada.in es el nombre del archivo donde va a volcar la lista de secuencias generada, min es el valor mínimo de tamaño de secuencia, max es el máximo y escala la diferencia de tamaño entre secuencias conjuntas en la lista a generar .
+\newline
+Agregar el parámetro escala tanto como min y máx fue necesario, ya que en un principio, al probar con secuencias de menos de 20 elementos, e incrementando a escalas pequeñas no se observaba claramente la relación cuadratica de los tiempos, luego encontramos un razonable set de datos para las experimentaciones definitivas, listas de secuencias de 20 a 800 programadores incrementando de a 10, 20 y 40.  
