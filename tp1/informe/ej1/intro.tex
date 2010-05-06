@@ -1,12 +1,3 @@
-En éste ejercicio contamos con el problema de la subsecuencia unimodal más larga, dada una secuencia, debemos hallar la cantidad mínima de elementos a eliminar tal que nos quede como resultante la subsecuencia (o una de ellas si hay más de una) unimodal máxima.
-
-Una secuencia es unimodal si es creciente hasta cierto elemento y decreciente a partir del mismo.
-El problema debe ser resuelto en una complejidad menor que O(n$^{3}$).
-
-Consideramos abordar el problema dividiéndolo en dos subproblemas, el de hallar la longitud de la subsecuencia creciente máxima para una instancia de la secuencia (o sea para S[1..i]) y lo mismo para la subsecuencia decreciente máxima (para S[i..n]).Luego calculamos la longitud de la subsecuencia unimodal máxima que tiene como pico máximo a un elemento particular de la secuencia usando las longitudes de las subsecuencias máximas creciente y decreciente correspondientes.
-
-Para el cálculo de la complejidad se eligió el modelo de costo uniforme, dado que no hay aclaraciones respecto de que el tamaño de la entrada pudiera no ser acotado.
-
-Se realizaron las experimentaciones midiendo el tiempo de procesamiento del algoritmo excluyendo los tiempos de parseo de archivo y escritura de resultados.
-
-Finalmente se contrastaron los resultados obtenidos ,con los calculados teoricamente. 
+El problema a resolver en este caso es: dados dos naturales $b$ y $n$, calcular \emph{$b^n mod n$}, asumiendo que b tiene un tamaño acotado. Los datos de entrada se deben leer desde un archivo con un formato particular, en cada línea hay alguna cantidad de espacios (que puede ser 0) luego un valor para b, por lo menos un espacio más, un valor para n y finalmente un salto de línea. Cuando b y n valen -1 significa que es la última línea del archivo, la cual obviamente no debe procesarse porque b y n tiene que ser números naturales. La salida tiene que ser un archivo tmabién con un formato específico, por cada línea de la entrada debe haber una línea con el resultado que le corresponde.
+\newline
+Este problema es simple de comprender, más aún habiendo cursado una materia como Álgebra I. Justamente por haber cursado dicha materia, nuestra primer tendencia fue a consultar nuestros apuntes en busca de algún teorema o propiedad útil, buscando también información complementaria en wikipedia.
