@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
         }
     }
     
-    //escribirSalida(salida, resultados);
+    escribirSalida(salida, resultados);
     
     return 0;
 }
@@ -59,7 +59,7 @@ void leerEntrada(const char *nombreArchivo, list<Grafo>& listaCiudades) {
                 for(uint j=0; j<vecinas; j++) {
                     uint v;
                     datos >> v ;
-                    g.conectarVertices(i, v);
+                    g.conectarVertices(i, v-1);
                 }
             }
             listaCiudades.push_back(g);
