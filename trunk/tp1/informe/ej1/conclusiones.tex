@@ -1,7 +1,5 @@
-Como era esperado, los gráficos describen una función cuadrática para todos los lotes de pruebas.
-
-No existen peores casos ya que la cantidad de iteraciones es constante para una secuencia dada, en función de su longitud, es por ello que no construimos otros lotes de secuencia más que los randoms.
-
-El algoritmo está sujeto a algunas modificaciones posibles, en primer lugar, podría obtenerse además de la longitud, la(o una) secuencia unimodal máxima guardando en la tabla los predecesores de cada elemento tanto para la subsecuencia máxima creciente como para la decreciente.Por otro lado, el algoritmo podría implementarse para obtener una complejidad de O(n*log(n)) mediante una estructura secundaria que permita obtener el predecesor inmediato de cada elemento en O(log(n)).
-
-Concluímos que el contraste teórico-experimental coincidió tal como esperábamos. 
+Como se puede observar en los gráficos del tiempo en función de la entrada, y tal como habíamos considerado al calcular la complejidad, es claro que la pendiente se corresponde con la de una función logarítmica. A pesar de ello se pueden notar algunos outliers, que tratamos de suavizar tomando el mínimo tiempo de ejecución para cada instancia luego de varias corridas. También tuvimos problemas cuando los valores de b y n no son suficientemente grandes, ya que por alguna optimización de la CPU, o por el algoritmo de scheduling del sistema operativo, hay una brecha notoria entre los tiempos.
+\newline
+No hay una diferencia demasiado importante tampoco entre los valores obtenidos de tiempo de ejecución para el peor y el mejor caso, lo que se puede ver en los gráficos. Lo que se condice con nuestra afirmación de que la complejidad en todos los casos es del mismo orden.
+\newline
+Concluimos finalmente que, aunque tal vez en la práctica no sea perfectamente claro, nuestras ideas en la teoría son, cuanto menos razonables al contrastarlas con los datos que surgen de la experimentación.
