@@ -1,4 +1,4 @@
-CC=g++
+CC=g++ -lrt
 #CFLAGS=-g -Wall -Werror -pedantic -Iinclude/ 
 #LDFLAGS=-g -Wall -Werror -pedantic
 CFLAGS=-g -Wall  -Iinclude/ 
