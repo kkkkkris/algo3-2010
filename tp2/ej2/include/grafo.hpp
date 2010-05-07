@@ -14,17 +14,15 @@ class Grafo {
         void desconectarVertices(uint v1, uint v2);
         bool esConexo();
         bool esOrientable();
+        inline uint getCantidadVertices(){return cantidadVertices;}
+        inline uint getCantidadAristas(){return cantidadAristas/2;}
     private:
-        //typedef enum {POSIBLE_PUENTE, PUENTE, NO_PUENTE} tipo_arista_t;
         //cantidad total de vertices
         uint cantidadVertices;
         //cantidad de aristas del grafo
         uint cantidadAristas;
         //Para la i-esima posicion, el vector contiene un set de los vecinos del i-esimo vertice.
         vector<set<uint> > vecinos;
-        //Cada m(i,j) indica si la arista (i,j) es puente o no
-        //vector<vector<tipo_arista_t> > tipoAristas;
-        //vector<vector<tipo_arista_t> > adyacencia;
         //Devuelve true si existen puentes en el grafo, o false en caso contrario
         bool hayPuentes();
 };

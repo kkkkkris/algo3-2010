@@ -5,9 +5,8 @@
 
 using namespace std;
 
-Grafo::Grafo(uint n): cantidadVertices(n), 
-                      vecinos(vector<set<uint> >(n, set<uint>() ) )/*,
-                      tipoAristas(vector<vector<tipo_arista_t> >(n, vector<tipo_arista_t>(n, PUENTE)))*/
+Grafo::Grafo(uint n): cantidadVertices(n), cantidadAristas(0), 
+                      vecinos(vector<set<uint> >(n, set<uint>() ) )
 {
 }
 
@@ -15,8 +14,6 @@ void Grafo::conectarVertices(uint v1, uint v2)
 {
     if(v1 < cantidadVertices && v2 < cantidadVertices)
     {
-        //adyacencia[v1][v2] = true;
-        //adyacencia[v2][v1] = true;
         vecinos[v1].insert(v2);
         vecinos[v2].insert(v1);
         cantidadAristas++;
@@ -26,8 +23,6 @@ void Grafo::conectarVertices(uint v1, uint v2)
 void Grafo::desconectarVertices(uint v1, uint v2) {
     if(v1 < cantidadVertices && v2 < cantidadVertices)
     {
-        //adyacencia[v1][v2] = false;
-        //adyacencia[v2][v1] = false;
         vecinos[v1].erase(v2);
         vecinos[v2].erase(v1);
         cantidadAristas--;
@@ -127,38 +122,7 @@ bool Grafo::hayPuentes() {
                 cantidadVecinosAnteriores++;
                 vecinoNivelAnterior = *it;
             }
-        }
-        
-        //Si hay vecinos del mismo nivel, entonces todas las aristas de ese nivel y las del nivel anterior no son puentes
-        /*
-        if(!vecinosNivelActual.empty()) {
-            for(list<uint>::iterator it = vecinosNivelActual.begin(); it != vecinosNivelActual.end(); it++) {
-                tipoAristas[nodoActual][*it] = NO_PUENTE;
-                tipoAristas[*it][nodoActual] = NO_PUENTE;
-                cantidadPuentes--;
-            }
-            for(list<uint>::iterator it = vecinosNivelAnterior.begin(); it != vecinosNivelAnterior.end(); it++) {
-                tipoAristas[nodoActual][*it] = NO_PUENTE;
-                tipoAristas[*it][nodoActual] = NO_PUENTE;
-                cantidadPuentes--;
-            }
-        }
-        else if(vecinosNivelAnterior.size() > 1) {
-            //Si el nodo tiene mas de una arista de nivel anterior, entonces todas ellas no son puentes
-            for(list<uint>::iterator it = vecinosNivelAnterior.begin(); it != vecinosNivelAnterior.end(); it++) {
-                tipoAristas[nodoActual][*it] = NO_PUENTE;
-                tipoAristas[*it][nodoActual] = NO_PUENTE;
-                cantidadPuentes--;
-            }
-        }
-        else if(vecinosNivelAnterior.size() == 1){
-            //Preguntamos por 1 ya que el nodo inicial no tiene anteriores
-            //Guardamos al nodo como pendiente ya que la arista de nivel nivelActual-1 puede ser o no un puente dependiendo de como sean sus 
-            //aristas de nivel nivelActual+1
-            nodosPendientes.push_back(nodoActual);
-        }
-        */
-        
+        }        
         if (cantidadVecinosMismoNivel == 0 && cantidadVecinosAnteriores == 1) {
             nodosPendientes.push_back(pair<uint, uint>(nodoActual, vecinoNivelAnterior));
         }
