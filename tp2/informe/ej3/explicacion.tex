@@ -1,0 +1,62 @@
+Como ya fue mencionado en la introducción, vamos a modelar el problema con un grafo, donde cada habitación es un nodo que puede contener una puerta, una llave (la cual abre una única puerta) o nada, y cada pasillo es una arista. \\
+A continuación desarrollaremos un algoritmo que pueda utilizarse para resolver el problema. La idea es recorrer el grafo desde el nodo identificado como el $1$ hasta el $n$, pero teniendo en cuenta que para pasar por las puertas en necesrio haber pasado por el nodo que tiene la llave que la abre. \\
+Entonces, para modelar el problema usamos las siguientes estructuras:
+
+\begin{verbatimtab}
+Nodo:
+	lista de nat links
+	nat id
+	entero llave
+	bool puerta
+\end{verbatimtab}
+
+\begin{verbatimtab}
+Grafo:
+	lista de nodo nodos
+	nat n
+	nat m
+	nat p
+\end{verbatimtab}
+
+Es decir que en el grafo nada más guardamos la cantidad de nodos, aristas y puertas, y una referencia a cada nodo. Estos son los que tienen la información, puerta determina si hay o no una puerta en el nodo, y si llave es distinto de $-1$ quiere decir que hay una llave y su valor indica el id del nodo donde está la puerta que abre. \\
+Una vez aclarado el modelo y las estructuras que usaremos, vamos a ver el algoritmo que utilizaremos para recorrer el grafo intentando llegar desde el nodo con id $1$ hasta el de id $n$. \\
+Para esto partimos de la idea de \textit{BFS}, pero agregando que si llega al nodo con id $n$ termine, y además teniendo en cuenta el tema de las puertas. Con ese fin usamos, además del arreglo de nodos marcados, uno para las puertas que guarda su estado, el cual puede ser INDEFINIDO, ABIERTA o CERRADA. El arreglo en realidad es de largo $n$, con lo cual todas las posiciones comienzan como INDEFINIDO, ya que puede haber o no una puerta en dicha posición (la cual reprensenta al nodo con id $posición + 1$). Luego, la idea es ir marcando las puertas como abiertas cuando encontramos la llave que corresponde, y como cerradas cuando pasamos por ellas y no estaban abiertas. Cuando una puerta se abre es agregada a la cola de \textit{BFS} y cuando está cerrada no. \\
+Para aclarar esta idea, a continuación escribimos el pseudocódigo de la función que verifica si es posible llegar partiendo del nodo $1$ al nodo $n$:
+
+\begin{verbatim}
+recorrerGrafo:  
+    Arreglo de bool marcados[n]
+    Arreglo de Estado puertas[n]
+    Cola de int cola
+    Nodo nodo
+    Para i en [0 ... n] hacer:
+        marcados[i] := false
+        puertas[i] := INDEFINIDO;
+
+    marcados[0] := true
+    cola.push(0)
+    Mientras !cola.empty()
+        nodo := nodos[cola.front()]
+        cola.pop()
+        Si (nodo.puerta & puertas[nodo.id -1] != ABIERTA) entonces:
+            puertas[nodo.id -1] := CERRADA
+        Sino:
+            Si nodo.llave != -1 entonces:
+                Si puertas[nodo.llave -1] = CERRADA entonces:
+                    cola.push(nodo.llave -1)
+                puertas[nodo.llave -1] := ABIERTA
+            
+            Para v en nodo.links hacer:
+                Si v.id = n entonces:
+                	devolver true
+                Si !marcados[v.id -1] entonces:
+                    marcados[v.id -1] := true
+                    cola.push(v.id -1)
+
+    devolver false
+\end{verbatim}
+
+En el pseudocódigo no se usan punteros, a diferencia de la implementación. Cabe aclarar que el id es un número entre 1 y n, lo cual hace que debamos restarle uno cuando lo utilizamos para indexar un arreglo. Lo mismo sucede con llave. \\
+Ahora pasaremos a analizar la complejidad del algoritmo en el peor caso. En primer lugar hay que tener en cuenta que la de \textit{BFS} es $O(n+m)$, siendo $n$ la cantidad de nodos y $m$ la de aristas. \\
+Basicamente hay una gran diferencia entre \textit{BFS} y el algoritmo propuesto, dicho de forma simple, este último tiene nodos que debe visitar antes que otros. Esto implica que puede terminar antes de recorrer todo el grafo (porque llegó al nodo $n$ o porque todos los nodos que le quedan por recorrer tienen puertas cerradas), aunque esto no nos interesa para el peor caso. La diferencia esencial es cuando se llega a un nodo que tiene una puerta cerrada, ya que no se lo encola. Lo que debe notarse es que no se pasa por ninguna arista ni nodo más veces que en \textit{BFS}, ya que la diferencia que puede haber es en el orden en que se visitan los nodos, porque se posterga la visita a los vecinos de un nodo con una puerta cerrada hasta tanto no se encuentre la llave que la abre. \\
+Por esta razón es que la complejidad del algoritmo prouesto en el peor caso es $O(n+m)$, la cual es estrictamente mejor que $O(n^3)$ como se pedía, puesto que $m$ puede acotarse por $n^2$ ya que se trata de un grafo simple. \\
