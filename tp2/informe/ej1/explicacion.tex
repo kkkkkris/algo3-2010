@@ -1,67 +1,75 @@
-La estructura soporte utilizada en el algoritmo es una matriz de 3 x n que denominamos Tabla en el algoritmo para mayor claridad.
+Como contamos anteriormente, proponemos encontrar la subsecuencia unimodal máxima. Para generar tal subsecuencia hacemos la unión de dos subsecuencias de la secuencia original, la primera creciente y la segunda decreciente, de modo tal que el primer elemento de la secuencia decreciente sea el ultimo de la secuencia creciente. Esto ultimo genera una secuencia unimodal pero no una que sea máxima. Entonces, como restriccion pedimos que las subsecuencias crecientes y decrecientes sean máximas en largo. Es asi que buscamos las subsecuencias crecientes máximas y las subsecuencias decrecientes máximas (de ahora en mas $SCM$ y $SDM$) que contienen a un elemento dado tanto como primer o ultimo elemento respectivamente y guardar su largo. Luego con esa información, buscamos el elemento que la combinacion de la $SCM$ y la $SDM$ que terminan y comienzan en ese elemento sea máxima. Así es como obtenemos la unimodal máxima posible. Es necesario señalar que las combinaciones de $SCM$s y $SDM$s que terminan y comienzan en un elemento generan la subsecuencia unimodal maximal que tenga a ese elemento como máximo.
+\newline 
+Para llevar a cabo tal tarea la estructura elegida es una matriz de 3 x n que denominamos Tabla en el algoritmo para mayor claridad.
 \newline
-La Tabla almacena para cada fila i: en una columna el elemento  i de la secuencia, en otra el tamaño de la máxima subsecuencia creciente desde 1 hasta i que incluye al elemento i de la secuencia, y en la tercera , el tamaño de la máxima subsecuencia decreciente desde  i hasta n que incluye al elemento i de la secuencia.
+La Tabla almacena para cada fila i: 
+
+hacer items: (agregar que down y up inician en 0)
+
+en una columna el elemento  i de la secuencia, en otra el tamaño de la máxima subsecuencia creciente desde 1 hasta i que incluye al elemento i de la secuencia, y en la tercera , el tamaño de la máxima subsecuencia decreciente desde  i hasta n que incluye al elemento i de la secuencia.
 \newline
-Para mejor comprensión del pseudocódigo indexaremos la tabla como tabla[i][number/up/down] donde la columna number  tiene el elemento en si,la columna up el tamaño de máxima subsecuencia creciente y la columna down el tamaño de máxima subsecuencia decreciente.
-En tabla[0][number] se guardara el tamaño de la secuencia y lo notamos como n en el pseudocódigo.
+Para mejor comprensión del pseudocódigo indexaremos la tabla como tabla[i][number/up/down] donde la columna number  tiene el elemento en si,la columna up el tamaño de máxima subsecuencia creciente y la columna down el tamaño de máxima subsecuencia decreciente. Llamamos $n$ al tamaño de la secuencia.
 \newline
 Pseudocódigo
 
-$/*$función que llena una fila de la tabla con los tamaños de máxima subsecuencia creciente desde 1 hasta i que incluyen el elemento i  $/*$
 
-\begin{verbatim}                        
-llenar_tablaup(tabla,i)           
-   para j=i-1,j>0,j--                   O(i-1)   
-     m= max_predecesor?(tabla,i,m) 	
-   devolver m+1;
+$/*$función principal que calcula la cantidad mínima de elementos de una secuencia que hay que eliminar para que la subsecuencia resultante sea unimodal.$*/$
+\begin{verbatim}
+    calcularMin(Tabla t){
+        para cada posicion i de la secuencia
+            tabla[i][up] = maxSubsecuenciaCreciente(t,i)
+        para cada posicion i de la secuencia (se recorre en orden inverso)
+            tabla[i][down] = maxSubsecuenciaDecreciente(t,i)
+        /* obtenemos el tamaño de la maxima subsecuencia unimodal*/   
+        max = unimodalMax(t)     
+        devolver n-max
+}
+\end{verbatim}
+
+$/*$función que devuelve la maxima subsecuencia decreciene que contiene al element $i$ de $t$  $/*$
+
+\begin{verbatim}                   
+    maxSubsecuenciaCreciente(Tabla tabla,num i)    
+        para j=i-1,j>0,j--                   O(i-1)
+            si tabla[j][number] < tabla[i][number]
+                m = maximo(tabla[i][up], tabla[j][up]) 	
+        devolver m+1;
 \end{verbatim}    
-        
 
-$/*$función que llena una fila de la tabla con los tamaños de máxima subsecuencia decreciente desde i hasta n que incluyen el elemento i $/*$ 
-       
-\begin{verbatim}                        
-  llenar_tabladown(tabla,i)             
-     para j=i+1,j<n+1,j++                 O(n-i) 
-       m= max_predecesor?(tabla,i,m) 	 
-     devolver m+1;
-\end{verbatim} 
+\newline
 
-max\_predecesor?(tabla,i,m) son comparaciones O(1) que devuelven el maximo predecesor hasta el elemento i. 
+notemos que maxSubsecuenciaDecreciente es analoga a maxSubsecuenciaCreciente.
 
 $/*$La siguiente función una vez obtenidos los tamaños de máxima subsecuencia creciente y máxima subsecuencia decreciente realiza la búsqueda de la combinación de ambas que conforman la máxima subsecuencia unimodal y devuelve el tamaño de la misma.
 Lo que hace es recorrer la tabla y para cada fila de la misma (con sus tres columnas number ,up y down) suma up y down y chequea si es mayor al max acumulador.
 Finalmente ,resta uno al max obtenido ya que sumamos dos veces el "pico" de la subecuencia unimodal máxima ,ya que tanto up como down incluían a ese elemento. 
 
 \begin{verbatim}
-  unimodalMax(tabla t){
-      int max,aux; 	
-      max= 0 ;
-      para k=1,k<n,k++                    O(n)
-	    aux=t[k][up]+t[k][down]
-	    si aux>max 
-	       max=aux
-	    finsi 
-	  finpara
-	  max-- 
-      devolver max
-  }
+    unimodalMax(tabla t){
+        res = 0 ;
+        para cada posicion k de la tabla                    O(n)
+            res = max(t[k][up]+t[k][down], res)
+        max--
+        devolver max
+}
 \end{verbatim}
 
 
-$/*$función principal que calcula la cantidad mínima de elementos de una secuencia que hay que eliminar para que la subsecuencia resultante sea unimodal.$*/$
+Analicemos las complejidades de este algoritmo:
 
 \begin{verbatim}
- calcularMin(Table t){
-    para i=1,i<n+1                   O(n2)
-       llenar_tablaup(t,i) 
-    para i=n,i>0                     O(n2)
-       llenar_tabladown(t,i)
-    
-    max= unimodalMax(t)              O(n)
-    devolver n-max   
-}                                    ____
-                            total:   O(n2)
-\end{verbatim}                       
+    calcularMin(Tabla t){
+        para cada posicion i de la secuencia                   O(n^2)
+            tabla[i][up] = maxSubsecuenciaCreciente(t,i)
+        /* (se recorre en orden inverso) */
+        para cada posicion i de la secuencia                   O(n^2)  
+            tabla[i][down] = maxSubsecuenciaDecreciente(t,i)
+        /* obtenemos el tamaño de la maxima subsecuencia unimodal*/   
+        max = unimodalMax(t)                                   O(n)  
+        devolver n-max
+}                                                              ____
+                                                        total  O(n^2)
+\end{verbatim}
 
 Los dos O($n^{2}$) de los ciclos con llenar\_tablaup y llenar\_tabladown provienen de la siguientes sumatorias:
 
