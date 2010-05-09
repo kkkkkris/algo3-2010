@@ -1,0 +1,105 @@
+#!/usr/bin/env python
+import random
+import sys
+
+def generar_puertas(cant, vacias):
+    puertas = []
+    for x in range(cant):
+        puerta = random.sample(vacias,1)[0]
+        vacias.remove(puerta)
+        llave = random.sample(vacias,1)[0]
+        vacias.remove(llave)
+        puertas.append((puerta,llave))
+    return puertas
+#!/usr/bin/python
+
+def conectar_nodos(size, conexo, luck):
+    nodos = {}
+    for x in range(size):
+        nodos[x+1] = []
+        if conexo:
+            nodos[x+1].append((x+1)%size + 1)
+        for y in range(x+1,size):
+            r = random.randint(0,99)
+            if not y+1 in nodos[x+1] and r < luck:
+                nodos[x+1]+=[y+1]
+    return nodos
+
+def main(size, amount = 1, luck = 50, conexo = False, dungeon = False):
+    for graph in range((size-3)*amount):
+        n = 4 + graph/amount
+        res = []
+        m = 0
+        p = 0
+        #en cada cuarto solo hay o una puerta o una llave
+        #la puerta y la salida no tienen puertas
+        #cantidad de puertas maximas: (n - 2)/2
+        if dungeon:
+            total_puertas = n/2 - 1
+        else:
+            total_puertas = random.randint(0,n/2 - 1)    
+        vacias = set(range(2,n)) #no incluyo entrada y salida
+        puertas = generar_puertas(total_puertas, vacias)
+        nodos = conectar_nodos(n, conexo, luck)
+        for x in puertas:
+            res.append(" "*2 + str(x[0]) + " " + str(x[1]))
+        for x in nodos:
+            for y in nodos[x]:
+                if y%2 == 0:
+                    res.append(" "*4 + str(y) + " " + str(x))
+                else :
+                    res.append(" "*4 + str(x) + " " + str(y))
+                m += 1
+        p = len(puertas)
+        res.insert(0, str(n) + " " + str(p) + " " + str(m))
+        print '\n'.join(res)
+        
+    print "-1 -1 -1"   
+    return 0
+
+
+def usage():
+    print ' '.join(sys.argv)
+    print "esta mal, se espera:"
+    print "./generador n [cantidad=1] [suerte=25] [-c] [-d]"
+    print "respetando el orden."
+    print "y no omitiendo si se quiere elegir los opcionales"
+    print "n > 3 (cantidad maxima de nodos)"
+    print "cantidad : cantidad de grafos con n nodos"
+    print "suerte densidad del grafo. probabilidad entre 1y 100 de que un nodo este conectado con otro"
+    print "-c : conexo, por default no es conexo"
+    print "-d : puertas, LLENAR DE PUERTAS"
+    print "ejemplos:"
+    print "./generador 10 : grafos de hasta 10 nodos"
+    print "./generador 15 3 : grafos de hasta 15 nodos (3 de cada tamanio)"
+    print "./generador 6 1 100 :  3 grafos completos, 1 de 4, otro de 5 y otro de 6"
+    print "./generador 9 10 15 -c : 10 de cada uno 15-denso pero conexo"
+    sys.exit(1)
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print "Falta n"
+        usage()
+    n = int(sys.argv[1])
+    if n < 4:
+        print "Al menos 4 nodos"
+        usage()
+    if(len(sys.argv) > 2):
+        try:
+            amount = int(sys.argv[2])
+        except:
+            print "se espera un entero"
+            usage()
+    else:
+        sys.exit(main(n))
+    if(len(sys.argv) > 3):
+        try:
+            luck = int(sys.argv[3])
+        except:
+            print "se espera un entero"
+            usage()
+    else:
+        sys.exit(main(n, amount))
+    conexo = len(sys.argv) > 4
+    dungeon = len(sys.argv) > 5
+    sys.exit(main(n, amount, luck, conexo, dungeon))
