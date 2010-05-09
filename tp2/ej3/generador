@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-import random
-import sys
+import random, sys, getopt
 
 def generar_puertas(cant, vacias):
     puertas = []
@@ -16,13 +15,14 @@ def generar_puertas(cant, vacias):
 def conectar_nodos(size, conexo, luck):
     nodos = {}
     for x in range(size):
-        nodos[x+1] = []
-        if conexo:
-            nodos[x+1].append((x+1)%size + 1)
-        for y in range(x+1,size):
+        actual = x+1
+        nodos[actual] = []
+        if conexo and actual < size:
+            nodos[x+1].append((actual)%size + 1)
+        for y in range(actual,size):
             r = random.randint(0,99)
-            if not y+1 in nodos[x+1] and r < luck:
-                nodos[x+1]+=[y+1]
+            if not y+1 in nodos[actual] and r < luck:
+                nodos[actual]+=[y+1]
     return nodos
 
 def main(size, amount = 1, luck = 50, conexo = False, dungeon = False):
@@ -61,45 +61,57 @@ def main(size, amount = 1, luck = 50, conexo = False, dungeon = False):
 def usage():
     print ' '.join(sys.argv)
     print "esta mal, se espera:"
-    print "./generador n [cantidad=1] [suerte=25] [-c] [-d]"
-    print "respetando el orden."
-    print "y no omitiendo si se quiere elegir los opcionales"
-    print "n > 3 (cantidad maxima de nodos)"
-    print "cantidad : cantidad de grafos con n nodos"
-    print "suerte densidad del grafo. probabilidad entre 1y 100 de que un nodo este conectado con otro"
-    print "-c : conexo, por default no es conexo"
-    print "-d : puertas, LLENAR DE PUERTAS"
-    print "ejemplos:"
-    print "./generador 10 : grafos de hasta 10 nodos"
-    print "./generador 15 3 : grafos de hasta 15 nodos (3 de cada tamanio)"
-    print "./generador 6 1 100 :  3 grafos completos, 1 de 4, otro de 5 y otro de 6"
-    print "./generador 9 10 15 -c : 10 de cada uno 15-denso pero conexo"
+    print "./generador [parametros]"
+    print "-n --nodos   : numero > 3 (cantidad maxima de nodos)"
+    print "-v --veces: cantidad de grafos con n nodos"
+    print "-s --suerte  : densidad del grafo."
+    print "         probabilidad entre 1y 100 de que un nodo este conectado con otro"
+    print "-c --conexo  : conexo, por default no es conexo"
+    print "-d --dungeon : LLENAR DE PUERTAS"
+    print "example: ./generador -n 20 -d -s 25"
     sys.exit(1)
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print "Falta n"
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "n:v:s:h:cd", ["nodos=", \
+            "veces=", "suerte=", "conexo", "dungeon", "help"])
+    except getopt.GetoptError:
+        # print help information and exit:
+        print "Error parseando"
         usage()
-    n = int(sys.argv[1])
-    if n < 4:
-        print "Al menos 4 nodos"
-        usage()
-    if(len(sys.argv) > 2):
-        try:
-            amount = int(sys.argv[2])
-        except:
-            print "se espera un entero"
+        sys.exit(2)
+    verbose = False
+    n = 6
+    amount = 1
+    luck = 50
+    conexo = False
+    dungeon = True
+    for o, a in opts:
+        if o == "-v":
+            verbose = True
+        if o in ("-h", "--help"):
             usage()
-    else:
-        sys.exit(main(n))
-    if(len(sys.argv) > 3):
-        try:
-            luck = int(sys.argv[3])
-        except:
-            print "se espera un entero"
-            usage()
-    else:
-        sys.exit(main(n, amount))
-    conexo = len(sys.argv) > 4
-    dungeon = len(sys.argv) > 5
+        if o in ("-n", "--nodos"):
+            try:
+                n = int(a)
+            except:
+                print "se espera numero"
+                usage()
+        if o in ("-v", "--veces"):
+            try:
+                amount = int(a)
+            except:
+                print "se espera numero"
+                usage()
+        if o in ("-s", "--suerte"):
+            try:
+                luck = int(a)
+            except:
+                print "se espera numero"
+                usage()
+        if o in ("-c", "--conexo"):
+            conexo = True
+        if o in ("-d", "--dungeon"):
+            dungeon = True
     sys.exit(main(n, amount, luck, conexo, dungeon))
