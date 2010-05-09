@@ -33,9 +33,10 @@ int main(int argc, char* argv[]) {
     list<pair<long long, time_tt> > tiempos;
     
     for(list<Grafo>::iterator it = listaCiudades.begin(); it!=listaCiudades.end(); it++) {
+        /*
         time_tt min_time;
         bool esOrientable;
-        /*
+        
         for(int k=0; k<5; k++){
             time_tt start = getNanosegundos();
             esOrientable = it->esOrientable();
@@ -49,9 +50,10 @@ int main(int argc, char* argv[]) {
                 }
             }
         }    
+        uint n = it->getCantidadVertices();
+        uint m = it->getCantidadAristas();
+        tiempos.push_back(pair<long long, time_tt>(n*(n+m), min_time));
         */
-        tiempos.push_back(pair<long long, time_tt>(it->getCantidadVertices()*it->getCantidadAristas(), min_time));
-        
         if(it->esOrientable()) {
             resultados.push_back(true);
         }
@@ -62,13 +64,15 @@ int main(int argc, char* argv[]) {
     
     escribirSalida(salida, resultados);
     
+    /*
     ofstream o("tiempos");
     if(o.good()){
         for(list<pair<long long, time_tt> >::iterator it = tiempos.begin(); it!=tiempos.end(); it++){
             o << it->first << "\t" << it->second << endl;
         }
         o.close();
-    }
+    }*/
+    
     return 0;
 }
 
