@@ -1,9 +1,9 @@
 CC=g++
-CFLAGS=-g -Wall -Werror -Iinclude/ 
-LDFLAGS=-g -Wall -Werror
+CFLAGS=-g -lrt -Wall -Werror -Iinclude/ 
+LDFLAGS=-g -lrt -Wall -Werror
 #EDIT THIS:
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
-SOURCES=src/file_utils.cpp src/graph.cpp src/parser.cpp src/bfs.cpp
+SOURCES=src/file_utils.cpp src/graph.cpp src/parser.cpp src/timer.cpp src/bfs.cpp
 BINARY=bfs
 # ----- 8< ----- 8< ----- 8< ----- 8< ----- 8< ----- 
 OBJECTS=$(SOURCES:src/%.cpp=.bin/%.o)

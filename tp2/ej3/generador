@@ -32,7 +32,7 @@ def conectar_nodos(size, conexo, luck, trivial):
 def main(size, amount = 1, luck = 50, conexo = False, dungeon = False,\
          escalera = False, trivial = False):
     if escalera:
-        primero = 4
+        primero = 20
     else:
         primero = size
     for n in range(primero, size+1):
