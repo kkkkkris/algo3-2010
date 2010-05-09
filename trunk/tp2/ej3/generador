@@ -12,20 +12,25 @@ def generar_puertas(cant, vacias):
     return puertas
 #!/usr/bin/python
 
-def conectar_nodos(size, conexo, luck):
+def conectar_nodos(size, conexo, luck, trivial):
     nodos = {}
     for x in range(size):
         actual = x+1
         nodos[actual] = []
         if conexo and actual < size:
             nodos[x+1].append((actual)%size + 1)
-        for y in range(actual,size):
+        if not trivial and actual == 1:
+            tope = size - 1
+        else:
+            tope = size
+        for y in range(actual,tope):
             r = random.randint(0,99)
             if not y+1 in nodos[actual] and r < luck:
                 nodos[actual]+=[y+1]
     return nodos
 
-def main(size, amount = 1, luck = 50, conexo = False, dungeon = False, escalera = False):
+def main(size, amount = 1, luck = 50, conexo = False, dungeon = False,\
+         escalera = False, trivial = False):
     if escalera:
         primero = 4
     else:
@@ -44,7 +49,7 @@ def main(size, amount = 1, luck = 50, conexo = False, dungeon = False, escalera 
                 total_puertas = random.randint(0,n/2 - 1)    
             vacias  = set(range(2,n)) #no incluyo entrada y salida
             puertas = generar_puertas(total_puertas, vacias)
-            nodos   = conectar_nodos(n, conexo, luck)
+            nodos   = conectar_nodos(n, conexo, luck, trivial)
             
             for x in puertas:
                 res.append(" "*2 + str(x[0]) + " " + str(x[1]))
@@ -74,14 +79,16 @@ def usage():
     print "-c --conexo  : conexo, por default no es conexo"
     print "-d --dungeon : LLENAR DE PUERTAS"
     print "-e --escalera: generar de 4 a n"
+    print "-t --trivial : si el primero puede estar conectado con el ultimo"
     print "example: ./generador -n 20 -de -s 25"
     sys.exit(1)
 
 if __name__ == "__main__":
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "n:v:s:h:cde", ["nodos=", \
-            "veces=", "suerte=", "conexo", "dungeon", "escalera", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], "n:v:s:h:cdet", ["nodos=", \
+            "veces=", "suerte=", "conexo", "dungeon", "escalera", "trivial",\
+                                                                  "help"])
     except getopt.GetoptError:
         # print help information and exit:
         print "Error parseando"
@@ -94,6 +101,7 @@ if __name__ == "__main__":
     conexo = False
     dungeon = True
     escalera = False
+    trivial = False
     for o, a in opts:
         if o == "-v":
             verbose = True
@@ -123,4 +131,6 @@ if __name__ == "__main__":
             dungeon = True
         if o in ("-e", "--escalera"):
             escalera = True
-    sys.exit(main(n, amount, luck, conexo, dungeon, escalera))
+        if o in ("-t", "--trivial"):
+            trivial = True
+    sys.exit(main(n, amount, luck, conexo, dungeon, escalera, trivial))
