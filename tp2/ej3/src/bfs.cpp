@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
         print("error escribiendo archivo");
         return 1;
     }
-    cout << "El archivo se ha escrito exitosamente ..." << endl;
+    cout << "... el archivo se ha escrito exitosamente." << endl;
     
     if (calcularTiempo) {
         cout << "Escribiendo los tiempos de ejecucion en el archivo correspondiente ..." << endl;
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
             cout << "ERROR: hubo un problema al escribir los tiempos de ejecución." << endl;
             return 1;
         }
-        cout << "El archivo con los tiempos de ejecucion se ha escrito exitosamente ..." << endl;
+        cout << "... el archivo con los tiempos de ejecucion se ha escrito exitosamente." << endl;
     }
     
     return 0;
