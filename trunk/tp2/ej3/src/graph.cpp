@@ -27,7 +27,13 @@ class Nodo{
                     ss << ", ";
                     ss << *it;
             }
-            ss << "]";
+            ss << "]    ";
+            if(this->puerta){
+                ss << "Puerta";
+            }
+            if(this->llave != -1){
+                ss << "Llave de puerta " << this->llave;
+            }
             return ss.str();
         }
         list<int>* links;
@@ -65,7 +71,7 @@ bool Grafo::bfsMejorado(){
     }
     queue<int> cola;
 
-    marcados[0] = true;  
+    marcados[0] = true;
     cola.push(0);
     while (!cola.empty()){
         nodo = (this->nodos)[cola.front()];
