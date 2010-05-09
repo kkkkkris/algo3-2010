@@ -69,12 +69,12 @@ def usage():
     print "esta mal, se espera:"
     print "./generador [parametros]"
     print "-n --nodos   : numero > 3 (cantidad maxima de nodos)"
-    print "-v --veces: cantidad de grafos con n nodos"
-    print "-s --suerte  : densidad del grafo."
-    print "         probabilidad entre 1y 100 de que un nodo este conectado con otro"
+    print "-v --veces   : cantidad de grafos con n nodos"
+    print "-s --suerte  : densidad del grafo. numero entre 1 y 100"
     print "-c --conexo  : conexo, por default no es conexo"
     print "-d --dungeon : LLENAR DE PUERTAS"
-    print "example: ./generador -n 20 -d -s 25"
+    print "-e --escalera: generar de 4 a n"
+    print "example: ./generador -n 20 -de -s 25"
     sys.exit(1)
 
 if __name__ == "__main__":
