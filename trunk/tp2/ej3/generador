@@ -25,34 +25,40 @@ def conectar_nodos(size, conexo, luck):
                 nodos[actual]+=[y+1]
     return nodos
 
-def main(size, amount = 1, luck = 50, conexo = False, dungeon = False):
-    for graph in range((size-3)*amount):
-        n = 4 + graph/amount
-        res = []
-        m = 0
-        p = 0
-        #en cada cuarto solo hay o una puerta o una llave
-        #la puerta y la salida no tienen puertas
-        #cantidad de puertas maximas: (n - 2)/2
-        if dungeon:
-            total_puertas = n/2 - 1
-        else:
-            total_puertas = random.randint(0,n/2 - 1)    
-        vacias = set(range(2,n)) #no incluyo entrada y salida
-        puertas = generar_puertas(total_puertas, vacias)
-        nodos = conectar_nodos(n, conexo, luck)
-        for x in puertas:
-            res.append(" "*2 + str(x[0]) + " " + str(x[1]))
-        for x in nodos:
-            for y in nodos[x]:
-                if y%2 == 0:
-                    res.append(" "*4 + str(y) + " " + str(x))
-                else :
-                    res.append(" "*4 + str(x) + " " + str(y))
-                m += 1
-        p = len(puertas)
-        res.insert(0, str(n) + " " + str(p) + " " + str(m))
-        print '\n'.join(res)
+def main(size, amount = 1, luck = 50, conexo = False, dungeon = False, escalera = False):
+    if escalera:
+        primero = 4
+    else:
+        primero = size
+    for n in range(primero, size+1):
+        for veces in range(amount):
+            res = []
+            m = 0
+            p = 0
+            #en cada cuarto solo hay o una puerta o una llave
+            #la puerta y la salida no tienen puertas
+            #cantidad de puertas maximas: (n - 2)/2
+            if dungeon:
+                total_puertas = n/2 - 1
+            else:
+                total_puertas = random.randint(0,n/2 - 1)    
+            vacias  = set(range(2,n)) #no incluyo entrada y salida
+            puertas = generar_puertas(total_puertas, vacias)
+            nodos   = conectar_nodos(n, conexo, luck)
+            
+            for x in puertas:
+                res.append(" "*2 + str(x[0]) + " " + str(x[1]))
+            for x in nodos:
+                for y in nodos[x]:
+                    #pongo un poco de ruido
+                    if y%2 == 0:
+                        res.append(" "*4 + str(y) + " " + str(x))
+                    else :
+                        res.append(" "*4 + str(x) + " " + str(y))
+                    m += 1
+            p = len(puertas)
+            res.insert(0, str(n) + " " + str(p) + " " + str(m))
+            print '\n'.join(res)
         
     print "-1 -1 -1"   
     return 0
@@ -74,8 +80,8 @@ def usage():
 if __name__ == "__main__":
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "n:v:s:h:cd", ["nodos=", \
-            "veces=", "suerte=", "conexo", "dungeon", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], "n:v:s:h:cde", ["nodos=", \
+            "veces=", "suerte=", "conexo", "dungeon", "escalera", "help"])
     except getopt.GetoptError:
         # print help information and exit:
         print "Error parseando"
@@ -87,6 +93,7 @@ if __name__ == "__main__":
     luck = 50
     conexo = False
     dungeon = True
+    escalera = False
     for o, a in opts:
         if o == "-v":
             verbose = True
@@ -114,4 +121,6 @@ if __name__ == "__main__":
             conexo = True
         if o in ("-d", "--dungeon"):
             dungeon = True
-    sys.exit(main(n, amount, luck, conexo, dungeon))
+        if o in ("-e", "--escalera"):
+            escalera = True
+    sys.exit(main(n, amount, luck, conexo, dungeon, escalera))
