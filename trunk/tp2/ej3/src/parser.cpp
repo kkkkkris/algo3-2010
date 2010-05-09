@@ -14,11 +14,14 @@ list<Grafo*> parsearInstancias(string entrada){
     bool* puertas = NULL;
     stringstream in(entrada);
     string line;
-    int i, aristas, puertas_t, n, p, m = 0;
+    int aristas, puertas_t, n, p, m;
+    aristas = 0;
     while(!in.eof() && aristas != -1){
         getline(in, line);
         if(aristas > 0){
+            /* todavia me falta cargar este grafo */
             if (puertas_t > 0){
+                /* me quedan puertas por ver*/
                 stringstream par(line);
                 int indice;
                 par >> indice;
@@ -28,6 +31,7 @@ list<Grafo*> parsearInstancias(string entrada){
                 puertas_t--;
             }
             else{
+                /* solo me queda ver el pasillo */
                 stringstream nodo(line);
                 int n1, n2;
                 nodo >> n1;
@@ -40,8 +44,14 @@ list<Grafo*> parsearInstancias(string entrada){
         }
         else {
             if(nodos != NULL) {
-                cout << "    * Instancia con " << n << " nodos, " << m << " aristas y " << p << " puertas." << endl;
+                /* se termino un grafo */
+                //cout << "    * Instancia con " << n << " nodos, " << m << " aristas y " << p << " puertas." << endl;
                 grafos.push_back(new Grafo(n, m, p, nodos, llaves, puertas));
+                if (nodos != NULL){
+                    delete nodos;
+                    delete llaves;
+                    delete puertas;
+                }
                 /*
                 int k;
                 cout << "llaves = [";
@@ -58,6 +68,7 @@ list<Grafo*> parsearInstancias(string entrada){
                 cout << "]" << endl;
                 */
             }
+            /* nuevo grafo */
             stringstream ss(line);
             ss >> n;
             ss >> p;
@@ -65,20 +76,15 @@ list<Grafo*> parsearInstancias(string entrada){
             aristas = m;
             puertas_t = p;
             if(aristas != -1) {
-                if (nodos != NULL){
-                    delete nodos;
-                    delete llaves;
-                    delete puertas;
-                }
+                /* no termino el archivo */
                 nodos = new list<int>*[n];
                 llaves = new int[n];
                 puertas = new bool[n];
-                for(i = 0; i < n; i++){
+                for(int i = 0; i < n; i++){
                     nodos[i] = new list<int>();
                     llaves[i] = -1;
                     puertas[i] = false;
                 }
-                i = 0;
             }
         }   
     }
