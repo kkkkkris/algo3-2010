@@ -116,7 +116,7 @@ la correctitud de nuestro algoritmo. \\
 \subsubsection{Complejidad}
 Analizaremos ahora la complejidad computacional de nuestro algoritmo.\\
 
-Elegir un nodo para comenzar a asignar niveles se realiza en $O(1)$. \\
+Elegir un vértice para comenzar a asignar niveles se realiza en $O(1)$. \\
 El recorrido por niveles de los nodos lo realizamos con un algoritmo BFS
 
 \begin{verbatimtab}
@@ -136,28 +136,33 @@ Mientras haya vertices en Cola
 	    Encolar w en Cola
 	}
     }
+    Si v tenía un sólo vecino de nivel anterior, guardar la arista e=(v,w)
 }
 \end{verbatimtab}
 
-Por cada vértice, si no fue visitado antes (es decir, no tiene nivel asignado), encolamos en $O(1)$ a cada uno de sus vecinos. Cada vértice $v$ tiene $d(v)$ vecinos, por lo que el costo 
-total de revisar a todos los nodos es 
+Leemos de la cola el primer vértice mientras no sea vacía, y para cada vecino, si no fue visitado antes (es decir, no tiene nivel asignado), lo encolamos. Cada vértice $v$ tiene $d(v)$ vecinos, por lo que el costo 
+total de revisar a todos los vértices es 
 \begin{center}
- $\sum_{i=1}^{n} d(v_i) = 2m = O(m)$
+ $\sum_{i=1}^{n} d(v_i)c_1 + c_2 = c_2n + 2mc_1 = O(n+m)$
 \end{center}
-Encolar una arista si el vértice sólo tiene un vecino de un nivel menor se hace en $O(1)$, por lo que la complejidad de la primera parte de nuestro algoritmo es $O(m)$.\\
+Donde $c_1$ es el costo de asignar nivel a $w$ y encolarlo, y $c_2$ el costo constante de leer de la cola. La complejidad de la primera parte de nuestro algoritmo es entonces $O(n+m)$.\\
 
 Ahora resta recorrer el conjunto de posibles aristas puente y probar una por una si la cantidad de componentes conexas aumenta al quitarla. \textbf{En el peor caso}, la cantidad de aristas en el 
 conjunto es n-1, ya que el primer nodo $v_0$ nunca tiene aristas de nivel inferior a su propio nivel. Notemos que no puede haber más de n-1 porque en ese caso habría un vértice que tendría 
 por lo menos 2 o más aristas de nivel menor y entonces no serían puentes ninguna de ellas. Para probar la conexidad de un grafo utilizamos el mismo algoritmo BFS anterior, aunque 
-sólo nos importa que la cantidad de vértices marcados como visitados sea $n$ al final del proceso, por lo que comprobar si $G$ es conexo es $O(m)$. Luego la complejidad total de verificar 
-cada arista es $O(nm)$. \\
-Antes de concluir, hacemos notar un detalle. El proceso de quitar una arista del grafo $G$ no es $O(1)$, sino que es $O(2 log (n-1))$ ya que en nuestra implementación, cada nodo guarda a 
-sus vecinos en una estructura de datos \footnote{Utilizamos el contenedor \textit{set} de la STL de C++} que permite agregar o quitar elementos en tiempo proporcional al logaritmo de la 
-cantidad de elementos. Como cada vértice tiene a lo sumo $n-1$ vecinos, y como cada arista une dos vértices, quitar un vecino por cada uno de los dos vértices se realiza en $O(2 log(n-1))$. 
-Sin embargo, en términos de complejidad, vemos que no nos afecta ya que $m=O(n^2)$
+sólo nos importa que la cantidad de vértices marcados como visitados sea $n$ al final del proceso, por lo que comprobar si $G$ es conexo es $O(n+m)$. Luego la complejidad total de verificar 
+cada arista es $O(n(n+m))$. \\
+Antes de concluir, hacemos notar un dos detalles de nuestra implementación. El primero tiene que ver con proceso de quitar una arista del grafo $G$. Este proceso no es $O(1)$, sino que es 
+$O(2 log (n-1))$ ya que en nuestra implementación cada vértice guarda a sus vecinos en una estructura de datos \footnote{Utilizamos el contenedor \textit{set} de la STL de C++} que permite 
+agregar o quitar elementos en tiempo proporcional al logaritmo de la cantidad de elementos. Como cada vértice tiene a lo sumo $n-1$ vecinos, y como cada arista une dos vértices, quitar un 
+vecino por cada uno de los dos vértices se realiza en $O(2 log(n-1))$. Sin embargo, en términos de complejidad, vemos que no nos afecta ya que $m=O(n^2)$
 
 \begin{center}
- $O(n(2log(n-1) + m)) = O(2nlog(n-1) + nm) = O(nm)$
+ $O(n(2log(n-1) + (n+m))) = O(2nlog(n-1) + n(n+m)) = O(n(n+m))$
 \end{center}
 
-Finalmente la complejidad de nuestro algoritmo es $O(nm)$, que es estrictamente menor que la primera aproximacion que habíamos propuesto en $O(m^2) = O(n^4)$.
+El segundo detalle es un corolario del teorema que demostramos, y tiene que ver con el hecho de que si un vértice tiene grado 1, entonces su arista es un puente. Esto nos permite implementar 
+una optimización: antes de realizar el algoritmo explicado anteriormente, recorremos todos los vértices y sólo seguimos si todos los nodos tienen grado 2 o más. Nuevamente este recorrido no hace 
+que el orden de la complejidad cambie. \\
+
+Finalmente la complejidad de nuestro algoritmo es $O(n(n+m))$, que es estrictamente menor que la primera aproximacion que habíamos propuesto en $O(m(n+m))$.
