@@ -81,9 +81,27 @@ Mostramos entonces que la complejidad de nuestro algoritmo es O($n^{2}$).
 
 
 
-Sea $s$ una secuencia de enteros, definimos $l_i$ como la subsecuencia creciente máxima de $s_[1..i]$ que contiene al elemento $s_i$ y la función maxSubsecuenciaCreciente como la que de devuelve el tamaño de dicha $l_i$ para un $i$. Veamos que maxSubsecuenciaCreciente es correcta respecto de su especificación, para ello definimos una función recursiva analoga a maxSubsecuenciaCreciente. definida asi:
+Sea $s$ una secuencia de enteros, definimos $l_i$ como la subsecuencia creciente máxima de $s_[1..i]$ que contiene al elemento $s_i$ y la función maxSubsecuenciaCreciente como la que de devuelve el tamaño de dicha $l_i$ para un $i$. Veamos que maxSubsecuenciaCreciente es correcta respecto de su especificación, para ello definimos una función recursiva analoga a maxSubsecuenciaCreciente. definida asi:\\
+\\
+$ maxSubsecuenciaCreciente(secu s, num i) =
+\left\{ \begin{array}{ll}
+    0  & \mbox{si}\ i = 0\\
+    maxSubsecuenciaCreciente(pia(s_i, s, i-1)) + 1 & \mbox{si}\ i \ne 0
+    \end{array}
+    \right. $\\
+\\
+\\
+donde pia es $posicionInmediataAnterior$ devuelve y se define asi:
+$ posicionInmediataAnterior(secu s, num i) = \\
+\left\{ \begin{array}{ll}
+    0  & \mbox{si}\ i = 0\\
+    posicionInmediataAnterior(pia(s_i, s, i-1)) & \mbox{si}\ i \ne 0
+    \end{array}
+    \right. $
 
-$ maxSubsecuenciaCreciente(secu s, num i) = { } $
+/******cambiar por induccion ***/
+
+
 Llamando S a la secuencia,lu(long up)a la secuencia de longitudes de subsecuencias máximas crecientes  y ld(long down) a la secuencia de longitudes de subsecuencias máximas decrecientes,la relación de recurrencia de los algoritmos es :
 
 lu$_0$=0;
@@ -98,6 +116,8 @@ El principio de optimalidad vale para ambos y se podría enunciar así :
 
 Si una subsecuencia es óptima(mas larga), no puede haber elementos entre los elementos de la subsecuencia que formen otra subsecuencia mejor que las subsecuencias que forman los elementos de la óptima, en otras palabras, las subsecuencias formadas por los elementos de la óptima, son óptimas para esa longitud.
 Luego hallando la mejor combinación entre subsecuencia creciente y subsecuencia decreciente, obtenemos la subsecuencia unimodal óptima. 
+
+/***************************************/
 
 %Es decir maxSecUnimodal = max(lu$_i$+ld$_i$)-1\hspace{0.1cm} $\forall$ i,j, $1\leq i<j\leq n$,S${_i} \not =$x${_j}$ 
 
