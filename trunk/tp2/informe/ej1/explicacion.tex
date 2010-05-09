@@ -71,20 +71,23 @@ Analicemos las complejidades de este algoritmo:
                                                         total  O(n^2)
 \end{verbatim}
 
-Los dos O($n^{2}$) de los ciclos con llenar\_tablaup y llenar\_tabladown provienen de la siguientes sumatorias:
+Como se observa en el pseudocódigo el algoritmo se compone de dos algoritmos de búsqueda de subsecuencia creciente y decreciente más larga. Ambos funcionan de forma analoga, por lo que de ahora en más vamos a analizar solo el algoritmo de busqueda de secuencia máxima creciente y concluir los mismos resultados para el otro.
+
+Analizando la complejidad del algoritmo podemos ver dos O($n^{2}$) de las funciones maxSubsecuenciaCreciente y maxSubsecuenciaDecreciente, estos provienen de la siguiente sumatoria:
 
 el primer ciclo hace
 
-$\sum_{i=1}^{i=n}$ llenar\_tablaup(t,i)= $\sum_{i=1}^{i=n} i-1 $ = n(n-1)$/$2 = O($n^{2}$)
+$\sum_{i=1}^n maxSubsecuenciaCreciente(t, i) = \sum_{i=1}^{n} i-1  = \frac{n(n-1)}{2} = O(n^{2})$
 
-mientras que el segundo
-
-$\sum_{i=n}^{i=1}$ llenar\_tabladown(t,i)= $\sum_{i=1}^{i=n}(n-i)$ = $\sum_{i=1}^{i=n}(i-1)$ = (n-1)n$/$2 = O($n^{2}$)
                        
 Mostramos entonces que la complejidad de nuestro algoritmo es O($n^{2}$).
 
-Como se observa en el pseudocódigo el algoritmo se compone de dos algoritmos de búsqueda de subsecuencia creciente y decreciente más larga.
 
+
+
+Sea $s$ una secuencia de enteros, definimos $l_i$ como la subsecuencia creciente máxima de $s_[1..i]$ que contiene al elemento $s_i$ y la función maxSubsecuenciaCreciente como la que de devuelve el tamaño de dicha $l_i$ para un $i$. Veamos que maxSubsecuenciaCreciente es correcta respecto de su especificación, para ello definimos una función recursiva analoga a maxSubsecuenciaCreciente. definida asi:
+
+$ maxSubsecuenciaCreciente(secu s, num i) = { } $
 Llamando S a la secuencia,lu(long up)a la secuencia de longitudes de subsecuencias máximas crecientes  y ld(long down) a la secuencia de longitudes de subsecuencias máximas decrecientes,la relación de recurrencia de los algoritmos es :
 
 lu$_0$=0;
@@ -93,11 +96,6 @@ lu$_i$ =$\max_{j<i}$ lu$_j$+ 1  tal que S$_j$ $<$ S$_i$
 
 y la solución la da $\max_{1\leq i\leq n}$ lu$_i$
 
-ld$_0$=0;
-
-ld$_i$ =$\max_{i<j}$ l$_j$+ 1  tal que S$_j$ $<$ S$_i$ 
-
-y la solución la da $\max_{1\leq i\leq n}$ ld$_i$
 
 
 El principio de optimalidad vale para ambos y se podría enunciar así : 
