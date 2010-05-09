@@ -88,7 +88,7 @@ vértice del grafo por ser éste conexo. En particular podemos ir a $v$ y a $w$ 
 $e$ no aumenta la cantidad de componentes conexas de $G$, y por lo tanto $e$ no es un puente. \\
 Ahora supongamos que $v$ tiene al menos dos aristas de nivel $k-1$. Sean $e_1$ y $e_2$ estas aristas, si quitamos $e_1$, desde $v$ todavía podemos ir al nivel $k-1$ usando $e_2$, y por 
 lo tanto, llegar hasta $v_0$ y desde ahí alcanzar el nodo que era vecino de $v$ mediante $e_1$. El caso es análogo si quitamos $e_2$. Nuevamente quitar una de estas aristas no hace que aumente 
-la cantidad de componentes conexas de $G$, por lo tanto ninguna es puente. $blacksquare$ 
+la cantidad de componentes conexas de $G$, por lo tanto ninguna es puente. $\blacksquare$ 
 \end{proof}
 
 Con esta propiedad entonces podemos evitar tener que probar con todas las aristas. Sólo basta revisar aquellas aristas que, eligiendo un $v_0$, son de nivel $k-1$ para algún vértice $v$ de nivel 
