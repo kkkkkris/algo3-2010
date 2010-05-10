@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     }
     if (argc == 4) {calcularTiempo = true;}
     
-    Timer timer;
+    Timer timer(false);
     const char* entrada = argv[1];
     const char* salida = argv[2];
     bool libre;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     contenido = "";
     for(list<Grafo*>::iterator it = instancias.begin(); it != instancias.end(); it++){
         if (calcularTiempo) {
-            timer.nueva();
+            timer.nueva((*it)->largoDeEntrada());
             timer.empezar();
         }
         libre = (*it)->bfsMejorado();
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
     
     if (calcularTiempo) {
         cout << "Escribiendo los tiempos de ejecucion en el archivo correspondiente ..." << endl;
-        if(escribirArchivo(argv[3], timer.tiempos())){
+        if(escribirArchivo(argv[3], timer.tiempos(true))){
             cout << "ERROR: hubo un problema al escribir los tiempos de ejecución." << endl;
             return 1;
         }

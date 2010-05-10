@@ -55,6 +55,10 @@ Grafo::Grafo(int n, int m, int p, list<int>* nodos[], int llaves[], bool puertas
 
 }
 
+int Grafo::largoDeEntrada(){
+    return (this->n + this->m);
+}
+
 bool Grafo::bfsMejorado(){
     cout << "        n = " << this->n << ", m = " << this->m << ", p = " << this->p << endl;
     for(int i = 0; i < n; i++){
