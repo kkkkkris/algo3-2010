@@ -10,6 +10,7 @@ class Grafo {
     public:
         Grafo(int n, int m, int p, list<int>* nodos[], int llaves[], bool puertas[]);
         bool bfsMejorado();
+        int largoDeEntrada();
         ~Grafo();
     private:
         Nodo** nodos;

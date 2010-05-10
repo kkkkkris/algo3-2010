@@ -54,12 +54,14 @@ void Timer::terminar() {
     midiendo = false;
 }
 
-string Timer::tiempos() {
+string Timer::tiempos(bool imprimirId) {
     string res;
     stringstream ss;
     for(list<medicion>::iterator it = mediciones.begin(); it != mediciones.end(); it++) {
-        //ss << it->id;
-        //ss << "\t";
+        if(imprimirId){
+            ss << it->id;
+            ss << "\t";
+        }
         ss << it->time;
         ss << "\n";
     }
