@@ -8,7 +8,7 @@ def generar_puertas(cant, vacias):
         vacias.remove(puerta)
         llave = random.sample(vacias,1)[0]
         vacias.remove(llave)
-        puertas.append((puerta,llave))
+        puertas.append((llave,puerta))
     return puertas
 #!/usr/bin/python
 
@@ -28,6 +28,25 @@ def conectar_nodos(size, conexo, luck, trivial):
             if not y+1 in nodos[actual] and r < luck:
                 nodos[actual]+=[y+1]
     return nodos
+
+def printGraph(nodos, puertas):
+    res = []
+    for x in puertas:
+        res.append(" "*2 + str(x[0]) + " " + str(x[1]))
+    for x in nodos:
+        for y in nodos[x]:
+            #pongo un poco de ruido
+            if y%2 == 2:
+                res.append(" "*4 + str(y) + " " + str(x))
+            else :
+                res.append(" "*4 + str(x) + " " + str(y))
+    p = len(puertas)
+    m = 0
+    for x in nodos:
+        m += len(nodos[x])
+    n = len(nodos.keys())
+    res.insert(0, str(n) + " " + str(p) + " " + str(m))
+    print '\n'.join(res)
 
 def main(size, amount = 1, luck = 50, conexo = False, dungeon = False,\
          escalera = False, trivial = False):
@@ -50,7 +69,7 @@ def main(size, amount = 1, luck = 50, conexo = False, dungeon = False,\
             vacias  = set(range(2,n)) #no incluyo entrada y salida
             puertas = generar_puertas(total_puertas, vacias)
             nodos   = conectar_nodos(n, conexo, luck, trivial)
-            
+            printGraph(nodos, puertas)
             for x in puertas:
                 res.append(" "*2 + str(x[0]) + " " + str(x[1]))
             for x in nodos:
@@ -68,6 +87,66 @@ def main(size, amount = 1, luck = 50, conexo = False, dungeon = False,\
     print "-1 -1 -1"   
     return 0
 
+## entradao
+##        |\
+##        | \
+##        |  \
+## llave1 o---o puerta1
+##        |\ /|
+##        | x |
+##        |/ \|
+## llave2 o---o puerta2
+##        |\ /|
+##        
+##        .....
+##        
+##        |/ \|
+##        o---o
+##        |\ /|
+##        | x |
+##        |/ \|
+## llave no---o puerta n
+##            |
+##            o salida
+
+def peor(size, escalera=False):
+    if escalera:
+        primero = 4
+    else:
+        primero = size
+    for veces in range(amount):
+        for n in range(primero, size + 1):
+            entrada = 1
+            salida = n
+            total_puertas = (n - 2)/2
+            nodos = {}
+            puertas = []
+            anterior_puerta = entrada
+            anterior_llave = entrada
+            for x in range(n):
+                nodos[x+1] = []
+            for x in range(total_puertas):
+                llave = x + 2
+                puerta = llave + total_puertas
+                #conecto diagonal (excepto la primera vez)
+                if anterior_puerta != 1:
+                    nodos[anterior_puerta] += [llave]
+                    nodos[anterior_llave] += [puerta]
+                #conecto las verticales
+                nodos[anterior_puerta] += [puerta]
+                nodos[anterior_llave] += [llave]
+                nodos[anterior_puerta].sort(reverse=True)
+                #conecto horizontal
+                nodos[llave] += [puerta]
+                puertas.append((llave, puerta))
+                anterior_puerta = puerta
+                anterior_llave = llave
+            nodos[n-1] += [n]
+            printGraph(nodos, puertas)
+    print " -1"*3
+                
+                
+
 
 def usage():
     print ' '.join(sys.argv)
@@ -80,15 +159,16 @@ def usage():
     print "-d --dungeon : LLENAR DE PUERTAS"
     print "-e --escalera: generar de 4 a n"
     print "-t --trivial : si el primero puede estar conectado con el ultimo"
+    print "-p --peor : genera el peor caso"
     print "example: ./generador -n 20 -de -s 25"
     sys.exit(1)
 
 if __name__ == "__main__":
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "n:v:s:h:cdet", ["nodos=", \
+        opts, args = getopt.getopt(sys.argv[1:], "n:v:s:h:cdetp", ["nodos=", \
             "veces=", "suerte=", "conexo", "dungeon", "escalera", "trivial",\
-                                                                  "help"])
+            "help", "peor"])
     except getopt.GetoptError:
         # print help information and exit:
         print "Error parseando"
@@ -133,4 +213,6 @@ if __name__ == "__main__":
             escalera = True
         if o in ("-t", "--trivial"):
             trivial = True
+        if o in ("-p", "--peor"):
+            sys.exit(peor(n, escalera))
     sys.exit(main(n, amount, luck, conexo, dungeon, escalera, trivial))
