@@ -18,7 +18,7 @@ Sea $G=(V_g,X_g)$ un grafo conexo y sean v,w $\in$ $V_g$. $G$ no tiene puentes $
 \end{lemma}
 
 \begin{proof}
-Demostraremos el lema por contrarecíproco. Supongamos existen $k$ caminos distintos entre $v$ y $w$ tales que $\forall$ $C_i$ ($i \in \{1,\ldots,k\}$) , $\bigcap$ $C_i$ $\neq$ $\emptyset$. 
+Demostraremos el lema por contrarecíproco. Supongamos existen $k$ caminos distintos entre $v$ y $w$ tales que $\forall$ $C_i$ ($i \in \{1,\ldots,k\}$) , $\displaystyle\bigcap_{i = 1}^{k} C_i$ $\neq$ $\emptyset$. 
 Entonces todos los caminos comparten al menos una arista. Sea $e \in X_g$ dicha arista, si la quitamos de $G$, no podremos alcanzar a $w$ desde $v$ (o viceversa) por ninguno de los caminos. 
 Entonces $e$ es un puente, y por lo tanto $G$ tiene al menos un puente.  $\blacksquare$
 \end{proof}
@@ -143,7 +143,7 @@ Mientras haya vertices en Cola
 Leemos de la cola el primer vértice mientras no sea vacía, y para cada vecino, si no fue visitado antes (es decir, no tiene nivel asignado), lo encolamos. Cada vértice $v$ tiene $d(v)$ vecinos, por lo que el costo 
 total de revisar a todos los vértices es 
 \begin{center}
- $\sum_{i=1}^{n} d(v_i)c_1 + c_2 = c_2n + 2mc_1 = O(n+m)$
+ $\displaystyle\sum_{i=1}^{n} d(v_i)\cdot c_1 + c_2 = c_2n + 2\cdot m\cdot c_1 = O(n+m)$
 \end{center}
 Donde $c_1$ es el costo de asignar nivel a $w$ y encolarlo, y $c_2$ el costo constante de leer de la cola. La complejidad de la primera parte de nuestro algoritmo es entonces $O(n+m)$.\\
 
@@ -155,14 +155,14 @@ cada arista es $O(n(n+m))$. \\
 Antes de concluir, hacemos notar un dos detalles de nuestra implementación. El primero tiene que ver con proceso de quitar una arista del grafo $G$. Este proceso no es $O(1)$, sino que es 
 $O(2 log (n-1))$ ya que en nuestra implementación cada vértice guarda a sus vecinos en una estructura de datos \footnote{Utilizamos el contenedor \textit{set} de la STL de C++} que permite 
 agregar o quitar elementos en tiempo proporcional al logaritmo de la cantidad de elementos. Como cada vértice tiene a lo sumo $n-1$ vecinos, y como cada arista une dos vértices, quitar un 
-vecino por cada uno de los dos vértices se realiza en $O(2 log(n-1))$. Sin embargo, en términos de complejidad, vemos que no nos afecta ya que $m=O(n^2)$
+vecino por cada uno de los dos vértices se realiza en $O(2\cdot log(n-1))$. Sin embargo, en términos de complejidad, vemos que no nos afecta ya que $m=O(n^2)$
 
 \begin{center}
- $O(n(2log(n-1) + (n+m))) = O(2nlog(n-1) + n(n+m)) = O(n(n+m))$
+ $O(n\cdot(2\cdot log(n-1) + (n+m))) = O(2\cdot n\cdot log(n-1) + n\cdot(n+m)) = O(n\cdot(n+m))$
 \end{center}
 
 El segundo detalle es un corolario del teorema que demostramos, y tiene que ver con el hecho de que si un vértice tiene grado 1, entonces su arista es un puente. Esto nos permite implementar 
 una optimización: antes de realizar el algoritmo explicado anteriormente, recorremos todos los vértices y sólo seguimos si todos los nodos tienen grado 2 o más. Nuevamente este recorrido no hace 
 que el orden de la complejidad cambie. \\
 
-Finalmente la complejidad de nuestro algoritmo es $O(n(n+m))$, que es estrictamente menor que la primera aproximacion que habíamos propuesto en $O(m(n+m))$.
+Finalmente la complejidad de nuestro algoritmo es $O(n\cdot(n+m))$, que es estrictamente menor que la primera aproximacion que habíamos propuesto en $O(m(n+m))$.
