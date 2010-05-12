@@ -56,7 +56,7 @@ Grafo::Grafo(int n, int m, int p, list<int>* nodos[], int llaves[], bool puertas
 }
 
 int Grafo::largoDeEntrada(){
-    return (this->n + this->m);
+    return (this->n + this->m + this->p);
 }
 
 bool Grafo::bfsMejorado(){
