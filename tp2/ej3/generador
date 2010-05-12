@@ -70,19 +70,6 @@ def main(size, amount = 1, luck = 50, conexo = False, dungeon = False,\
             puertas = generar_puertas(total_puertas, vacias)
             nodos   = conectar_nodos(n, conexo, luck, trivial)
             printGraph(nodos, puertas)
-            for x in puertas:
-                res.append(" "*2 + str(x[0]) + " " + str(x[1]))
-            for x in nodos:
-                for y in nodos[x]:
-                    #pongo un poco de ruido
-                    if y%2 == 0:
-                        res.append(" "*4 + str(y) + " " + str(x))
-                    else :
-                        res.append(" "*4 + str(x) + " " + str(y))
-                    m += 1
-            p = len(puertas)
-            res.insert(0, str(n) + " " + str(p) + " " + str(m))
-            print '\n'.join(res)
         
     print "-1 -1 -1"   
     return 0
