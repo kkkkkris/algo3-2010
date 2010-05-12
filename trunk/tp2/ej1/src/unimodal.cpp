@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     string contenido = leerArchivo(entrada);
     string buf;
     int res ;
-    list<Table>::iterator it; //en main primero todas las declaraciones antes de funciones!?
+    list<Table>::iterator it;
 
     list<Table> list =parsearInstancias(contenido);
     Timer timer(false);
@@ -49,11 +49,11 @@ int main(int argc, char* argv[]) {
         timer.terminar();
         buf=toString(res);
         contenido+=buf;
-        tabla_toS(*it);
-        cout<<"Min cant de eliminaciones :"<<buf<<endl;
+        //tabla_toS(*it);
+        //cout<<"Min cant de eliminaciones :"<<buf<<endl;
         destructor(*it);
     }
-    res_tiempos="Tamaño de secuencia     Tiempo \n";
+    res_tiempos="Tamaño de secuencia            Tiempo \n";
     res_tiempos+=timer.tiempos();
 ///oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo///
     print(res_tiempos);
@@ -77,7 +77,7 @@ string toString(int i) {
 }
 
 int calcularMin(Table tabla){
-   //llenar long y pred
+   //llenar long 
     int size=tabla[0][number],i,maxunimodal;
     for(i=1;i<size+1;i++){
         llenar_up(tabla,i);
@@ -143,7 +143,7 @@ int unimodalMax(Table tabla){
 }
 void tabla_toS(Table t){
     int size=t[0][number],i=1;
-    print("tabla -->");
+    print("tabla de secuencia-->");
     for(i=1;i<size+1;i++){
         cout<<t[i][long_down];
     }

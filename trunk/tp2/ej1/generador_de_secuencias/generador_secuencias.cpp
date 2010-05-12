@@ -6,7 +6,7 @@
 #include <string>
 #include <ctime>
 #define print(a) cout << a << endl
-#define TOT_TIME 40;
+#define RANGE 40;
 
 using namespace std;
 
@@ -14,8 +14,8 @@ int randomNumber(int hi);
 
 int main (int argc,char* argv[]){
  
-string usage ("uso: ./secuencias modo file_out min max  \n\n");
-       usage +="modo = [r = random, w = worst,a= average]\n";
+string usage ("uso: ./secuencias modo file_out min max escala \n\n");
+       usage +="modo = [r = random]\n";
        usage +="min = tamaño de la secuencia minima \n";
        usage +="max = tamaño de la secuencia maxima \n";
        usage +="escala = escala para iterar tamaños entre min max \n";
@@ -43,7 +43,7 @@ string usage ("uso: ./secuencias modo file_out min max  \n\n");
             cout<< "Generando secuencia de "<< n <<"numeros ..."<<endl;
             salida <<n<<" ";
             for(k=1;k<=n;k++){
-                s = rand()%TOT_TIME;//randomNumber(tot_time);
+                s = rand()%RANGE;
                 salida<<s<<" ";                 
              }
             salida<<endl;
@@ -51,28 +51,7 @@ string usage ("uso: ./secuencias modo file_out min max  \n\n");
       salida<<"-1";
       return 0 ;
     }
-    //Worst case ,
-    case 'w': {
-//        cout<<"Generando planillas de peor caso ...";
-//        if(min<1 || max>500){
-//        cerr<<"El minimo debe ser >=1 y el maximo <=500 "<<endl;
-//        }
-//        int n,k,s;
-//           for(n=min;n<=max;n++){
-//            cout<< "Generando secuencia de "<< n <<"numeros ..."<<endl;
-//            salida <<n<<" ";
-//            for(k=1;k<=n;k++){
-//                s = rand()%TOT_TIME;//randomNumber(tot_time);
-//                salida<<s<<" ";                 
-//             }
-//            salida<<endl;
-//          }
-//      salida<<"-1";
-    return 0;
-    }
-    case 'a':{
-        return 0;
-    }
+
   }
 }
 
