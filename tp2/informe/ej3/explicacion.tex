@@ -28,50 +28,47 @@ Una vez aclarado el modelo y las estructuras que usaremos, vamos a ver el algori
 Para esto partimos de la idea de \textit{BFS}, pero agregando que si llega al nodo con id $n$ termine, y además teniendo en cuenta el tema de las puertas. Con ese fin usamos, además del arreglo de nodos marcados, uno para las puertas que guarda su estado, el cual puede ser INDEFINIDO, ABIERTA o CERRADA. El arreglo en realidad es de largo $n$, con lo cual todas las posiciones comienzan como INDEFINIDO, ya que puede haber o no una puerta en dicha posición (la cual reprensenta al nodo con id \textit{posición + 1}). Luego, la idea es ir marcando las puertas como abiertas cuando encontramos la llave que corresponde, y como cerradas cuando pasamos por ellas y no estaban abiertas. Cuando una puerta que estaba marcada como cerrada, es decir que ya había sido visitada, se abre, es agregada a la cola de \textit{BFS}. En cambio, si encontramos la llave, pero la puerta no estaba cerrada (lo que quiere decir que no la habíamos visitado), no la agregamos. \\
 
 Para aclarar esta idea, a continuación escribimos el pseudocódigo de la función que verifica si es posible llegar partiendo del nodo $1$ al nodo $n$: \\ \\
-$recorrerGrafo(G):$
+$buscarSalida(G):$
 
-$\; \; \; \; \; marcados_v \, \longleftarrow \, false, \; puertas_v \, \longleftarrow \, INDEFINIDO \; \; \forall \, v \, \in \, V_G$
+$\; \; \; \; \; marcados_v \, \longleftarrow \, FALSE, \; puertas_v \, \longleftarrow \, INDEFINIDO \; \; \forall \, v \, \in \, V_G$
 
 $\; \; \; \; \; cola \, \longleftarrow \, nueva \, cola$
 
-$\; \; \; \; \; marcados_1 \, \longleftarrow \, true$
+$\; \; \; \; \; marcados_1 \, \longleftarrow \, TRUE$
 
 $\; \; \; \; \; cola.push(1)$
 
-\begin{verbatim}
-recorrerGrafo:  
-    Arreglo de bool marcados[n]
-    Arreglo de Estado puertas[n]
-    Cola de int cola
-    Nodo nodo
-    Para i en [0 ... n] hacer:
-        marcados[i] := false
-        puertas[i] := INDEFINIDO;
+$\; \; \; \; \; \textbf{while} \; \neg cola.empty() \; \textbf{do}:$
 
-    marcados[0] := true
-    cola.push(0)
-    Mientras !cola.empty()
-        nodo := nodos[cola.front()]
-        cola.pop()
-        Si (nodo.puerta & puertas[nodo.id -1] != ABIERTA) entonces:
-            puertas[nodo.id -1] := CERRADA
-        Sino:
-            Si nodo.llave != -1 entonces:
-                Si puertas[nodo.llave -1] = CERRADA entonces:
-                    cola.push(nodo.llave -1)
-                puertas[nodo.llave -1] := ABIERTA
-            
-            Para v en nodo.links hacer:
-                Si v.id = n entonces:
-                	devolver true
-                Si !marcados[v.id -1] entonces:
-                    marcados[v.id -1] := true
-                    cola.push(v.id -1)
+$\; \; \; \; \; \; \; \; \; \; nodo \, \longleftarrow \, v \in V_G \, \backslash \; v.id = cola.pop()$
 
-    devolver false
-\end{verbatim}
+$\; \; \; \; \; \; \; \; \; \; \textbf{if} \; \left( nodo.puerta \wedge puertas_{nodo} \neq ABIERTA \right) \; \textbf{then}:$
 
-En el pseudocódigo no se usan punteros, a diferencia de la implementación. Cabe aclarar que el id es un número entre 1 y n, lo cual hace que debamos restarle uno cuando lo utilizamos para indexar un arreglo. Lo mismo sucede con llave. \\
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; puertas_{nodo} \, \longleftarrow \, CERRADA$
+
+$\; \; \; \; \; \; \; \; \; \; \textbf{else}:$
+
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \textbf{if} \; nodo.llave \neq -1 \; \textbf{then}:$
+
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; puertas_{nodo.llave} \, \longleftarrow \, ABIERTA$
+
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \textbf{if} \; puertas_{nodo.llave} = CERRADA \; \textbf{then}:$
+
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; cola.push(nodo.llave)$
+
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \textbf{for each} \; v \in nodo.links \; \textbf{do}:$
+
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \textbf{if} \; v.id = n \; \textbf{then}:$
+
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \textbf{return} \; TRUE$
+
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \textbf{if} \; \neg marcados_{v.id} \; \textbf{then}:$
+
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; marcados_{v.id} \, \longleftarrow \, TRUE$
+
+$\; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; cola.push(v.id)$
+
+$\; \; \; \; \; \textbf{return} \; FALSE$ \\
 
 Ahora pasaremos a analizar la complejidad del algoritmo en el peor caso. En primer lugar hay que tener en cuenta que la de \textit{BFS} es $O(n+m)$, siendo $n$ la cantidad de nodos y $m$ la de aristas. \\
 
