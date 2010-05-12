@@ -52,7 +52,9 @@ Table parsearSecu(string secu,int& secu_size) {
 	 //agrego secuencia a la tabla
 	 while(pch != NULL && i<secu_size+1){
 		 pch = strtok(NULL," ");
-		 aux=atoi(pch);
+		 //cout<<"pch:"<<pch<<endl;
+         aux=atoi(pch);
+         // cout<<"aux:"<<aux<<endl;
 		 tabla[i][number]=aux;
 		 i++;
 	 }
