@@ -141,6 +141,8 @@ def peor(size, escalera=False):
                 puertas.append((llave, puerta))
                 anterior_puerta = puerta
                 anterior_llave = llave
+            if n%2:
+                nodos[n-2] += [n-1]
             nodos[n-1] += [n]
             printGraph(nodos, puertas)
     print " -1"*3
