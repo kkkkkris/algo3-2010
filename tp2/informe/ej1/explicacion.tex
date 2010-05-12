@@ -73,7 +73,7 @@ Analizando la complejidad del algoritmo podemos ver dos O($n^{2}$) de las funcio
 
 el primer ciclo hace
 
-$\sum_{i=1}^n maxSubsecuenciaCreciente(t, i) = \sum_{i=1}^{n} i-1  = \frac{n(n-1)}{2} = O(n^{2})$
+$\displaystyle\sum_{i=1}^n maxSubsecuenciaCreciente(t, i) = \sum_{i=1}^{n} i-1  = \frac{n(n-1)}{2} = O(n^{2})$
 
                        
 Mostramos entonces que la complejidad de nuestro algoritmo es O($n^{2}$).
@@ -81,52 +81,45 @@ Mostramos entonces que la complejidad de nuestro algoritmo es O($n^{2}$).
 
 
 
-Sea $s$ una secuencia de enteros, definimos $l_i$ como la subsecuencia creciente máxima de $s_[1..i]$ que contiene al elemento $s_i$ y la función maxSubsecuenciaCreciente como la que de devuelve el tamaño de dicha $l_i$ para un $i$. Veamos que maxSubsecuenciaCreciente es correcta respecto de su especificación, para ello definimos una función recursiva analoga a maxSubsecuenciaCreciente. definida asi:\\
+Sea $s$ una secuencia de enteros, definimos $l_i$ como la subsecuencia creciente máxima de $s_[1..i]$ que contiene al elemento $s_i$ ($l_i \in
+  \{l_j ++ [s_i] / \exists j \in \mathbb{N}, j < i \land s_j < s_i\}$ y la función maxSubsecuenciaCreciente como la que de devuelve el tamaño de dicha $l_i$ para un $i$. Veamos que maxSubsecuenciaCreciente es correcta respecto de su especificación, para ello definimos una función recursiva analoga a maxSubsecuenciaCreciente. definida asi:\\
 \\
-$ maxSubsecuenciaCreciente(secu s, num i) =
-\left\{ \begin{array}{ll}
-    0  & \mbox{si}\ i = 0\\
-    maxSubsecuenciaCreciente(pia(s_i, s, i-1)) + 1 & \mbox{si}\ i \ne 0
-    \end{array}
-    \right. $\\
+    \centerline{$ \displaystyle maxCreciente(secu\ s, num\ i) = \max_{j \in A_i} maxCreciente(s, j) + 1$} 
+    \centerline{tal que $A_i = \{ j \in \mathbb{N} / j < i \land s_j < s_i \}$}
+
+Demostremos por induccion en i que $maxCreciente(s,i) = largo(l_i)$:
+
+Caso base\\
+i = 1 \\
+\centerline{$\displaystyle maxCreciente(s, 1) = \max_{j \in A_1} (maxCreciente(s,j)) + 1$}
+\centerline{$\displaystyle maxCreciente(s, 1) = \max_{j \in \emptyset} (maxCreciente(s,j)) + 1$}
+\centerline{$\displaystyle maxCreciente(s, 1) = 1 = largo(s) = largo(l_1)$} 
+Como queriamos ver.\\
 \\
-\\
-donde pia es $posicionInmediataAnterior$ devuelve y se define asi:
-$ posicionInmediataAnterior(secu s, num i) = \\
-\left\{ \begin{array}{ll}
-    0  & \mbox{si}\ i = 0\\
-    posicionInmediataAnterior(pia(s_i, s, i-1)) & \mbox{si}\ i \ne 0
-    \end{array}
-    \right. $
+Paso Inductivo\\
+Supongo que vale $\forall j \in \mathbb{N} / j < i$, quiero ver que para $i$. $(i > 1)$ vale:\\
+\centerline{$\displaystyle maxCreciente(s, i) = \max_{j \in A_i} \{maxCreciente(s,j)\} + 1 \ \ \ (1)$}
+Notemos que $ A_i \subset H = \{ j \in \mathbb{N} / j < i\} $ por lo que si vale para los elementos de $H$, tambien para los de $A_i$\\
+Por hipótesis inductiva vale que:
 
-/******cambiar por induccion ***/
+$ \displaystyle \forall j \in A_i , maxCreciente(s,j) = largo(l_j) \\
+ \Rightarrow \max_{j \in A_i} {maxCreciente(s,j)} = \max_{j \in A_i} {largo(l_j)} \\
+ \Rightarrow \max_{j \in A_i} {maxCreciente(s,j) + 1} = \max_{j \in A_i} {largo(l_j) + 1}$ \\
+Como $s_i  \notin l_j$
+$\displaystyle \Rightarrow \max_{j \in A_i} {maxCreciente(s,j) + 1} = \max_{j \in A_i} {largo(l_j ++ [s_i])} \ \ \ (2)$ \\
+Como $\forall j \in A_i,\ s_i > s_j$ entonces $l_j ++ [s_i]$  sigue siendo una secuencia creciente.\\
+$\displaystyle \Rightarrow \max_{j \in A_i} {largo(l_j ++ [s_i])} = largo(l_i)\ \ \ (3) $ por propiedad descripta en el enunciado. \\ 
+Por (1), (2) y (3)      
+$\displaystyle \Rightarrow maxCreciente(s, i) = \max_{j \in A_i} {maxCreciente(s,j) + 1} = \max_{j \in A_i} {largo(l_j ++ [s_i])}$ \\
+$\displaystyle \therefore maxCreciente(s, i) = largo(l_i) \blacksquare$ 
 
-
-Llamando S a la secuencia,lu(long up)a la secuencia de longitudes de subsecuencias máximas crecientes  y ld(long down) a la secuencia de longitudes de subsecuencias máximas decrecientes,la relación de recurrencia de los algoritmos es :
-
-lu$_0$=0;
-
-lu$_i$ =$\max_{j<i}$ lu$_j$+ 1  tal que S$_j$ $<$ S$_i$  
-
-y la solución la da $\max_{1\leq i\leq n}$ lu$_i$
-
-
-
-El principio de optimalidad vale para ambos y se podría enunciar así : 
-
-Si una subsecuencia es óptima(mas larga), no puede haber elementos entre los elementos de la subsecuencia que formen otra subsecuencia mejor que las subsecuencias que forman los elementos de la óptima, en otras palabras, las subsecuencias formadas por los elementos de la óptima, son óptimas para esa longitud.
-Luego hallando la mejor combinación entre subsecuencia creciente y subsecuencia decreciente, obtenemos la subsecuencia unimodal óptima. 
-
-/***************************************/
+Una vez demostrado esto, mostremos que hallando la mejor combinación entre subsecuencia creciente y subsecuencia decreciente, obtenemos la subsecuencia unimodal óptima. 
 
 %Es decir maxSecUnimodal = max(lu$_i$+ld$_i$)-1\hspace{0.1cm} $\forall$ i,j, $1\leq i<j\leq n$,S${_i} \not =$x${_j}$ 
 
-Llamemos SC${_i}$ a una subsecuencia creciente maxima para S[1..i] que incluye al elemento S$_i$ y SD${_i}$ a una subsecuencia decreciente maxima para S[i..n] que incluye al elemento S${_i}$.(puede haber más de una máxima)
+Llamemos $SC_i$ a una subsecuencia creciente maxima para S[1..i] que incluye al elemento $S_i$ y $SD_i$ a una subsecuencia decreciente maxima para $S[i..n]$ que incluye al elemento $S_i$(puede haber más de una).
 
-Llamemos U${_i}$ a una subsecuencia unimodal máxima que tiene al elemento S${_i}$ como su pico máximo.
-Tenemos entonces que necesariamente U${_i}$ está formada por una combinación de SC${_i}$ + fin(SD${_i}$) (donde fin(s) devuelve s menos su primer elemento), ya que el primer elemento de SC${_i}$ y el último de SD${_i}$ son el mismo y son el pico máximo de la subsecuencia unimodal U${_i}$.
+Llamemos $U_i$ a una subsecuencia unimodal que tiene al elemento $S_i$ como su pico máximo ****FALTA DEFINIR PICO MAXIMO***.
+Tal que $U_i$ está formada por una combinación de $SC_i$ + fin($SD_i$),donde fin(s) devuelve s menos su primer elemento, ya que el último elemento de $SC_i$ y el primero de $SD_i$ son el mismo, en especial es el pico máximo. Entonces podemos ver que $U_i$ es máximal, no tengo forma de agregarle elementos (tanto de su parte izquierda como su parte derecha), tal que siga siendo unimodal. Pues si hubiera forma, $SC_i$ y $SD_i$ no seriam máximas.
 
-Y lo anterior se deduce de que si S{$_i$} es pico máximo, la máxima U${_i}$ estará formada por la subsecuencia creciente más larga hasta el pico y la decreciente mas larga desde el pico. 
-
-Luego tendremos la subsecuencia unimodal máxima en $\max_{1\leq i\leq n}$ U${_i}$, y estamos considerando todas las posibles subsecuencias unimodales máximas dado que toda secuencia unimodal tiene un "pico" máximo.
-Con lo cual es correcta la concatenación de ambas subsecuencias(o la suma de longitudes según lo pedido en el ejercicio) para formar la unimodal. 
+Luego tomando el conjunto $M = \{U_i / i \in \mathbb{N} \land i \le largo(s)\}$, habremos obtenido el conjunto de todas las posibles subsecuencias unimodales máximales (toda secuencia tiene al menos un elemento). De este conjunto $M$ tomamos la $U_i$ que sea máxima en largo y habremos obtenido la subsecuencia unimodal máxima. Con lo cual queda demostrado que es correcto la concatenación de subsecuencias crecientes y decrecientes máximas(o mejor dicho la suma de sus longitudes) para formar la unimodal.
