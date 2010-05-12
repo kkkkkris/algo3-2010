@@ -1,11 +1,14 @@
 Como contamos anteriormente, proponemos encontrar la subsecuencia unimodal máxima a partir del conjunto de todas las secuencias unimodales maximales. Para generar tales subsecuencias hacemos la unión de dos subsecuencias de la secuencia original, la primera creciente y la segunda decreciente, de modo tal que cumplan ser máximas y el primer elemento de la secuencia decreciente sea el ultimo de la secuencia creciente. Para ello generamos todas las subsecuencias decrecientes y crecientes máximas que cumplen que comienzan y terminan en un determinado elemento.
 
 \subsubsection{Correctitud}
-Sea $s$ una secuencia de enteros, definimos $l_i$ como la subsecuencia creciente máxima de $s_[1..i]$ que contiene al elemento $s_i$ ($l_i \in
-  \{l_j ++ [s_i] / \exists j \in \mathbb{N}, j < i \land s_j < s_i\}$ )y la función maxCreciente como la que devuelve el tamaño de dicha $l_i$ para un $i$ determinado definida asi:\\
+Sea $s$ una secuencia de enteros, definimos $l_i$ como la subsecuencia creciente máxima 
+de $s[1..i]$ que contiene al elemento $s_i$. Sea 
+$A_i = \{ j \in \mathbb{N} / j < i \land s_j < s_i \}$ , entonces 
+$\displaystyle l_i = \max_{largo(l_j)}\{l_j ++ [s_i] / j \in A_i\}$. Definimos la función maxCreciente como la que devuelve 
+el tamaño de dicha $l_i$ para un $i$ de esta forma:\\
 \\
     \centerline{$ \displaystyle maxCreciente(num\ i) = \max_{j \in A_i} (maxCreciente(j)) + 1$} 
-    \centerline{tal que $A_i = \{ j \in \mathbb{N} / j < i \land s_j < s_i \}$}
+    \centerline{tal que }
 
 Demostremos por inducción en i que $maxCreciente(i) = largo(l_i)$:
 
@@ -43,8 +46,15 @@ $\displaystyle \Rightarrow maxCreciente(i) = \max_{j \in A_i}({maxCreciente(j) +
 \\
 $\displaystyle \therefore maxCreciente(i) = largo(l_i) \blacksquare$ 
 
-Cabe destacar que la misma demostración vale para la subsecuencia decreciente máxima,definiendo $l_i$ como la subsecuencia decreciente máxima de $s_[i..n]$ que contiene al elemento $s_i$ ($l_i \in
-  \{ [s_i]++l_j  / \exists j \in \mathbb{N}, j > i \land s_j < s_i\}$ )y la función maxDecreciente como la que devuelve el tamaño de dicha $l_i$ para un $i$ determinado.
+definimos $l_i$ como la subsecuencia creciente máxima 
+de $s[1..i]$ que contiene al elemento $s_i$. Sea 
+$A_i = \{ j \in \mathbb{N} / j < i \land s_j < s_i \}$
+
+Cabe destacar que la misma demostración vale para la subsecuencia decreciente máxima, 
+definiendo $l_i$ como la subsecuencia decreciente máxima de $s_[i..n]$ que contiene al elemento 
+$s_i$. Con $A_i = \{ j \in \mathbb{N} / j > i \land s_j < s_i \}$ y 
+ $\displaystyle l_i = \max_{largo(l_j)}\{ [s_i]++l_j  / j \in A_i\}$ ) y 
+la función maxDecreciente como la que devuelve el tamaño de dicha $l_i$ para un $i$ determinado.
 
 Una vez demostrado esto, mostremos que hallando la mejor combinación entre subsecuencia creciente y subsecuencia decreciente, obtenemos la subsecuencia unimodal óptima.\\
 Llamemos $SC_i$ a una subsecuencia creciente maxima para S[1..i] que incluye al elemento $S_i$ y $SD_i$ a una subsecuencia decreciente maxima para $S[i..n]$ que incluye al elemento $S_i$(puede haber más de una).\\
