@@ -4,5 +4,5 @@ using namespace std;
 
 string leerArchivo(const char* archivo);
 bool escribirArchivo(const char* archivo, string contenido);
-
+string toString(set<int>*);
 #endif

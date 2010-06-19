@@ -1,4 +1,4 @@
-CC=g++
+CC=g++ -lrt
 CFLAGS=-g -Wall -Werror -Iinclude/ -I../timer
 LDFLAGS=-g -Wall -Werror -lrt
 #EDIT THIS:

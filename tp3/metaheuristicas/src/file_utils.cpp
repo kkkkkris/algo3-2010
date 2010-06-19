@@ -2,10 +2,11 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <set>
 
 using namespace std;
 /**
- * lee un archivo de texto y devuelve su contenido en un string 
+ * lee un archivo de texto y devuelve su contenido en un string
  * */
 string leerArchivo(const char* filename){
     string res = "";
@@ -33,4 +34,9 @@ bool escribirArchivo(const char* filename, string content) {
         return true;
     }
     return false;
+}
+string toString(set<int>*){
+    string res="";
+  //TODO
+    return res;
 }
