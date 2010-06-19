@@ -3,6 +3,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <set>
 using namespace std;
 
 class Nodo;
@@ -11,12 +12,17 @@ class Grafo {
         Grafo(map<int, list<int> >);
         ~Grafo();
         int length();
-        Grafo* maxClique();
+        set<int>* maxClique();
     private:
         Nodo& getNodo(int nodo_id);
         Nodo* nodos;
         int size;
         bool sonAdyacentes(int i, int j);
+        int getGrado(int nodo_id);
+        int getDensidad(int nodo_id);
+        void setDensidad(int nodo_id,int densidad);
+        bool esClique(int nodo_id,set<int> Cq);
+        set<int>* HC();
 };
 
 
