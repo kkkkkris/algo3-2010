@@ -36,7 +36,7 @@ set<int>* Grafo::maxClique() {
 
 Nodo &Grafo::getNodo(nodo_id id){
     assert(id <= this->size && id > 0);
-    return this->nodos[id];
+    return this->nodos[id-1];
 }
 
 bool Grafo::sonAdyacentes(nodo_id i, nodo_id j) {
@@ -122,10 +122,10 @@ set<int>* Grafo::getVecinos(nodo_id i){
 set<nodo_id>* Grafo::HC(){
     set<int> Cq,*p_Cq,*vecinos;
     //inicializo las densidades del grafo
-    int d,nodomax,maxd,w;
+    int d,nodomax=1,maxd=0,w;
     for(int i=1;i<=this->size;i++){
        d= this->getDensidad(i);
-       assert(d>-1);
+       assert(d>-1 && d<this->size);
 
        this->setDensidad(i,d);
        if(d>maxd){maxd=d;nodomax=i;}
