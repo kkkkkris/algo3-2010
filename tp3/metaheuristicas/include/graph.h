@@ -1,5 +1,6 @@
 #ifndef __GRAPH__
 #define __GRAPH__
+#include "nodo.h"
 #include <string>
 #include <list>
 #include <map>
@@ -7,7 +8,6 @@
 #include <queue>
 using namespace std;
 
-class Nodo;
 class Grafo {
     public:
         Grafo(map<int, list<int> >);
