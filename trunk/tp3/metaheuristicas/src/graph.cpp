@@ -3,39 +3,14 @@
 #include <stack>
 #include <string>
 #include <iostream>
-#include <sstream>
 #include <cassert>
 #include <cstdlib>
 #include <cstdio>
 #include "graph.h"
 #define print(a) cout << a << endl
 
-typedef list<int>::iterator it_list;
-typedef int nodo_id;
-
 using namespace std;
-class Nodo{
-    public:
-        Nodo(){};
-        Nodo(const nodo_id id, list<int> links):links(links), id(id), visitada(false),grado(links.size()),densidad(-1){};
-        string toString() {
-            stringstream ss;
-            ss << "nodo #" << id << " [";
-            for(it_list it = links.begin(); it != links.end(); it++) {
-                if(it != links.begin())
-                    ss << ", ";
-                ss << *it;
-            }
-            ss << "]";
-            return ss.str();
-        }
-        list<int> links;
-        nodo_id id;
-        bool visitada;
-        int grado;
-        int densidad;
 
-};
 
 Grafo::Grafo(map<int, list<int> > nodos_p){
     this->size = nodos_p.size();
@@ -136,12 +111,12 @@ bool Grafo::esClique(nodo_id i,set<nodo_id> Cq){
 }
 
 set<int>* Grafo::getVecinos(nodo_id i){
-    set<int> s;
+    set<int> *s = new set<int>();
     Nodo* nodoi = &getNodo(i);
     for(list<int>::iterator it=nodoi->links.begin();it!=nodoi->links.end();it++){
-        s.insert(*it);
+        s->insert(*it);
     }
-    return &s;
+    return s;
 }
 
 set<nodo_id>* Grafo::HC(){
