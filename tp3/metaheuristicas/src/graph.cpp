@@ -17,7 +17,7 @@ using namespace std;
 class Nodo{
     public:
         Nodo(){};
-        Nodo(const nodo_id id, list<int> links):links(links), id(id), visitada(false),grado(links.size()),densidad(0){};
+        Nodo(const nodo_id id, list<int> links):links(links), id(id), visitada(false),grado(links.size()),densidad(-1){};
         string toString() {
             stringstream ss;
             ss << "nodo #" << id << " [";
@@ -55,13 +55,13 @@ Grafo::~Grafo() {
 }
 
 set<int>* Grafo::maxClique() {
-    //TODO
+   // set<int>* cqMax= this->HC();
     return NULL;
 }
 
 Nodo &Grafo::getNodo(nodo_id id){
     assert(id <= this->size && id > 0);
-    return this->nodos[id - 1];
+    return this->nodos[id];
 }
 
 bool Grafo::sonAdyacentes(nodo_id i, nodo_id j) {
@@ -110,7 +110,7 @@ int Grafo::getGrado(nodo_id i){
 int Grafo::getDensidad(nodo_id i){
     Nodo* nodoi = &getNodo(i);
     int res;
-    if(nodoi->densidad){ //si densidad no es 0
+    if(nodoi->densidad!=-1){ //si densidad no es 0
         res=nodoi->densidad;
     }else{
         int g=this->getGrado(i);
@@ -135,7 +135,43 @@ bool Grafo::esClique(nodo_id i,set<nodo_id> Cq){
     return true;
 }
 
+set<int>* Grafo::getVecinos(nodo_id i){
+    set<int> s;
+    Nodo* nodoi = &getNodo(i);
+    for(list<int>::iterator it=nodoi->links.begin();it!=nodoi->links.end();it++){
+        s.insert(*it);
+    }
+    return &s;
+}
+
 set<nodo_id>* Grafo::HC(){
-//TODO
- return NULL;
+    set<int> Cq,*p_Cq,*vecinos;
+    //inicializo las densidades del grafo
+    int d,nodomax,maxd,w;
+    for(int i=1;i<=this->size;i++){
+       d= this->getDensidad(i);
+       assert(d>-1);
+
+       this->setDensidad(i,d);
+       if(d>maxd){maxd=d;nodomax=i;}
+    }
+    priority_queue<int,vector<int>,greater<int> > S;
+    vecinos=getVecinos(nodomax);
+    for(set<int>::iterator it=vecinos->begin();it!=vecinos->end();it++){
+        S.push(*it);
+    }
+    //ciclo ppal
+    while(!S.empty()){
+        w=S.top();
+        if(esClique(w,Cq)){
+            Cq.insert(w);
+            vecinos=getVecinos(w);
+            for(set<int>::iterator it=vecinos->begin();it!=vecinos->end();it++){
+                S.push(*it);
+            }
+        }
+        S.pop();
+    }
+    p_Cq=&Cq;
+    return p_Cq;
 }

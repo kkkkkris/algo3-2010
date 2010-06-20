@@ -4,6 +4,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <queue>
 using namespace std;
 
 class Nodo;
@@ -22,6 +23,7 @@ class Grafo {
         int getDensidad(int nodo_id);
         void setDensidad(int nodo_id,int densidad);
         bool esClique(int nodo_id,set<int> Cq);
+        set<int>* getVecinos(int nodo_id);
         set<int>* HC();
 };
 
