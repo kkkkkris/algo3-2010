@@ -9,17 +9,26 @@
 #include "graph.h"
 #define print(a) cout << a << endl
 
+typedef  set<nodo_id>::iterator it_set;
 using namespace std;
 
 
 Grafo::Grafo(map<int, list<int> > nodos_p){
     this->size = nodos_p.size();
     this->nodos = new Nodo[nodos_p.size()];
-
+    this->adj = new bool[this->size*this->size];
+    for(int i = 0; i < this->size*this->size; i++) {
+        this->adj[i] = false;
+    }
     map<int, list<int> >::iterator it = nodos_p.begin();
     while(it != nodos_p.end()){
         assert(it->first > 0);
         this->nodos[it->first - 1] = Nodo(it->first, it->second);
+        for(it_list lit = it->second.begin(); lit != it->second.end(); lit++) {
+            //matriz simetrica.
+            this->adj[((it->first - 1)*this->size) + *lit - 1] = true;
+            this->adj[((*lit - 1)*this->size) + it->first - 1] = true;
+        }
         //print(this->nodos[it->first - 1].toString());
         it++;
     }
@@ -40,35 +49,7 @@ Nodo &Grafo::getNodo(nodo_id id){
 }
 
 bool Grafo::sonAdyacentes(nodo_id i, nodo_id j) {
-    Nodo* nodoi = &getNodo(i);
-    Nodo* nodoj = &getNodo(j);
-    //nodo cuya lista se recorre
-    Nodo* nodoMaestro;
-    //ID del nodo cuya lista no recorremos
-    nodo_id nodoEsclavoId;
-
-    //Si son adyacentes, i figura en la lista de links de j, y viceversa, por lo que
-    //es lo mismo recorrer cualquiera de las dos listas. Entonces recorro la mas chica
-    //para mejorar un poquito el tiempo de respuesta
-    if(nodoi->links.size() > nodoj->links.size()){
-        nodoMaestro     = nodoj;
-        nodoEsclavoId   = i;
-    }
-    else{
-        nodoMaestro     = nodoi;
-        nodoEsclavoId   = j;
-    }
-
-    //asumimos que no son adyacentes
-    bool adyacentes = false;
-    //recorremos la lista para ver si efectivametne son o no son adyacentes
-    for(list<int>::iterator it = nodoMaestro->links.begin(); it != nodoMaestro->links.end() && !adyacentes; it++){
-        if(*it == nodoEsclavoId){
-            adyacentes = true;
-        }
-    }
-
-    return adyacentes;
+    return this->adj[(i-1)*this->size + j - 1];
 }
 
 
@@ -90,7 +71,7 @@ int Grafo::getDensidad(nodo_id i){
     }else{
         int g=this->getGrado(i);
         res=g;
-        for(list<int>::iterator it = nodoi->links.begin();it != nodoi->links.end();it++){
+        for(it_list it = nodoi->links.begin();it != nodoi->links.end();it++){
             res+=this->getGrado(*it);
         }
         res=res/(g+1);
@@ -100,11 +81,11 @@ int Grafo::getDensidad(nodo_id i){
 
 void Grafo::setDensidad(nodo_id i,int densidad){
     Nodo* nodoi = &getNodo(i);
-    nodoi->densidad = this->getDensidad(i);
+    nodoi->densidad = densidad;
 }
 
 bool Grafo::esClique(nodo_id i,set<nodo_id> Cq){
-    for(set<nodo_id>::iterator it = Cq.begin();it != Cq.end();it++){
+    for(it_set it = Cq.begin();it != Cq.end();it++){
         if(!this->sonAdyacentes(i,*it))return false;
     }
     return true;
@@ -113,7 +94,7 @@ bool Grafo::esClique(nodo_id i,set<nodo_id> Cq){
 set<int>* Grafo::getVecinos(nodo_id i){
     set<int> *s = new set<int>();
     Nodo* nodoi = &getNodo(i);
-    for(list<int>::iterator it=nodoi->links.begin();it!=nodoi->links.end();it++){
+    for(it_list it=nodoi->links.begin();it!=nodoi->links.end();it++){
         s->insert(*it);
     }
     return s;
@@ -126,7 +107,6 @@ set<nodo_id>* Grafo::HC(){
     for(int i=1;i<=this->size;i++){
        d= this->getDensidad(i);
        assert(d>-1 && d<this->size);
-
        this->setDensidad(i,d);
        if(d>maxd){maxd=d;nodomax=i;}
     }
@@ -141,7 +121,7 @@ set<nodo_id>* Grafo::HC(){
         if(esClique(w,Cq)){
             Cq.insert(w);
             vecinos=getVecinos(w);
-            for(set<int>::iterator it=vecinos->begin();it!=vecinos->end();it++){
+            for(it_set it=vecinos->begin();it!=vecinos->end();it++){
                 S.push(*it);
             }
         }

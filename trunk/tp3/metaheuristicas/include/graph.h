@@ -15,9 +15,12 @@ class Grafo {
         int length();
         set<int>* maxClique();
     private:
-        Nodo& getNodo(int nodo_id);
+        //datos
         Nodo* nodos;
         int size;
+        bool *adj;
+        //metodos privados
+        Nodo& getNodo(int nodo_id);
         bool sonAdyacentes(int i, int j);
         int getGrado(int nodo_id);
         int getDensidad(int nodo_id);
