@@ -101,28 +101,42 @@ Nodo& Grafo::generarDensidad() {
 
 
 set<nodo_id>* Grafo::HC(){
-    set<int>* Cq = new set<int>();
     //inicializo las densidades del grafo
     Nodo nodoMax = generarDensidad();
     
     //Genero la cola de prioridad de nodos ordenados por su densidad
     //ARREGLAR: NO SE PRIORIZA POR DENSIDAD.
-    list<nodo_id> vecinos = nodoMax.links;
-    priority_queue<int,vector<int>,greater<int> > S;
-    for(it_list it = vecinos.begin(); it != vecinos.end(); it++){
+    list<nodo_id> candidatos = nodoMax.links;
+    typedef priority_queue<nodo_id,vector<nodo_id>,Grafo::GreatNodo> pqDelta;
+    pqDelta S(this);
+    for(it_list it = candidatos.begin(); it != candidatos.end(); it++){
         S.push(*it);
     }
+    return this->expandClique(new set<nodo_id>(), S);
+}
+/** dado un clique y un conjunto de candidatos, expande el grafo clique */
+set<nodo_id>* Grafo::expandClique(set<nodo_id>* Cq, 
+        priority_queue<nodo_id, vector<nodo_id>, Grafo::GreatNodo> S) {
     //ciclo ppal
     while(!S.empty()){
         nodo_id w = S.top();
         if(esClique(w,*Cq)){
             Cq->insert(w);
-            vecinos = getNodo(w).links;
-            for(it_list it=vecinos.begin(); it != vecinos.end(); it++){
+            list<nodo_id> candidatos = getNodo(w).links;
+            for(it_list it=candidatos.begin(); it != candidatos.end(); it++){
                 S.push(*it);
             }
         }
         S.pop();
     }
     return Cq;
+}
+
+
+bool Grafo::GreatNodo::operator()(const nodo_id& left, const nodo_id& right) const{
+    return parent->getNodo(left).densidad > parent->getNodo(right).densidad;
+}
+
+set<nodo_id>* Grafo::HL() {
+    return NULL;
 }
