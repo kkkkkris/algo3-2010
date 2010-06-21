@@ -38,11 +38,6 @@ Grafo::~Grafo() {
     delete [] nodos;
 }
 
-set<int>* Grafo::maxClique() {
-   // set<int>* cqMax= this->HC();
-    return NULL;
-}
-
 Nodo &Grafo::getNodo(nodo_id id){
     assert(id <= this->size && id > 0);
     return this->nodos[id-1];
@@ -58,23 +53,23 @@ int Grafo::length(){
 }
 
 
-
+/** calcula la densidad para un nodo. */
 int Grafo::getDensidad(nodo_id i){
     Nodo* nodoi = &getNodo(i);
-    int res;
-    if(nodoi->densidad!=-1){ //si densidad no es 0
+    int res = 0;
+    if( nodoi->densidad != -1){ //si densidad no es 0
         res=nodoi->densidad;
     }else{
         int g = nodoi->grado;
-        res = g;
         for(it_list it = nodoi->links.begin();it != nodoi->links.end();it++){
             res += this->getNodo(*it).grado;
         }
-        res=res/(g+1);
+        res= res / g;
     }
     return res;
 }
-
+/** dado el id de un nodo le pone su densidad y devuelve la densidad 
+ * que le puso. */
 int Grafo::setDensidad(nodo_id i){
     Nodo* nodoi = &getNodo(i);
     int densidad = this->getDensidad(i);
