@@ -124,6 +124,5 @@ set<nodo_id>* Grafo::HC(){
         }
         S.pop();
     }
-    //???? estas devolviendo una referencia a memoria local. USAR NEW.
     return Cq;
 }
