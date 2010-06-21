@@ -28,6 +28,15 @@ class Grafo {
         int setDensidad(int nodo_id);
         Nodo& generarDensidad();
         bool esClique(int nodo_id, set<int> Cq);
+        class GreatNodo {
+            public:
+                GreatNodo(Grafo* p) : parent(p) {}
+                bool operator() (const int& lhs, const int&rhs) const;
+            private:
+                Grafo* parent;
+        };
+        set<nodo_id>* expandClique(set<nodo_id>* ,priority_queue<int,vector<int>,GreatNodo>);
+        
 };
 
 
