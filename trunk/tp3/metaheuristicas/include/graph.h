@@ -13,7 +13,9 @@ class Grafo {
         Grafo(map<int, list<int> >);
         ~Grafo();
         int length();
-        set<int>* maxClique();
+        set<int>* HC();
+        set<int>* HL();
+        set<int>* HT();
     private:
         //datos
         Nodo* nodos;
@@ -26,8 +28,6 @@ class Grafo {
         int setDensidad(int nodo_id);
         Nodo& generarDensidad();
         bool esClique(int nodo_id, set<int> Cq);
-        set<int>* HC();
-        set<int>* HL();
 };
 
 

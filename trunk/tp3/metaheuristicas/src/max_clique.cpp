@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
     for(list<Grafo*>::iterator it = instancias.begin(); it != instancias.end(); it++) {
             timer.nueva();
             timer.empezar();
-            cliquemax = (*it)->maxClique();
+            cliquemax = (*it)->HC();
             timer.terminar();
             //escribo la medicion con el formato n  time(en nanosegundos)
             if(testingOutput.good()){
