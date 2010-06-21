@@ -58,10 +58,6 @@ int Grafo::length(){
 }
 
 
-int Grafo::getGrado(nodo_id i){
-    Nodo* nodoi = &getNodo(i);
-    return nodoi->grado;
-}
 
 int Grafo::getDensidad(nodo_id i){
     Nodo* nodoi = &getNodo(i);
@@ -69,21 +65,24 @@ int Grafo::getDensidad(nodo_id i){
     if(nodoi->densidad!=-1){ //si densidad no es 0
         res=nodoi->densidad;
     }else{
-        int g=this->getGrado(i);
-        res=g;
+        int g = nodoi->grado;
+        res = g;
         for(it_list it = nodoi->links.begin();it != nodoi->links.end();it++){
-            res+=this->getGrado(*it);
+            res += this->getNodo(*it).grado;
         }
         res=res/(g+1);
     }
     return res;
 }
 
-void Grafo::setDensidad(nodo_id i,int densidad){
+int Grafo::setDensidad(nodo_id i){
     Nodo* nodoi = &getNodo(i);
+    int densidad = this->getDensidad(i);
     nodoi->densidad = densidad;
+    return densidad;
 }
 
+/** dice si agregar el nodo_id i al clique cq sigue siendo clique*/
 bool Grafo::esClique(nodo_id i,set<nodo_id> Cq){
     for(it_set it = Cq.begin();it != Cq.end();it++){
         if(!this->sonAdyacentes(i,*it))return false;
@@ -91,42 +90,45 @@ bool Grafo::esClique(nodo_id i,set<nodo_id> Cq){
     return true;
 }
 
-set<int>* Grafo::getVecinos(nodo_id i){
-    set<int> *s = new set<int>();
-    Nodo* nodoi = &getNodo(i);
-    for(it_list it=nodoi->links.begin();it!=nodoi->links.end();it++){
-        s->insert(*it);
+/** Setea las densidad a todos y devuelve el Id del nodo con mas densidad*/
+Nodo& Grafo::generarDensidad() {
+    int nodomax=1, maxd=0;
+    for(int i = 1;i <= this->size; i++){
+       int d = this->setDensidad(i);
+       if(d > maxd) {
+           maxd = d;
+           nodomax = i;
+       }
     }
-    return s;
+    return getNodo(nodomax);
 }
 
+
+
 set<nodo_id>* Grafo::HC(){
-    set<int> Cq,*p_Cq,*vecinos;
+    set<int>* Cq = new set<int>();
     //inicializo las densidades del grafo
-    int d,nodomax=1,maxd=0,w;
-    for(int i=1;i<=this->size;i++){
-       d= this->getDensidad(i);
-       assert(d>-1 && d<this->size);
-       this->setDensidad(i,d);
-       if(d>maxd){maxd=d;nodomax=i;}
-    }
+    Nodo nodoMax = generarDensidad();
+    
+    //Genero la cola de prioridad de nodos ordenados por su densidad
+    //ARREGLAR: NO SE PRIORIZA POR DENSIDAD.
+    list<nodo_id> vecinos = nodoMax.links;
     priority_queue<int,vector<int>,greater<int> > S;
-    vecinos=getVecinos(nodomax);
-    for(set<int>::iterator it=vecinos->begin();it!=vecinos->end();it++){
+    for(it_list it = vecinos.begin(); it != vecinos.end(); it++){
         S.push(*it);
     }
     //ciclo ppal
     while(!S.empty()){
-        w=S.top();
-        if(esClique(w,Cq)){
-            Cq.insert(w);
-            vecinos=getVecinos(w);
-            for(it_set it=vecinos->begin();it!=vecinos->end();it++){
+        nodo_id w = S.top();
+        if(esClique(w,*Cq)){
+            Cq->insert(w);
+            vecinos = getNodo(w).links;
+            for(it_list it=vecinos.begin(); it != vecinos.end(); it++){
                 S.push(*it);
             }
         }
         S.pop();
     }
-    p_Cq=&Cq;
-    return p_Cq;
+    //???? estas devolviendo una referencia a memoria local. USAR NEW.
+    return Cq;
 }

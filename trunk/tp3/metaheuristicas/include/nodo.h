@@ -13,9 +13,9 @@ class Nodo
 {
 	public:
 		Nodo();
-    Nodo(const nodo_id id, list<int> links);
+    Nodo(const nodo_id id, list<nodo_id> links);
     string toString();
-    list<int> links;
+    list<nodo_id> links;
     nodo_id id;
     bool visitada;
     int grado;
