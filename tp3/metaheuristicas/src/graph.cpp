@@ -9,8 +9,17 @@
 #include "graph.h"
 #define print(a) cout << a << endl
 
-typedef  set<nodo_id>::iterator it_set;
 using namespace std;
+
+
+/**
+*Funcion que da la prioridad a la cola de prioridad de densidad de nodos
+*/
+struct comparison{
+  bool operator()( Nodo &a, Nodo &b) {
+    return a.densidad<b.densidad;
+  }
+};
 
 
 Grafo::Grafo(map<int, list<int> > nodos_p){
@@ -52,33 +61,34 @@ int Grafo::length(){
     return size;
 }
 
-
-/** calcula la densidad para un nodo. */
-int Grafo::getDensidad(nodo_id i){
+/**
+*Devuelve el grado del nodo
+*/
+int Grafo::getGrado(nodo_id i){
     Nodo* nodoi = &getNodo(i);
-    int res = 0;
-    if( nodoi->densidad != -1){ //si densidad no es 0
-        res=nodoi->densidad;
-    }else{
-        int g = nodoi->grado;
-        for(it_list it = nodoi->links.begin();it != nodoi->links.end();it++){
-            res += this->getNodo(*it).grado;
-        }
-        res= res / g;
+    return nodoi->grado;
+}
+/**
+*Calcula y setea la densidad del nodo i
+*/
+float Grafo::setDensidad(nodo_id i){
+    assert(i <= this->size && i > 0);
+    float res;
+    int g;
+    Nodo* nodoi = &getNodo(i);
+    g=this->getGrado(i);
+    res=g;
+    for(it_list it = nodoi->links.begin();it != nodoi->links.end();it++){
+        res+=this->getGrado(*it);
     }
+    res=res/(g+1);
+    nodoi->densidad=res;
     return res;
 }
-/** dado el id de un nodo le pone su densidad y devuelve la densidad 
- * que le puso. */
-int Grafo::setDensidad(nodo_id i){
-    Nodo* nodoi = &getNodo(i);
-    int densidad = this->getDensidad(i);
-    nodoi->densidad = densidad;
-    return densidad;
-}
+
 
 /** dice si agregar el nodo_id i al clique cq sigue siendo clique*/
-bool Grafo::esClique(nodo_id i,set<nodo_id> Cq){
+bool Grafo::esClique(nodo_id i,set<nodo_id>& Cq){
     for(it_set it = Cq.begin();it != Cq.end();it++){
         if(!this->sonAdyacentes(i,*it))return false;
     }
@@ -86,57 +96,88 @@ bool Grafo::esClique(nodo_id i,set<nodo_id> Cq){
 }
 
 /** Setea las densidad a todos y devuelve el Id del nodo con mas densidad*/
-Nodo& Grafo::generarDensidad() {
-    int nodomax=1, maxd=0;
+nodo_id Grafo::generarDensidad() {
+    int nodomax=1;
+    float d,maxd=0;
     for(int i = 1;i <= this->size; i++){
-       int d = this->setDensidad(i);
+       d= this->setDensidad(i);
+       assert(d>=0 && d<=this->size);
        if(d > maxd) {
            maxd = d;
            nodomax = i;
        }
+      // cout<<"la densidad del nodo "<<i<<"es :"<<d<<endl;
     }
-    return getNodo(nodomax);
+    return nodomax;
+}
+
+/**
+*Agrega a la cola de prioridad S los vecinos de i que no estan en Cq ni fueron encolados en S.
+*/
+void Grafo::merge(nodo_id i,pqDelta& S,set<int>& Cq){
+    Nodo* nodoi = &getNodo(i);
+    Nodo* nodoj ;
+    for(it_list it=nodoi->links.begin();it!=nodoi->links.end();it++){
+       nodoj=&getNodo(*it);
+       if(Cq.count(*it)==0 && !(nodoj->encolado)){
+           nodoj->encolado=true;
+           S.push(*nodoj);;
+        //   cout<<"S + "<<(*it)<<endl;
+       }
+    }
+}
+/**
+*Imprime un set por pantalla
+*/
+void Grafo::set_to_String(set<int>& S){
+    for(it_set it=S.begin();it!=S.end();it++){
+        cout<<*it<<",";
+    }
+        cout<<endl;
 }
 
 
-
+/**
+*HEURISTICA CONSTRUCTIVA
+*/
 set<nodo_id>* Grafo::HC(){
-    //inicializo las densidades del grafo
-    Nodo nodoMax = generarDensidad();
-    
-    //Genero la cola de prioridad de nodos ordenados por su densidad
-    //ARREGLAR: NO SE PRIORIZA POR DENSIDAD.
-    list<nodo_id> candidatos = nodoMax.links;
-    typedef priority_queue<nodo_id,vector<nodo_id>,Grafo::GreatNodo> pqDelta;
-    pqDelta S(this);
-    for(it_list it = candidatos.begin(); it != candidatos.end(); it++){
-        S.push(*it);
-    }
-    return this->expandClique(new set<nodo_id>(), S);
+    cout<<" \n GRAFO : "<<endl;
+    //Inicializo las densidades del grafo
+    nodo_id nodoMax = generarDensidad();
+
+    //Genero el conjunto maximo Clique resultado
+    set<nodo_id> Cq,*p_Cq;
+    Cq.insert(nodoMax);
+    p_Cq=&Cq;
+    //Genero la cola de prioridad S de nodos candidatos ordenados por su densidad
+    pqDelta S;
+    merge(nodoMax,S,Cq);
+
+    return this->expandClique(p_Cq, S);
 }
+
 /** dado un clique y un conjunto de candidatos, expande el grafo clique */
-set<nodo_id>* Grafo::expandClique(set<nodo_id>* Cq, 
-        priority_queue<nodo_id, vector<nodo_id>, Grafo::GreatNodo> S) {
+set<nodo_id>* Grafo::expandClique(set<nodo_id>* Cq,pqDelta S) {
     //ciclo ppal
     while(!S.empty()){
-        nodo_id w = S.top();
+        nodo_id w = S.top().id;//hay alguna razon para declarar un nuevo nodo_id en cada iteracion?
         if(esClique(w,*Cq)){
+      //      cout<<"S.top =nodo "<<w <<endl;
             Cq->insert(w);
-            list<nodo_id> candidatos = getNodo(w).links;
-            for(it_list it=candidatos.begin(); it != candidatos.end(); it++){
-                S.push(*it);
-            }
+            merge(w,S,*Cq);
         }
         S.pop();
     }
+    cout<<"Clique max : ";
+    set_to_String(*Cq);
     return Cq;
 }
 
-
+/*
 bool Grafo::GreatNodo::operator()(const nodo_id& left, const nodo_id& right) const{
     return parent->getNodo(left).densidad > parent->getNodo(right).densidad;
 }
-
+*/
 set<nodo_id>* Grafo::HL() {
     return NULL;
 }

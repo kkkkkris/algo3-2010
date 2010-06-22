@@ -5,7 +5,7 @@
 
 Nodo::Nodo(){};
 
-Nodo::Nodo(const nodo_id id, list<int> links):links(links), id(id), visitada(false),grado(links.size()),densidad(-1){};
+Nodo::Nodo(const nodo_id id, list<int> links):links(links), id(id), encolado(false),grado(links.size()),densidad(-1){};
 
 string Nodo::toString() {
     stringstream ss;
