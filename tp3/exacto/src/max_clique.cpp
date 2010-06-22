@@ -23,30 +23,38 @@ int main(int argc, char* argv[]) {
     }
     const char* entrada = argv[1];
     const char* salida = argv[2];
-    ofstream testingOutput((string(entrada)+string(".times")).c_str());
+    //ofstream testingOutput((string(entrada)+string(".times")).c_str());
     string contenido = leerArchivo(entrada);
     list<Grafo*> instancias =  parsearInstancias(contenido);
     Timer timer;
+    std::stringstream aux;
     string resultados = "";
     int i = 1;
     for(list<Grafo*>::iterator it = instancias.begin(); it != instancias.end(); it++) {
             timer.nueva();
             timer.empezar();
-            (*it)->maxClique();
+            list<int>* nodos_ids = new list<int>();
+            (*it)->maxClique(nodos_ids);
             timer.terminar();
             //escribo la medicion con el formato n  time(en nanosegundos)
-            if(testingOutput.good()){
+            /*if(testingOutput.good()){
                 testingOutput << (*it)->length() << "\t" << timer.getUltimaMedicion() << endl;
+            }*/
+            aux << nodos_ids->size();
+            resultados += aux.str() + "\n" + "N";
+            for(list<int>::iterator it2 = nodos_ids->begin(); it2 != nodos_ids->end(); it2++){
+                aux.clear();
+                aux << (*it);
+                resultados += " " + aux.str();
             }
-            /*string resultado = (esHamilton)?"ronda":"no";
-            resultados += resultado + "\n";
-            print("#" << i << ": Es hamiltoniano: " << resultado);
-            print("--------------------------------------------");*/
+            resultados += "\n";
             i++;
             delete (*it);
     }
-    string t("tiempos");
+    //string t("tiempos");
     //escribirArchivo( (t + string(entrada)).c_str(), timer.tiempos());
+    
+    print(resultados);
     
     if(escribirArchivo(salida, resultados)){
         print("error escribiendo archivo");
