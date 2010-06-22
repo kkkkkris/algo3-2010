@@ -17,10 +17,10 @@ class Nodo
     string toString();
     list<nodo_id> links;
     nodo_id id;
-    bool visitada;
+    bool encolado;
     int grado;
-    int densidad;
-			
+    float densidad;
+
 };
 
-#endif /* NODO_H */ 
+#endif /* NODO_H */

@@ -6,7 +6,12 @@
 #include <map>
 #include <set>
 #include <queue>
+
 using namespace std;
+struct comparison;
+
+typedef  set<nodo_id>::iterator it_set;
+typedef priority_queue<Nodo,vector<Nodo>,comparison> pqDelta ;
 
 class Grafo {
     public:
@@ -23,20 +28,22 @@ class Grafo {
         bool *adj;
         //metodos privados
         Nodo& getNodo(int nodo_id);
+        int getGrado(int nodo_id);
         bool sonAdyacentes(int i, int j);
-        int getDensidad(int nodo_id);
-        int setDensidad(int nodo_id);
-        Nodo& generarDensidad();
-        bool esClique(int nodo_id, set<int> Cq);
-        class GreatNodo {
+        float setDensidad(int nodo_id);
+        nodo_id generarDensidad();
+        bool esClique(int nodo_id, set<int>& Cq);
+        void merge(int nodo_id,pqDelta& S,set<int>& Cq);
+        void set_to_String(set<int>& S);
+       /*  class GreatNodo {
             public:
                 GreatNodo(Grafo* p) : parent(p) {}
                 bool operator() (const int& lhs, const int&rhs) const;
             private:
                 Grafo* parent;
-        };
-        set<nodo_id>* expandClique(set<nodo_id>* ,priority_queue<int,vector<int>,GreatNodo>);
-        
+        };*/
+        set<nodo_id>* expandClique(set<nodo_id>* ,pqDelta );
+
 };
 
 
