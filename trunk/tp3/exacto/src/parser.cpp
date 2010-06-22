@@ -34,6 +34,7 @@ list<Grafo*> parsearInstancias(string entrada){
             }
         }   
     }
+    cout << "\n";
     return grafos;
 }
 
