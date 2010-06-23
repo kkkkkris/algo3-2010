@@ -94,44 +94,47 @@ void Grafo::cliqueMax(list<Nodo>* R, list<Nodo>* P, list<Nodo>* X, list<int>* no
     if(P->empty() && X->empty()){
         cout << "if" << endl;
         if(R->size() > nodos_ids->size()){
-            for(list<Nodo>::iterator it = R->begin(); it != R->end(); it++){
-                nodos_ids->push_back(it->id);
+            for(list<Nodo>::iterator itR = R->begin(); itR != R->end(); itR++){
+                cout << "itR->id = " << (itR->id) << endl;
+                nodos_ids->push_back(itR->id);
             }
         }
     }
     else{
         cout << "else" << endl;
-        for(list<Nodo>::iterator it = P->begin(); it != P->end(); it++){
-            cout << "for" << endl;
+        for(list<Nodo>::iterator itP = P->begin(); itP != P->end(); itP++){
+            cout << "1) itP->id = " << (itP->id) << endl;
             list<Nodo>* R2 = new list<Nodo> (*R);
-            R2->push_back((*it)); // genera segmentation fault
-            cout << "ok1" << endl;
+            R2->push_back((*itP)); // genera segmentation fault
+
             list<Nodo>* P2;
-            if(P->empty() || (it->links).empty()){
+            if(P->empty() || (itP->links).empty()){
                 P2 = new list<Nodo> ();
             }
             else{
                 P2 = new list<Nodo> (*P);
-                this->interseccion(P2, &(it->links));
+                this->interseccion(P2, &(itP->links));
             }
-            cout << "ok2" << endl;
+
             list<Nodo>* X2;
-            if(X->empty() || (it->links).empty()){
+            if(X->empty() || (itP->links).empty()){
                 X2 = new list<Nodo> ();
             }
             else{
                 X2 = new list<Nodo> (*X);
-                this->interseccion(X2, &(it->links));
+                this->interseccion(X2, &(itP->links));
             }
-            cout << "ok3" << endl;
+            cout << "2) itP->id = " << (itP->id) << endl;
             cliqueMax(R2, P2, X2, nodos_ids);
-            
+            cout << "3) itP->id = " << (itP->id) << endl;            
             delete R2;
             delete P2;
             delete X2;
 
-            P->erase(it);
-            X->push_back((*it));
+            P->erase(itP);
+            cout << "4) itP->id = " << (itP->id) << endl;            
+            X->push_back((*itP));
+            cout << "5) itP->id = " << (itP->id) << endl;            
             cout << "end for" << endl;
         }
     }
