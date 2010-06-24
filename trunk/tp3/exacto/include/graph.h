@@ -12,8 +12,10 @@ class Grafo {
         Grafo(map<int, list<int> >);
         ~Grafo();
         int length();
+        void mostrar();
         void maxClique(list<int>* nodos_ids);
     private:
+        void imprimirSecu(list<Nodo>* l);
         void copiarNodos(list<Nodo>* copiaNodos);
         void interseccion(list<Nodo>* l1, list<int>* l2);
         void cliqueMax(list<Nodo>* R, list<Nodo>* P, list<Nodo>* X, list<int>* nodos_ids);

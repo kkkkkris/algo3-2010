@@ -28,33 +28,39 @@ int main(int argc, char* argv[]) {
     list<Grafo*> instancias =  parsearInstancias(contenido);
     Timer timer;
     std::stringstream aux;
+    string resultado = "";
     string resultados = "";
     int i = 1;
+    cout << "\n";
     for(list<Grafo*>::iterator it = instancias.begin(); it != instancias.end(); it++) {
-            timer.nueva();
-            timer.empezar();
-            list<int>* nodos_ids = new list<int>();
-            (*it)->maxClique(nodos_ids);
-            timer.terminar();
-            //escribo la medicion con el formato n  time(en nanosegundos)
-            /*if(testingOutput.good()){
-                testingOutput << (*it)->length() << "\t" << timer.getUltimaMedicion() << endl;
-            }*/
-            aux << nodos_ids->size();
-            resultados += aux.str() + "\n" + "N";
-            for(list<int>::iterator it2 = nodos_ids->begin(); it2 != nodos_ids->end(); it2++){
-                aux.clear();
-                aux << (*it);
-                resultados += " " + aux.str();
-            }
-            resultados += "\n";
-            i++;
-            delete (*it);
+        cout << "Grafo #" << i << endl;
+        timer.nueva();
+        timer.empezar();
+        list<int>* nodos_ids = new list<int>();
+        (*it)->maxClique(nodos_ids);
+        timer.terminar();
+        //escribo la medicion con el formato n  time(en nanosegundos)
+        /*if(testingOutput.good()){
+            testingOutput << (*it)->length() << "\t" << timer.getUltimaMedicion() << endl;
+        }*/
+        aux << nodos_ids->size();
+        resultado = aux.str() + "\n" + "N ";
+        for(list<int>::iterator itS = nodos_ids->begin(); itS != nodos_ids->end(); itS++){
+            aux.str("");
+            aux << (*itS);
+            if(itS != nodos_ids->begin())
+                resultado += " ";
+            resultado += aux.str();
+        }
+        aux.str("");
+        resultado += "\n";
+        print(resultado);
+        resultados += resultado;
+        i++;
+        delete (*it);
     }
     //string t("tiempos");
     //escribirArchivo( (t + string(entrada)).c_str(), timer.tiempos());
-    
-    print(resultados);
     
     if(escribirArchivo(salida, resultados)){
         print("error escribiendo archivo");

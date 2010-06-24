@@ -23,9 +23,10 @@ list<Grafo*> parsearInstancias(string entrada){
             
         } else {
             if(!nodos.empty()) {
-                cout << "Grafo: #" << g << endl;
+                cout << "\nGrafo #" << g << endl;
                 g++;
                 grafos.push_back(new Grafo(nodos));
+                grafos.back()->mostrar();
             }
             nodos_t = atoi(line.c_str());
             if(nodos_t != -1) {
