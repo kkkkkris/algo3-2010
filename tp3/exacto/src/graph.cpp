@@ -56,6 +56,20 @@ Grafo::~Grafo() {
     delete [] nodos;
 }
 
+void Grafo::mostrar() {
+    cout << "size: " << this->size << endl;
+    cout << "nodos:" << endl;
+    for(int i = 0; i < this->size; i++){
+        cout << "       " << i+1 << " [";
+        for(list<int>::iterator itL = (this->nodos[i]).links.begin(); itL != (this->nodos[i]).links.end(); itL++){
+            if (itL != (this->nodos[i]).links.begin())
+                cout << ", ";
+            cout << (*itL);
+        }
+        cout << "]" << endl;
+    }
+}
+
 void Grafo::maxClique(list<int>* nodos_ids) {
     list<Nodo>* R = new list<Nodo> ();
     list<Nodo>* P = new list<Nodo> ();
@@ -90,22 +104,25 @@ BronKerbosch2(R,P,X):
 */
 
 void Grafo::cliqueMax(list<Nodo>* R, list<Nodo>* P, list<Nodo>* X, list<int>* nodos_ids) {
-    cout << "principio" << endl;
     if(P->empty() && X->empty()){
-        cout << "if" << endl;
         if(R->size() > nodos_ids->size()){
+            nodos_ids->clear();
             for(list<Nodo>::iterator itR = R->begin(); itR != R->end(); itR++){
-                cout << "itR->id = " << (itR->id) << endl;
                 nodos_ids->push_back(itR->id);
             }
+            //cout << "nodos_ids = "; imprimirSecu(R); cout << "\n";
         }
+        /*
+        else
+            cout << "No es max: R = "; imprimirSecu(R); cout << "\n";*/
     }
     else{
-        cout << "else" << endl;
-        for(list<Nodo>::iterator itP = P->begin(); itP != P->end(); itP++){
-            cout << "1) itP->id = " << (itP->id) << endl;
+        for(list<Nodo>::iterator itP = P->begin(); itP != P->end();){
+            /*cout << "R = "; imprimirSecu(R);
+            cout << "   P = "; imprimirSecu(P);
+            cout << "   X = "; imprimirSecu(X); cout << "\n";*/
             list<Nodo>* R2 = new list<Nodo> (*R);
-            R2->push_back((*itP)); // genera segmentation fault
+            R2->push_back((*itP));
 
             list<Nodo>* P2;
             if(P->empty() || (itP->links).empty()){
@@ -124,33 +141,44 @@ void Grafo::cliqueMax(list<Nodo>* R, list<Nodo>* P, list<Nodo>* X, list<int>* no
                 X2 = new list<Nodo> (*X);
                 this->interseccion(X2, &(itP->links));
             }
-            cout << "2) itP->id = " << (itP->id) << endl;
+            
+            /*cout << "   R2 = "; imprimirSecu(R2);
+            cout << "   P2 = "; imprimirSecu(P2);
+            cout << "   X2 = "; imprimirSecu(X2); cout << "\n";*/
             cliqueMax(R2, P2, X2, nodos_ids);
-            cout << "3) itP->id = " << (itP->id) << endl;            
+
             delete R2;
             delete P2;
             delete X2;
 
-            P->erase(itP);
-            cout << "4) itP->id = " << (itP->id) << endl;            
             X->push_back((*itP));
-            cout << "5) itP->id = " << (itP->id) << endl;            
-            cout << "end for" << endl;
+            itP = P->erase(itP);
         }
     }
-    cout << "final" << endl;
+}
+
+void Grafo::imprimirSecu(list<Nodo>* l) {
+    cout << "[";
+    for(list<Nodo>::iterator itI = l->begin(); itI != l->end(); itI++){
+        if (itI != l->begin())
+            cout << ", ";
+        cout << (itI->id);
+    }
+    cout << "]";
 }
 
 void Grafo::interseccion(list<Nodo>* l1, list<int>* l2) {
     bool pertenece;
-    
-    for(list<Nodo>::iterator it1 = l1->begin(); it1 != l1->end(); it1++){
+    for(list<Nodo>::iterator it1 = l1->begin(); it1 != l1->end();){
         pertenece = false;
         for(list<int>::iterator it2 = l2->begin(); !pertenece && (it2 != l2->end()); it2++){
             pertenece = (it1->id) == (*it2);
         }
         if(!pertenece){
-            l1->erase(it1);
+            it1 = l1->erase(it1);
+        }
+        else{
+            it1++;
         }
     }
 }
