@@ -12,17 +12,18 @@
 
 using namespace std;
 
-string usage = "uso:  ./maxclique entrada salida";
+string usage = "uso:  ./maxclique entrada salida [optimizado]";
 
 int main(int argc, char* argv[]) {
     
-    if(argc < 3){
+    if(argc < 3 || argc > 4){
         print("bad arguments");
         print(usage);
         return 1;
     }
     const char* entrada = argv[1];
     const char* salida = argv[2];
+    bool mejorado = argc == 4; 
     //ofstream testingOutput((string(entrada)+string(".times")).c_str());
     string contenido = leerArchivo(entrada);
     list<Grafo*> instancias =  parsearInstancias(contenido);
@@ -30,14 +31,15 @@ int main(int argc, char* argv[]) {
     std::stringstream aux;
     string resultado = "";
     string resultados = "";
+    list<int>* nodos_ids = NULL;
     int i = 1;
     cout << "\n";
     for(list<Grafo*>::iterator it = instancias.begin(); it != instancias.end(); it++) {
         cout << "Grafo #" << i << endl;
+        nodos_ids = new list<int>();
         timer.nueva();
         timer.empezar();
-        list<int>* nodos_ids = new list<int>();
-        (*it)->maxClique(nodos_ids);
+        (*it)->maxClique(nodos_ids, mejorado);
         timer.terminar();
         //escribo la medicion con el formato n  time(en nanosegundos)
         /*if(testingOutput.good()){

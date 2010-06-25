@@ -15,24 +15,29 @@ typedef int nodo_id;
 
 using namespace std;
 class Nodo{
+    friend bool operator>(const Nodo &a,const Nodo &b);
     public:
         Nodo(){};
-        Nodo(const nodo_id id, list<int> links):links(links), id(id), visitada(false) {};
+        Nodo(const nodo_id id, list<int> links, int orden):links(links), id(id), orden(orden) {};
         string toString() {
             stringstream ss;
-            ss << "nodo #" << id << " [";
+            ss << "nodo #" << id << " {";
             for(it_list it = links.begin(); it != links.end(); it++) {
                 if(it != links.begin())
                     ss << ", ";
                 ss << *it;
             }
-            ss << "]";
+            ss << "}";
             return ss.str();
         }
         list<int> links;
         nodo_id id;
-        bool visitada;
+        int orden;
 };
+
+bool operator<(const Nodo &a,const Nodo &b){
+    return a.links.size() < b.links.size();
+}
 
 Grafo::Grafo(){
     this->size = 0;
@@ -43,13 +48,24 @@ Grafo::Grafo(map<int, list<int> > nodos_p){
     this->size = nodos_p.size();
     this->nodos = new Nodo[nodos_p.size()];
     
+    list<Nodo>* aux = new list<Nodo>();
+    
     map<int, list<int> >::iterator it = nodos_p.begin();
     while(it != nodos_p.end()){
         assert(it->first > 0);
-        this->nodos[it->first - 1] = Nodo(it->first, it->second);
+        this->nodos[it->first - 1] = Nodo(it->first, it->second, 0);
+        aux->push_back(this->nodos[it->first - 1]);
         //print(this->nodos[it->first - 1].toString());
         it++;
-    }  
+    }
+    
+    aux->sort();
+    int i = 1;
+    for(list<Nodo>::reverse_iterator itA = aux->rbegin(); itA != aux->rend(); itA++){
+        (this->nodos[itA->id - 1]).orden = i;
+        i++;
+    }
+    delete aux;
 }
 
 Grafo::~Grafo() {
@@ -60,92 +76,89 @@ void Grafo::mostrar() {
     cout << "size: " << this->size << endl;
     cout << "nodos:" << endl;
     for(int i = 0; i < this->size; i++){
-        cout << "       " << i+1 << " [";
+        cout << "       " << i+1 << " {";
         for(list<int>::iterator itL = (this->nodos[i]).links.begin(); itL != (this->nodos[i]).links.end(); itL++){
             if (itL != (this->nodos[i]).links.begin())
                 cout << ", ";
             cout << (*itL);
         }
-        cout << "]" << endl;
+        cout << "}    orden " << (this->nodos[i]).orden << endl;
     }
 }
 
-void Grafo::maxClique(list<int>* nodos_ids) {
-    list<Nodo>* R = new list<Nodo> ();
-    list<Nodo>* P = new list<Nodo> ();
-    list<Nodo>* X = new list<Nodo> ();
-    this->copiarNodos(P);
-    this->cliqueMax(R, P, X, nodos_ids);
+void Grafo::maxClique(list<int>* nodos_ids, bool mejorado) {
+    list<int>* R = new list<int> ();
+    list<int>* P = new list<int> ();
+    list<int>* X = new list<int> ();
+    //this->copiarNodos(P);
+    for(int i = 0; i < this->size; i++){
+        P->push_back(i+1);
+    }
+    if(mejorado)
+        this->cliqueMax(R, P, X, nodos_ids);
+    else
+        this->cliqueMaxSinMejoras(R, P, X, nodos_ids);
 }
 
-void Grafo::copiarNodos(list<Nodo>* copiaNodos) {
+void Grafo::copiarNodos(list<int>* copiaNodos) {
     for(int i = 0; i < this->size; i++){
-        copiaNodos->push_back(this->nodos[i]);
+        copiaNodos->push_back((this->nodos[i]).id);
     }
 }
 
 /*
-BronKerbosch1(R,P,X):
+    BronKerbosch1(R,P,X):
        if P and X are both empty:
            report R as a maximal clique
        for each vertex v in P:
            BronKerbosch1(R ⋃ {v}, P ⋂ N(v), X ⋂ N(v))
            P := P \ {v}
            X := X ⋃ {v}
-
-BronKerbosch2(R,P,X):
-       if P and X are both empty:
-           report R as a maximal clique
-       choose a pivot vertex u in P ⋃ X
-       for each vertex v in P \ N(u):
-           BronKerbosch2(R ⋃ {v}, P ⋂ N(v), X ⋂ N(v))
-           P := P \ {v}
-           X := X ⋃ {v}
 */
 
-void Grafo::cliqueMax(list<Nodo>* R, list<Nodo>* P, list<Nodo>* X, list<int>* nodos_ids) {
+void Grafo::cliqueMaxSinMejoras(list<int>* R, list<int>* P, list<int>* X, list<int>* nodos_ids) {
     if(P->empty() && X->empty()){
         if(R->size() > nodos_ids->size()){
             nodos_ids->clear();
-            for(list<Nodo>::iterator itR = R->begin(); itR != R->end(); itR++){
-                nodos_ids->push_back(itR->id);
+            for(list<int>::iterator itR = R->begin(); itR != R->end(); itR++){
+                nodos_ids->push_back((*itR));
             }
             //cout << "nodos_ids = "; imprimirSecu(R); cout << "\n";
         }
-        /*
-        else
-            cout << "No es max: R = "; imprimirSecu(R); cout << "\n";*/
+        /*else{
+            cout << "No es max: R = "; imprimirSecu(R); cout << "\n";
+        }*/
     }
     else{
-        for(list<Nodo>::iterator itP = P->begin(); itP != P->end();){
+        for(list<int>::iterator itP = P->begin(); itP != P->end();){
             /*cout << "R = "; imprimirSecu(R);
             cout << "   P = "; imprimirSecu(P);
             cout << "   X = "; imprimirSecu(X); cout << "\n";*/
-            list<Nodo>* R2 = new list<Nodo> (*R);
+            list<int>* R2 = new list<int> (*R);
             R2->push_back((*itP));
 
-            list<Nodo>* P2;
-            if(P->empty() || (itP->links).empty()){
-                P2 = new list<Nodo> ();
+            list<int>* P2;
+            if(P->empty() || (this->nodos[(*itP)-1].links).empty()){
+                P2 = new list<int> ();
             }
             else{
-                P2 = new list<Nodo> (*P);
-                this->interseccion(P2, &(itP->links));
+                P2 = new list<int> (*P);
+                this->interseccion(P2, &(this->nodos[(*itP)-1].links));
             }
 
-            list<Nodo>* X2;
-            if(X->empty() || (itP->links).empty()){
-                X2 = new list<Nodo> ();
+            list<int>* X2;
+            if(X->empty() || (this->nodos[(*itP)-1].links).empty()){
+                X2 = new list<int> ();
             }
             else{
-                X2 = new list<Nodo> (*X);
-                this->interseccion(X2, &(itP->links));
+                X2 = new list<int> (*X);
+                this->interseccion(X2, &(this->nodos[(*itP)-1].links));
             }
             
             /*cout << "   R2 = "; imprimirSecu(R2);
             cout << "   P2 = "; imprimirSecu(P2);
             cout << "   X2 = "; imprimirSecu(X2); cout << "\n";*/
-            cliqueMax(R2, P2, X2, nodos_ids);
+            cliqueMaxSinMejoras(R2, P2, X2, nodos_ids);
 
             delete R2;
             delete P2;
@@ -157,22 +170,117 @@ void Grafo::cliqueMax(list<Nodo>* R, list<Nodo>* P, list<Nodo>* X, list<int>* no
     }
 }
 
-void Grafo::imprimirSecu(list<Nodo>* l) {
-    cout << "[";
-    for(list<Nodo>::iterator itI = l->begin(); itI != l->end(); itI++){
-        if (itI != l->begin())
-            cout << ", ";
-        cout << (itI->id);
+/*
+    BronKerbosch2(R,P,X):
+       if P and X are both empty:
+           report R as a maximal clique
+       choose a pivot vertex u in P ⋃ X
+       for each vertex v in P \ N(u):
+           BronKerbosch2(R ⋃ {v}, P ⋂ N(v), X ⋂ N(v))
+           P := P \ {v}
+           X := X ⋃ {v}
+*/
+
+void Grafo::cliqueMax(list<int>* R, list<int>* P, list<int>* X, list<int>* nodos_ids) {
+    if(P->empty() && X->empty()){
+        if(R->size() > nodos_ids->size()){
+            nodos_ids->clear();
+            for(list<int>::iterator itR = R->begin(); itR != R->end(); itR++){
+                nodos_ids->push_back((*itR));
+            }
+            //cout << "nodos_ids = "; imprimirSecu(R); cout << "\n";
+        }
+        /*else
+            cout << "No es max: R = "; imprimirSecu(R); cout << "\n";*/
     }
-    cout << "]";
+    else{
+        int pivote = this->elegirPivote(P, X);
+        //cout << "pivote = " << pivote << endl;
+        list<int>* aux = new list<int>((*P));
+        sacarVecinos(aux, pivote);
+        //cout << "P - N(pivote) = "; imprimirSecu(aux); cout << "\n";
+        for(list<int>::iterator itAux = aux->begin(); itAux != aux->end();){
+            /*cout << "R = "; imprimirSecu(R);
+            cout << "   P = "; imprimirSecu(P);
+            cout << "   X = "; imprimirSecu(X); cout << "\n";*/
+            list<int>* R2 = new list<int> (*R);
+            R2->push_back((*itAux));
+
+            list<int>* P2;
+            if(P->empty() || (this->nodos[(*itAux)-1].links).empty()){
+                P2 = new list<int> ();
+            }
+            else{
+                P2 = new list<int> (*P);
+                this->interseccion(P2, &(this->nodos[(*itAux)-1].links));
+            }
+
+            list<int>* X2;
+            if(X->empty() || (this->nodos[(*itAux)-1].links).empty()){
+                X2 = new list<int> ();
+            }
+            else{
+                X2 = new list<int> (*X);
+                this->interseccion(X2, &(this->nodos[(*itAux)-1].links));
+            }
+            
+            /*cout << "   R2 = "; imprimirSecu(R2);
+            cout << "   P2 = "; imprimirSecu(P2);
+            cout << "   X2 = "; imprimirSecu(X2); cout << "\n";*/
+            cliqueMax(R2, P2, X2, nodos_ids);
+
+            delete R2;
+            delete P2;
+            delete X2;
+
+            X->push_back((*itAux));
+            P->remove((*itAux));
+            itAux = aux->erase(itAux);
+        }
+    }
 }
 
-void Grafo::interseccion(list<Nodo>* l1, list<int>* l2) {
+void Grafo::sacarVecinos(list<int>* l, int v){
     bool pertenece;
-    for(list<Nodo>::iterator it1 = l1->begin(); it1 != l1->end();){
+    for(list<int>::iterator itV = this->nodos[v - 1].links.begin(); itV != this->nodos[v - 1].links.end(); itV++){
+        pertenece = false;
+        for(list<int>::iterator itList = l->begin(); !pertenece && (itList != l->end()); itList++){
+            pertenece = (*itV) == (*itList);
+            if(pertenece)
+                itList = l->erase(itList);
+        }
+    }
+}
+
+void Grafo::imprimirSecu(list<int>* l) {
+    cout << "{";
+    for(list<int>::iterator itI = l->begin(); itI != l->end(); itI++){
+        if (itI != l->begin())
+            cout << ", ";
+        cout << (*itI);
+    }
+    cout << "}";
+}
+
+int Grafo::elegirPivote(list<int>* l1, list<int>* l2){
+    int pivote = 0;
+    for(list<int>::iterator itPiv = l1->begin(); itPiv != l1->end(); itPiv++){
+        if(pivote == 0 || this->nodos[(*itPiv) - 1].orden < this->nodos[pivote - 1].orden)
+            pivote = *itPiv;
+    }
+    for(list<int>::iterator itPiv = l2->begin(); itPiv != l2->end(); itPiv++){
+        if(pivote == 0 || this->nodos[(*itPiv) - 1].orden < this->nodos[pivote - 1].orden)
+            pivote = *itPiv;
+    }
+    return pivote;
+}
+
+void Grafo::interseccion(list<int>* l1, list<int>* l2) {
+    bool pertenece;
+    for(list<int>::iterator it1 = l1->begin(); it1 != l1->end();){
         pertenece = false;
         for(list<int>::iterator it2 = l2->begin(); !pertenece && (it2 != l2->end()); it2++){
-            pertenece = (it1->id) == (*it2);
+            pertenece = (*it1) == (*it2);
         }
         if(!pertenece){
             it1 = l1->erase(it1);
