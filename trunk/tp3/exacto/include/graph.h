@@ -13,12 +13,15 @@ class Grafo {
         ~Grafo();
         int length();
         void mostrar();
-        void maxClique(list<int>* nodos_ids);
+        void maxClique(list<int>* nodos_ids, bool mejorado);
     private:
-        void imprimirSecu(list<Nodo>* l);
-        void copiarNodos(list<Nodo>* copiaNodos);
-        void interseccion(list<Nodo>* l1, list<int>* l2);
-        void cliqueMax(list<Nodo>* R, list<Nodo>* P, list<Nodo>* X, list<int>* nodos_ids);
+        void sacarVecinos(list<int>* l, int v);
+        void imprimirSecu(list<int>* l);
+        void copiarNodos(list<int>* copiaNodos);
+        int elegirPivote(list<int>* l1, list<int>* l2);
+        void interseccion(list<int>* l1, list<int>* l2);
+        void cliqueMaxSinMejoras(list<int>* R, list<int>* P, list<int>* X, list<int>* nodos_ids);
+        void cliqueMax(list<int>* R, list<int>* P, list<int>* X, list<int>* nodos_ids);
         Nodo& getNodo(int nodo_id);
         Nodo* nodos;
         int size;
