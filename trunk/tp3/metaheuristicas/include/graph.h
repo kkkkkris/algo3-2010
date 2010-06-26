@@ -18,9 +18,9 @@ class Grafo {
         Grafo(map<int, list<int> >);
         ~Grafo();
         int length();
-        set<int>* HC();
-        set<int>* HL();
-        set<int>* HT();
+        set<int> HC();
+        set<int> HL();
+        set<int> HT();
     private:
         //datos
         Nodo* nodos;
@@ -35,14 +35,7 @@ class Grafo {
         bool esClique(int nodo_id, set<int>& Cq);
         void merge(int nodo_id,pqDelta& S,set<int>& Cq);
         void set_to_String(set<int>& S);
-       /*  class GreatNodo {
-            public:
-                GreatNodo(Grafo* p) : parent(p) {}
-                bool operator() (const int& lhs, const int&rhs) const;
-            private:
-                Grafo* parent;
-        };*/
-        set<nodo_id>* expandClique(set<nodo_id>* ,pqDelta );
+        set<nodo_id> expandClique(set<nodo_id>& ,pqDelta );
 
 };
 
