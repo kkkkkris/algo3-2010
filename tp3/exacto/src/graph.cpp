@@ -42,22 +42,26 @@ bool operator<(const Nodo &a,const Nodo &b){
 Grafo::Grafo(){
     this->size = 0;
     this->nodos = NULL;
+    this->m = 0;
 }
 
 Grafo::Grafo(map<int, list<int> > nodos_p){
     this->size = nodos_p.size();
     this->nodos = new Nodo[nodos_p.size()];
+    this->m = 0;
     
     list<Nodo>* aux = new list<Nodo>();
     
     map<int, list<int> >::iterator it = nodos_p.begin();
     while(it != nodos_p.end()){
         assert(it->first > 0);
+        this->m += it->second.size();
         this->nodos[it->first - 1] = Nodo(it->first, it->second, 0);
         aux->push_back(this->nodos[it->first - 1]);
         //print(this->nodos[it->first - 1].toString());
         it++;
     }
+    this->m = m/2;
     
     aux->sort();
     int i = 1;
@@ -87,17 +91,32 @@ void Grafo::mostrar() {
 }
 
 void Grafo::maxClique(list<int>* nodos_ids, bool mejorado) {
-    list<int>* R = new list<int> ();
-    list<int>* P = new list<int> ();
-    list<int>* X = new list<int> ();
-    //this->copiarNodos(P);
-    for(int i = 0; i < this->size; i++){
-        P->push_back(i+1);
+    if(this->size == 0){
+        //cout << "vacio" << endl;
+        return;
     }
-    if(mejorado)
-        this->cliqueMax(R, P, X, nodos_ids);
-    else
-        this->cliqueMaxSinMejoras(R, P, X, nodos_ids);
+    else if(this->m == 0){
+        //cout << "sin aristas" << endl;
+        nodos_ids->push_back(1);
+    }
+    else if(2*(this->m) == (this->size)*(this->size-1)){
+        //cout << "completo" << endl;
+        for(int i = 0; i < this->size; i++)
+            nodos_ids->push_back(i+1);
+    }
+    else{
+        list<int>* R = new list<int> ();
+        list<int>* P = new list<int> ();
+        list<int>* X = new list<int> ();
+        //this->copiarNodos(P);
+        for(int i = 0; i < this->size; i++){
+            P->push_back(i+1);
+        }
+        if(mejorado)
+            this->cliqueMax(R, P, X, nodos_ids);
+        else
+            this->cliqueMaxSinMejoras(R, P, X, nodos_ids);
+    }
 }
 
 void Grafo::copiarNodos(list<int>* copiaNodos) {
