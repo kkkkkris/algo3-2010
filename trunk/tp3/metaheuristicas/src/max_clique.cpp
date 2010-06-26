@@ -24,8 +24,9 @@ int main(int argc, char* argv[]) {
     const char* modo = argv[1];
     const char* entrada = argv[2];
     size_t pos =string(entrada).find_last_of(".");
-    string salida = string(entrada).substr(0,pos)+string(modo)+string(".out");
-    ofstream testingOutput((string(entrada)+string(".times")).c_str());
+    string encabezado=string(entrada).substr(0,pos)+string(modo);
+    string salida = encabezado +string(".out");
+    ofstream testingOutput((encabezado+string(".times")).c_str());
     string contenido = leerArchivo(entrada);
     list<Grafo*> instancias =  parsearInstancias(contenido);
     Timer timer;
@@ -67,7 +68,7 @@ int main(int argc, char* argv[]) {
         }
     }
     string t("tiempos");
-    escribirArchivo( (t + string(entrada)).c_str(), timer.tiempos());
+    escribirArchivo( (t + encabezado).c_str(), timer.tiempos());
 
     if(escribirArchivo(salida.c_str(), resultados)){
         print("error escribiendo archivo");
