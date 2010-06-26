@@ -25,6 +25,7 @@ class Grafo {
         Nodo& getNodo(int nodo_id);
         Nodo* nodos;
         int size;
+        int m;
         bool sonAdyacentes(int i, int j);
 };
 
