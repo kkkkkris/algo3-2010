@@ -3,6 +3,8 @@
 #include <fstream>
 #include <string>
 #include <set>
+#include <stdlib.h>
+#include <stdio.h>
 
 using namespace std;
 /**
@@ -35,8 +37,14 @@ bool escribirArchivo(const char* filename, string content) {
     }
     return false;
 }
-string toString(set<int>*){
-    string res="";
-  //TODO
-    return res;
+
+/**Formatea el set "cliquemax" para escribir en Archivo**/
+string toString(set<int>& cliquemax){
+    stringstream ss;
+    ss<<cliquemax.size()<<"\nN";
+    for(set<int>::iterator it= cliquemax.begin();it != cliquemax.end();it++){
+            ss<<" "<<(*it);
+    }
+    ss<<"\n";
+       return ss.str();
 }

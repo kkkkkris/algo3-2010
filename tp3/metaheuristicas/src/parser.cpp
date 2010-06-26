@@ -20,7 +20,7 @@ list<Grafo*> parsearInstancias(string entrada){
         if(pos < nodos_t){
             nodos[pos + 1] = parsearNodo(line);
             pos++;
-            
+
         } else {
             if(!nodos.empty()) {
                 cout << "Grafo: #" << g << endl;
@@ -32,7 +32,7 @@ list<Grafo*> parsearInstancias(string entrada){
                 pos = 0;
                 nodos.clear();
             }
-        }   
+        }
     }
     return grafos;
 }

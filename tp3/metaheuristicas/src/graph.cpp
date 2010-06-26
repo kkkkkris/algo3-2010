@@ -136,48 +136,40 @@ void Grafo::set_to_String(set<int>& S){
         cout<<endl;
 }
 
-
 /**
 *HEURISTICA CONSTRUCTIVA
 */
-set<nodo_id>* Grafo::HC(){
+set<nodo_id> Grafo::HC(){
+    set<nodo_id>Cq;
+    pqDelta S;
+    nodo_id nodoMax;
     cout<<" \n GRAFO : "<<endl;
     //Inicializo las densidades del grafo
-    nodo_id nodoMax = generarDensidad();
-
+    nodoMax = generarDensidad();
     //Genero el conjunto maximo Clique resultado
-    set<nodo_id> Cq,*p_Cq;
     Cq.insert(nodoMax);
-    p_Cq=&Cq;
     //Genero la cola de prioridad S de nodos candidatos ordenados por su densidad
-    pqDelta S;
     merge(nodoMax,S,Cq);
-
-    return this->expandClique(p_Cq, S);
+    return this->expandClique(Cq,S);
 }
 
-/** dado un clique y un conjunto de candidatos, expande el grafo clique */
-set<nodo_id>* Grafo::expandClique(set<nodo_id>* Cq,pqDelta S) {
-    //ciclo ppal
+/** Dado un clique y un conjunto de candidatos, expande el grafo clique */
+set<nodo_id> Grafo::expandClique(set<nodo_id>& Cq,pqDelta S) {
     while(!S.empty()){
-        nodo_id w = S.top().id;//hay alguna razon para declarar un nuevo nodo_id en cada iteracion?
-        if(esClique(w,*Cq)){
-      //      cout<<"S.top =nodo "<<w <<endl;
-            Cq->insert(w);
-            merge(w,S,*Cq);
+        nodo_id w = S.top().id;
+        if(esClique(w,Cq)){
+      // cout<<"S.top =nodo "<<w <<endl;
+            Cq.insert(w);
+            merge(w,S,Cq);
         }
         S.pop();
     }
     cout<<"Clique max : ";
-    set_to_String(*Cq);
+    set_to_String(Cq);
     return Cq;
 }
 
-/*
-bool Grafo::GreatNodo::operator()(const nodo_id& left, const nodo_id& right) const{
-    return parent->getNodo(left).densidad > parent->getNodo(right).densidad;
-}
-*/
-set<nodo_id>* Grafo::HL() {
-    return NULL;
+set<nodo_id> Grafo::HL() {
+    set<nodo_id> s;
+    return s;
 }
