@@ -40,7 +40,11 @@ int main(int argc, char* argv[]) {
                 timer.nueva();
                 timer.empezar();
                 cliquemax = (*it)->HC();
+                /** debug **********/
+                string valido = (*it)->validar(cliquemax)? "si":"no";
+                cout << "es valido?: " << valido << endl;
                 cout<< "Clique max : " << cliquemax << endl;
+                /**********************/
                 timer.terminar();
                 //escribo la medicion con el formato n  time(en nanosegundos)
                 if(testingOutput.good()){
@@ -56,8 +60,11 @@ int main(int argc, char* argv[]) {
                 timer.nueva();
                 timer.empezar();
                 cliquemax = (*it)->HL();
-                (*it)->validar(cliquemax);
+                /** debug **********/
+                string valido = (*it)->validar(cliquemax)? "si":"no";
+                cout << "es valido?: " << valido << endl;
                 cout<< "Clique max : " << cliquemax << endl;
+                /**********************/
                 timer.terminar();
                 //escribo la medicion con el formato n  time(en nanosegundos)
                 if(testingOutput.good()){
