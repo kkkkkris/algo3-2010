@@ -202,25 +202,30 @@ candidato Grafo::findCandidato(const set<nodo_id>& cq) {
     res.puntaje = 0;
     set<nodo_id> posibles = this->vecindad(cq);
     for(it_set v = posibles.begin(); v != posibles.end(); v++) {
-        it_set c = cq.begin();
-        set<nodo_id> l = getNodo(*c).links;
-        //mientras este nodo lo contenga.
-        while(l.find(*v) != l.end()) {
-            c++;
-            set<nodo_id> l = getNodo(*c).links;
-        }
+        nodo_id op = this->findOpuesto(*v, cq);
+        
         // c es el opuesto a v
-        if(getNodo(*v).densidad - getNodo(*c).densidad > res.puntaje) {
+        if(getNodo(*v).densidad - getNodo(op).densidad > res.puntaje) {
             // poner a v es mejor que dejar a c. y mejor que cambiar
             // a los anteriores. (res.puntaje >= 0)
             res.nuevo = *v;
-            res.viejo = *c;
-            res.puntaje = getNodo(*v).densidad - getNodo(*c).densidad;
+            res.viejo = op;
+            res.puntaje = getNodo(*v).densidad - getNodo(op).densidad;
         }
     }
     return res;
 }
 
+nodo_id Grafo::findOpuesto(nodo_id v, const set<nodo_id>& cq) {
+    it_set c = cq.begin();
+    set<nodo_id> l = getNodo(*c).links;
+    //mientras este nodo lo contenga.
+    while(this->sonAdyacentes(*c, v)) {
+        c++;
+        set<nodo_id> l = getNodo(*c).links;
+    }
+    return *c;
+}
 /** obtiene todos los nodos que son vecinos de todos menos uno. */
 set<nodo_id> Grafo::vecindad(const set<nodo_id> & cq) {
     multiset<nodo_id> vecindad;
@@ -239,4 +244,15 @@ set<nodo_id> Grafo::vecindad(const set<nodo_id> & cq) {
         }
     }
     return posibles;
+}
+
+bool Grafo::validar(const set<nodo_id> &cq) {
+    set<nodo_id> temp;
+    for(it_set c = cq.begin(); c!= cq.end(); c++) {
+        if(!this->esClique(*c, temp)) {
+            return false;
+        }
+        temp.insert(*c);
+    }
+    return true;
 }

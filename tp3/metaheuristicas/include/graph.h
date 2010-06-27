@@ -22,6 +22,7 @@ class Grafo {
         set<int> HC();
         set<int> HL();
         set<int> HT();
+        bool validar(const set<int>& cq);
     private:
         //datos
         Nodo* nodos;
@@ -37,6 +38,7 @@ class Grafo {
             nodo_id generarDensidad();
             set<nodo_id> vecindad(const set<nodo_id> & cq);
             bool esClique(int nodo_id, set<int>& Cq);
+            nodo_id findOpuesto(nodo_id, const set<nodo_id>&);
             void merge(int nodo_id,pqDelta& S,set<int>& Cq);
             set<nodo_id> expandClique(set<nodo_id>& ,pqDelta );
             candidato findCandidato(const set<nodo_id> &);
