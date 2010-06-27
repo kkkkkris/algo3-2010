@@ -2,6 +2,7 @@
 #ifndef NODO_H
 #define NODO_H
 #include <list>
+#include <set>
 #include <string>
 
 
@@ -15,7 +16,7 @@ class Nodo
 		Nodo();
     Nodo(const nodo_id id, list<nodo_id> links);
     string toString();
-    list<nodo_id> links;
+    set<nodo_id> links;
     nodo_id id;
     bool encolado;
     int grado;

@@ -8,7 +8,7 @@
 #include <cstdio>
 #include "graph.h"
 #define print(a) cout << a << endl
-
+#
 using namespace std;
 
 
@@ -20,7 +20,11 @@ struct comparison{
     return a.densidad<b.densidad;
   }
 };
-
+struct candidato {
+  nodo_id nuevo;
+  nodo_id viejo;
+  float puntaje; 
+};
 
 Grafo::Grafo(map<int, list<int> > nodos_p){
     this->size = nodos_p.size();
@@ -78,7 +82,7 @@ float Grafo::setDensidad(nodo_id i){
     Nodo* nodoi = &getNodo(i);
     g=this->getGrado(i);
     res=g;
-    for(it_list it = nodoi->links.begin();it != nodoi->links.end();it++){
+    for(it_set it = nodoi->links.begin();it != nodoi->links.end();it++){
         res+=this->getGrado(*it);
     }
     res=res/(g+1);
@@ -117,7 +121,7 @@ nodo_id Grafo::generarDensidad() {
 void Grafo::merge(nodo_id i,pqDelta& S,set<int>& Cq){
     Nodo* nodoi = &getNodo(i);
     Nodo* nodoj ;
-    for(it_list it=nodoi->links.begin();it!=nodoi->links.end();it++){
+    for(it_set it=nodoi->links.begin();it!=nodoi->links.end();it++){
        nodoj=&getNodo(*it);
        if(Cq.count(*it)==0 && !(nodoj->encolado)){
            nodoj->encolado=true;
@@ -127,13 +131,13 @@ void Grafo::merge(nodo_id i,pqDelta& S,set<int>& Cq){
     }
 }
 /**
-*Imprime un set por pantalla
+* Imprime un set por pantalla
 */
-void Grafo::set_to_String(set<int>& S){
+ostream& operator<<(ostream& out, const set<int>& S) {
     for(it_set it=S.begin();it!=S.end();it++){
-        cout<<*it<<",";
+        out<<*it<<",";
     }
-        cout<<endl;
+	return out;
 }
 
 /**
@@ -143,7 +147,6 @@ set<nodo_id> Grafo::HC(){
     set<nodo_id>Cq;
     pqDelta S;
     nodo_id nodoMax;
-    cout<<" \n GRAFO : "<<endl;
     //Inicializo las densidades del grafo
     nodoMax = generarDensidad();
     //Genero el conjunto maximo Clique resultado
@@ -164,12 +167,76 @@ set<nodo_id> Grafo::expandClique(set<nodo_id>& Cq,pqDelta S) {
         }
         S.pop();
     }
-    cout<<"Clique max : ";
-    set_to_String(Cq);
     return Cq;
 }
 
+/** HEURISTICA LOCAL ****************************************/
+
 set<nodo_id> Grafo::HL() {
-    set<nodo_id> s;
-    return s;
+    set<nodo_id> cq = this->HC();
+    bool movi = true;
+    while(!movi){
+        //MUEVO (YA ESTOY EXPANDIDO)
+        candidato c = this->findCandidato(cq);
+        if(c.puntaje > 0) {
+            cq.erase(c.viejo);
+            cq.insert(c.nuevo);
+        } else {
+            movi = false;
+        }
+        
+        //SI ME MOVI ME EXPANDO.
+        if(movi) {
+            pqDelta S;
+            this->merge(*cq.begin(),S,cq);
+            this->expandClique(cq, S);
+        }
+    }
+    return cq;
+}
+
+/** dado un clique el nodo con mayor puntaje que es vecino de todos 
+ * menos uno */
+candidato Grafo::findCandidato(const set<nodo_id>& cq) {
+    candidato res;
+    res.puntaje = 0;
+    set<nodo_id> posibles = this->vecindad(cq);
+    for(it_set v = posibles.begin(); v != posibles.end(); v++) {
+        it_set c = cq.begin();
+        set<nodo_id> l = getNodo(*c).links;
+        //mientras este nodo lo contenga.
+        while(l.find(*v) != l.end()) {
+            c++;
+            set<nodo_id> l = getNodo(*c).links;
+        }
+        // c es el opuesto a v
+        if(getNodo(*v).densidad - getNodo(*c).densidad > res.puntaje) {
+            // poner a v es mejor que dejar a c. y mejor que cambiar
+            // a los anteriores. (res.puntaje >= 0)
+            res.nuevo = *v;
+            res.viejo = *c;
+            res.puntaje = getNodo(*v).densidad - getNodo(*c).densidad;
+        }
+    }
+    return res;
+}
+
+/** obtiene todos los nodos que son vecinos de todos menos uno. */
+set<nodo_id> Grafo::vecindad(const set<nodo_id> & cq) {
+    multiset<nodo_id> vecindad;
+    set<nodo_id> posibles;
+    //de todos los posibles nodos vecinos.
+    for(it_set c = cq.begin(); c != cq.end(); c++){
+        Nodo n = this->getNodo(*c);
+        for(it_set v = n.links.begin(); v != n.links.end(); v++) {
+            vecindad.insert(*v);
+        }
+    }
+    //me quedo con aquellos que son vecinos de todos menos 1.
+    for(multiset<nodo_id>::iterator v = vecindad.begin(); v != vecindad.end(); v++) {
+        if(vecindad.count(*v) == cq.size() - 1) {
+            posibles.insert(*v);
+        }
+    }
+    return posibles;
 }

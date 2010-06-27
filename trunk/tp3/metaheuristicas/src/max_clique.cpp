@@ -11,7 +11,7 @@
 #define print(a) cout << a << endl
 
 using namespace std;
-
+ostream& operator<<(ostream&, const set<int>&);
 string usage = "uso:  ./maxclique modo=[HC/HL] entrada  ";
 
 int main(int argc, char* argv[]) {
@@ -40,6 +40,7 @@ int main(int argc, char* argv[]) {
                 timer.nueva();
                 timer.empezar();
                 cliquemax = (*it)->HC();
+                cout<< "Clique max : " << cliquemax << endl;
                 timer.terminar();
                 //escribo la medicion con el formato n  time(en nanosegundos)
                 if(testingOutput.good()){
@@ -50,12 +51,13 @@ int main(int argc, char* argv[]) {
                 i++;
                 delete (*it);
         }
-    }
-    if (modo ==HL){
+    } else if (modo ==HL) {
             for(list<Grafo*>::iterator it = instancias.begin(); it != instancias.end(); it++) {
                 timer.nueva();
                 timer.empezar();
                 cliquemax = (*it)->HL();
+                (*it)->validar(cliquemax);
+                cout<< "Clique max : " << cliquemax << endl;
                 timer.terminar();
                 //escribo la medicion con el formato n  time(en nanosegundos)
                 if(testingOutput.good()){
@@ -66,6 +68,8 @@ int main(int argc, char* argv[]) {
                 i++;
                 delete (*it);
         }
+    } else {
+        cout << "WROOONG" << endl;
     }
     string t("tiempos");
     escribirArchivo( (t + encabezado).c_str(), timer.tiempos());
