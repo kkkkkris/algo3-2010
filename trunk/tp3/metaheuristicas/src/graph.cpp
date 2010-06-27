@@ -175,13 +175,15 @@ set<nodo_id> Grafo::expandClique(set<nodo_id>& Cq,pqDelta S) {
 set<nodo_id> Grafo::HL() {
     set<nodo_id> cq = this->HC();
     bool movi = true;
-    while(!movi){
+    while(movi){
         //MUEVO (YA ESTOY EXPANDIDO)
         candidato c = this->findCandidato(cq);
         if(c.puntaje > 0) {
+            cout << "nos movems" << endl;
             cq.erase(c.viejo);
             cq.insert(c.nuevo);
         } else {
+            cout << "DEAD END" << endl;
             movi = false;
         }
         
@@ -201,10 +203,12 @@ candidato Grafo::findCandidato(const set<nodo_id>& cq) {
     candidato res;
     res.puntaje = 0;
     set<nodo_id> posibles = this->vecindad(cq);
+    cout << "hay " << posibles.size() << " posibles" << endl;
     for(it_set v = posibles.begin(); v != posibles.end(); v++) {
         nodo_id op = this->findOpuesto(*v, cq);
-        
-        // c es el opuesto a v
+        // op es el opuesto a v
+        cout << "densidad de v: " << getNodo(*v).densidad << endl;
+        cout << "puntaje: " << getNodo(*v).densidad - getNodo(op).densidad << endl;
         if(getNodo(*v).densidad - getNodo(op).densidad > res.puntaje) {
             // poner a v es mejor que dejar a c. y mejor que cambiar
             // a los anteriores. (res.puntaje >= 0)
@@ -224,6 +228,14 @@ nodo_id Grafo::findOpuesto(nodo_id v, const set<nodo_id>& cq) {
         c++;
         set<nodo_id> l = getNodo(*c).links;
     }
+    /** DEBUG */
+    it_set d = c;
+    d++;
+    while(d != cq.end()) {
+        assert(this->sonAdyacentes(*d, v));
+        d++;
+    }
+    /*** fin debug *******/
     return *c;
 }
 /** obtiene todos los nodos que son vecinos de todos menos uno. */
