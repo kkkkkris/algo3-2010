@@ -23,7 +23,7 @@ list<Grafo*> parsearInstancias(string entrada){
 
         } else {
             if(!nodos.empty()) {
-                cout << "Grafo: #" << g << endl;
+                //cout << "Grafo: #" << g << endl;
                 g++;
                 grafos.push_back(new Grafo(nodos));
             }
