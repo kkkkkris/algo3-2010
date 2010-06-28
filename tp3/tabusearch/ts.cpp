@@ -3,6 +3,7 @@
 #include <list>
 #include <utility>
 #include <ctime>
+#include <cstdlib>
 
 #include "types.hpp"
 #include "grafo.hpp"
@@ -21,8 +22,11 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
-    const char* entrada = argv[1];
-    const char* salida = argv[2];
+    const char* entrada 	= argv[1];
+    const char* salida 		= argv[2];
+    int maxIter				= atoi(argv[3]);
+    //double alpha 			= atof(argv[3]);
+    //double beta 			= atof(argv[4]);
     
     //Lista de grafos
     list<Grafo> listaGrafos;
@@ -55,7 +59,7 @@ int main(int argc, char* argv[]) {
         tiempos.push_back(pair<long long, time_tt>(n*(n+m), min_time));
         */    
         
-        maxClique = ((*it).maxClique(500)).size();
+        maxClique = ((*it).maxClique(maxIter)).size();
         resultados.push_back(maxClique);
         cout << maxClique << endl;
     }
