@@ -12,11 +12,10 @@ typedef unsigned long int time_tt;
 using namespace std;
 
 void leerEntrada(const char *nombreArchivo, list<Grafo>& listaCiudades);
-void escribirSalida(const char *nombreArchivo, list<bool>& listaResultados);
+void escribirSalida(const char *nombreArchivo, list<uint>& listaResultados);
 time_tt getNanosegundos();
 
 int main(int argc, char* argv[]) {
-    /*
     if(argc < 3){
         cout << "Parametros insuficientes" << endl;
         return 1;
@@ -25,19 +24,19 @@ int main(int argc, char* argv[]) {
     const char* entrada = argv[1];
     const char* salida = argv[2];
     
-    //Lista de ciudades
-    list<Grafo> listaGrafo;
-    //Leemos las ciudades
-    leerEntrada(entrada, listaCiudades);
+    //Lista de grafos
+    list<Grafo> listaGrafos;
+    //Leemos los grafos
+    leerEntrada(entrada, listaGrafos);
     
-    list<bool> resultados;
+    list<uint> resultados;
     list<pair<long long, time_tt> > tiempos;
     
-    for(list<Grafo>::iterator it = listaCiudades.begin(); it!=listaCiudades.end(); it++) {
-        
+    for(list<Grafo>::iterator it = listaGrafos.begin(); it!=listaGrafos.end(); it++) {
         time_tt min_time;
-        bool esOrientable;
+        uint maxClique = 0;
         
+        /*
         for(int k=0; k<5; k++){
             time_tt start = getNanosegundos();
             esOrientable = it->esOrientable();
@@ -50,22 +49,20 @@ int main(int argc, char* argv[]) {
                     min_time = finish-start;
                 }
             }
-        }    
+        }
         uint n = it->getCantidadVertices();
         uint m = it->getCantidadAristas();
         tiempos.push_back(pair<long long, time_tt>(n*(n+m), min_time));
+        */    
         
-        if(it->esOrientable()) {
-            resultados.push_back(true);
-        }
-        else {
-            resultados.push_back(false);
-        }       
+        maxClique = ((*it).maxClique(500)).size();
+        resultados.push_back(maxClique);
+        cout << maxClique << endl;
     }
     
     escribirSalida(salida, resultados);
     
-    
+    /*
     ofstream o("tiempos");
     if(o.good()){
         for(list<pair<long long, time_tt> >::iterator it = tiempos.begin(); it!=tiempos.end(); it++){
@@ -74,31 +71,30 @@ int main(int argc, char* argv[]) {
         o.close();
     }
     */
-    
     return 0;
 }
 
-void leerEntrada(const char *nombreArchivo, list<Grafo>& listaCiudades) {
+void leerEntrada(const char *nombreArchivo, list<Grafo>& listaGrafos) {
     ifstream datos(nombreArchivo);
     while(datos.good()) {
         int n;
         //Leemos la cantidad de esquinas
         datos >> n;
         if(n>0) {
-            //Nueva ciudad
+            //Nuevo grafo
             Grafo g(n);
-            //Leemos las n esquinas
+            //Leemos los nodos
             for(int i=0; i<n; i++) {
-                //Leemos la cantidad de esquinas vecinas
-                uint vecinas;
-                datos >> vecinas;
-                for(uint j=0; j<vecinas; j++) {
+                //Leemos la cantidad de vecinos
+                uint vecinos;
+                datos >> vecinos;
+                for(uint j=0; j<vecinos; j++) {
                     uint v;
                     datos >> v ;
                     g.conectarVertices(i, v-1);
                 }
             }
-            listaCiudades.push_back(g);
+            listaGrafos.push_back(g);
         }
         else {
             break;
@@ -108,17 +104,11 @@ void leerEntrada(const char *nombreArchivo, list<Grafo>& listaCiudades) {
     datos.close();    
 }
 
-void escribirSalida(const char *nombreArchivo, list<bool>& resultados) {
+void escribirSalida(const char *nombreArchivo, list<uint>& resultados) {
     ofstream salida(nombreArchivo);
     if(salida.good()) {
-        for(list<bool>::iterator it = resultados.begin(); it!=resultados.end(); it++) {
-            if (*it){
-                salida << "fuertemente conexo";
-            }
-            else{
-                salida << "no";
-            }
-            salida << endl;
+        for(list<uint>::iterator it = resultados.begin(); it!=resultados.end(); it++) {
+            salida << (*it) << endl;
         }
         salida.close();
     }
