@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <algorithm>
 #include "grafo.hpp"
 
 using namespace std;
@@ -7,7 +7,8 @@ using namespace std;
 list<uint> interseccion(const list<uint>& s1, const list<uint>& s2);
 
 Grafo::Grafo(uint n): cantidadVertices(n), cantidadAristas(0), 
-                      vecinos(vector<list<uint> >(n, list<uint>() ) ) {}
+                      vecinos(vector<list<uint> >(n, list<uint>() ) ),
+                      densidad(n,0) {}
 
 
 void Grafo::conectarVertices(uint v1, uint v2) 
@@ -18,14 +19,15 @@ void Grafo::conectarVertices(uint v1, uint v2)
         cantidadAristas++;
     }
 }
-
- set<uint> createNovisitados(uint largo) {
-	set<uint> res;
+/*
+vector<bool> crearNoVisitados(uint largo) {
+	vector<bool> res(largo);
 	for (uint i=0; i<largo; i++){
-		res.insert(i);
+		res[i] = false;
 	}
 	return res;
-}
+}*/
+
 /*
 void Grafo::desconectarVertices(uint v1, uint v2) {
     if(v1 < cantidadVertices && v2 < cantidadVertices) {
@@ -35,55 +37,86 @@ void Grafo::desconectarVertices(uint v1, uint v2) {
     }
 }*/
 
-set<uint> Grafo::maxClique(uint maxIteraciones, uint max_tabu_length) {
-	uint k = 0;
-	set<uint> s; //solucion
-	set<uint> st; //solucion temporal
+set<uint> Grafo::maxClique(uint maxIteraciones) {
+	uint k = 0; //cantidad de iteraciones transcurridas desde que no se actualiza la mejor solucion
+	set<uint> sol; //solucion actual
+	set<uint> mejorSol; //mejor solucion encontrada
 	list<uint> candidatos; //conjunto de nodos candidatos a elegir
-	set<uint> noVisitados = createNovisitados(vecinos.size());
-	list<uint> listaTabuInsert;
-	list<uint> listaTabuDelete;
+	vector<bool> nodosVisitados(vecinos.size(), false); //vector que indica si un nodo ya fue usado alguna vez
+    uint cantidadNodosVisitados = 0; //cantidad de nodos que fueron usados para alguna solucion
+    vector<uint> vecesUsado(vecinos.size(), 0); //vector que indica para cada nodo cuantas veces fue usado en una solucion (antes de diversificar)
+    
+    //list<uint> listaTabuInsert;
+	//list<uint> listaTabuDelete;
 	
+    //Calculamos las densidades de los nodos
+    calcularDensidades();
+    
 	//eligo una solucion inicial
-	st = obtenerSolucionInicial(noVisitados);
-	
-	
+	mejorSol.insert(obtenerSolucionInicial(nodosVisitados));
+
 	do {
-		if(k > maxIteraciones) {
-			s = obtenerSolucionInicial(noVisitados);	
+		//Si la cantidad de iteraciones sin encontrar una mejor solucion supera el umbral, diversificamos
+        if(k > maxIteraciones) {
+			//Obtener una nueva solucion a partir de los nodos no usados
+            uint nodoInicial = obtenerSolucionInicial(nodosVisitados);
+            sol.clear();
+            sol.insert(nodoInicial);
 			k = 0;
+            cantidadNodosVisitados++;
+            vecesUsado.assign(vecinos.size(), 0);
+            vecesUsado[nodoInicial] = 1;
+            //listaTabuInsert.clear();
+            //listaTabuDelete.clear();
 		}
-		//Calcular candidatos en funcion de la solucion temporal
-		calcularCandidatos(st, candidatos, listaTabuDelete);
 		
+        //Calcular candidatos en funcion de la solucion temporal
+		//calcularCandidatos(sol, candidatos, listaTabuDelete);
+		calcularCandidatos(sol, candidatos);
+        
 		if (candidatos.size()>0) {
-			uint c = elegirCandidatoExpansion(candidatos);
-			st.insert(c);
-			listaTabuInsert.push_back(c);
-			if(listaTabuInsert.size() > max_tabu_length) {
+			uint c = elegirCandidatoExpansion(candidatos, vecesUsado);
+			sol.insert(c);
+			/*
+            listaTabuInsert.push_back(c);
+            if(listaTabuInsert.size() > maxLogitudTabu) {
 				listaTabuInsert.pop_front();
 			}
-			noVisitados.erase(c);
+            */ 
+			nodosVisitados[c]=true;
+            cantidadNodosVisitados++;
 		}
 		else
 		{
-			if (st.size()>1) {
-				uint c = elegirCandidatoContraccion(st, listaTabuDelete);
-				st.erase(st.find(c));
-				listaTabuDelete.push_back(c);
-				if(listaTabuDelete.size() > max_tabu_length) { 
+			if (sol.size()>1) {
+				uint c = elegirCandidatoContraccion(sol, vecesUsado);
+				sol.erase(sol.find(c));
+				/*
+                listaTabuDelete.push_back(c);
+				if(listaTabuDelete.size() > maxLogitudTabu) { 
 					listaTabuDelete.pop_front();
 				}
+                */ 
 			}
 		}
 		
-		if (st.size() > s.size()) {
-			s = st;
+        //Actualizamos la cantidad de veces que cada nodo fue usado
+        for (set<uint>::iterator it = sol.begin(); it!=sol.end(); it++) {
+            vecesUsado[*it]++;
+        }
+        
+        //Si la solucion encontrada es mejor (es decir, es un clique mas grande) actualizamos mejorSol
+		if (sol.size() > mejorSol.size()) {
+			mejorSol = sol;
 			k = 0;
 		}
-		
-	}while(!noVisitados.empty());
-	return s;
+        else {
+            k++;
+        }
+  
+	}while(cantidadNodosVisitados < vecinos.size());
+	
+    return mejorSol;
 }
 
 /**
@@ -92,30 +125,48 @@ set<uint> Grafo::maxClique(uint maxIteraciones, uint max_tabu_length) {
  * generar los nuevos candidatos. 
  * @param solucion : clique actual
  * @param candidatos: resultado
- * @param listaTabu: filtro
  */ 
-void Grafo::calcularCandidatos(const set<uint>& solucion, list<uint>& candidatos, const list<uint>& listaTabu) {
+void Grafo::calcularCandidatos(const set<uint>& solucion, list<uint>& candidatos) {
 	candidatos = vecinos[*(solucion.begin())];
 	for (set<uint>::iterator itS = solucion.begin(); itS != solucion.end(); itS++){
 		candidatos = interseccion(candidatos, vecinos[*itS]);
 	}
-	candidatos = interseccion(candidatos, listaTabu);
 }
 
 /**
  * Obtiene una nueva solucion inicial a partir de la lista de nodos no visitados por TS.
  * @param lista de nodos aun no visitados por TS.
  */ 
-set<uint> Grafo::obtenerSolucionInicial(set<uint>& noVisitados) {
-	//TODO: elegir el nodo o los nodos de forma inteligente
-	set<uint> s0;
-	s0.insert(*(noVisitados.begin()));
-	noVisitados.erase(noVisitados.begin());
-	return s0;
+uint Grafo::obtenerSolucionInicial(vector<bool>& nodosVisitados) {
+	//Buscamos el nodo de mayor densidad
+    uint nodoElegido;
+    bool seleccionInicial = false;
+    
+    for (uint v =0; v<vecinos.size(); v++) {
+        if (!nodosVisitados[v]) {
+            if (!seleccionInicial) {
+                nodoElegido = v;
+                seleccionInicial = true;
+            }
+            else {
+                //Si el nodo no visitado tiene mas densidad que el que ya elegi, lo reemplazo
+                if (densidad[v]>densidad[nodoElegido]) {
+                    nodoElegido = v;
+                }
+            }
+        }
+    }
+    
+    nodosVisitados[nodoElegido] = true;
+    	
+	return nodoElegido;
 }
 
 /**
  * Interseccion de listas
+ * 
+ * @param s1: conjunto de nodos 1
+ * @param s2: conjunto de nodos 2
  */ 
 list<uint> interseccion(const list<uint>& s1, const list<uint>& s2) {
 	list<uint> res;
@@ -129,20 +180,57 @@ list<uint> interseccion(const list<uint>& s1, const list<uint>& s2) {
 }
 
 /**
- * Dado una lista de nodos s elige utilizando un criterio adecuado el proximo nodo para expandir el clique actual.
- * s es un conjunto de nodos donde cada uno es vecino a todos los del clique y ya estan filtrados por la lista tabu
+ * Dado una lista de nodos s elige el proximo nodo para expandir el clique actual.
+ * 
+ * Criterio: maximizar f(v) = delta(v) - vecesUsado(v)
+ * 
+ * @param s: conjunto de nodos donde cada uno es vecino a todos los del clique.
+ * @param vecesUsado: vector que indica, para cada nodo, cuantas veces fue usado en un clique o solucion temporal
  **/
-uint Grafo::elegirCandidatoExpansion(const list<uint>& s)
-{
-	//TODO: Elegir el candidato usando algun criterio.
-	return *(s.begin());
-	
+uint Grafo::elegirCandidatoExpansion(const list<uint>& s, const vector<uint>& vecesUsado) {
+	uint nodoElegido = *(s.begin());
+	for (list<uint>::const_iterator it = s.begin(); it!=s.end() ; it++) {
+        if ((densidad[*it]-vecesUsado[*it]) > (densidad[nodoElegido]-vecesUsado[nodoElegido])) {
+            nodoElegido = *it;
+        }
+    }
+    
+    return nodoElegido;
 }
 
-/** Dado el clique s elige utilizando un criterio adecuado el proximo nodo para contraer el clique actual. **/
-uint Grafo::elegirCandidatoContraccion(const set<uint>& s, const list<uint>& listaTabuInsert)
-{
-	//TODO: Elegir el candidato usando algun criterio.
-	return *(s.begin());
-	
+/** 
+ * Dado el clique s elige el proximo nodo para contraer el clique actual.
+ * 
+ * Criterio: maximizar f(v) = densidad(v) + vecesUsado(v)
+ * 
+ * @param s: solucion actual (clique)
+ * @param vecesUsado: vector que indica para cada nodo, cuantas veces fue usado en una solucion intermedia
+ **/
+uint Grafo::elegirCandidatoContraccion(const set<uint>& s, const vector<uint>& vecesUsado) {
+	uint nodoElegido = *(s.begin());
+    
+    for (set<uint>::const_iterator it = s.begin(); it!=s.end(); it++) {        
+        if ((densidad[*it]+vecesUsado[*it]) > (densidad[nodoElegido] + vecesUsado[nodoElegido])) {
+            nodoElegido = *it;
+        }
+    }
+
+	return nodoElegido;
+}
+
+/**
+ * Calcula la densidad para todo nodo
+ */ 
+void Grafo::calcularDensidades() {
+    for (uint v = 0; v<vecinos.size(); v++) {
+        float d = 0.0;
+        if (vecinos[v].size() > 0) {
+            for(list<uint>::iterator it = vecinos[v].begin(); it!=vecinos[v].end(); it++) {
+                d += vecinos[*it].size();
+            }
+            
+            d /= vecinos[v].size();
+        }
+        densidad[v] = d;
+    }
 }
