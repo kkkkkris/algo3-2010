@@ -1,0 +1,109 @@
+QtiPlot 0.9.7 project file
+<scripting-lang>	muParser
+<windows>	2
+<table>
+Table1	30	3	6/28/10 9:13 PM
+geometry	0	0	492	545	active
+header	1[X]	2[Y]	3[Y]
+ColWidth	100	100	100	
+<com>
+</com>
+ColType	0;0/13	0;0/13	0;0/13
+ReadOnlyColumn	0	0	0
+HiddenColumn	0	0	0
+Comments				
+WindowLabel		2
+<data>
+0	1.72900000000000e+03	1.52120540000000e+07	
+1	8.51500000000000e+03	1.65209140000000e+07	
+2	2.12650000000000e+04	4.12646040000000e+07	
+3	4.04600000000000e+04	7.16969930000000e+07	
+4	6.64390000000000e+04	1.16452366000000e+08	
+5	9.94590000000000e+04	1.74917997000000e+08	
+6	1.39734000000000e+05	2.27218248000000e+08	
+7	1.87441000000000e+05	3.11046937000000e+08	
+8	2.42736000000000e+05	4.15927634000000e+08	
+9	3.05754000000000e+05	4.57310480000000e+08	
+10	3.76618000000000e+05	5.94906172000000e+08	
+11	4.55437000000000e+05	7.34001080000000e+08	
+12	5.42312000000000e+05	8.52184512000000e+08	
+13	6.37336000000000e+05	9.92119311000000e+08	
+14	7.40594000000000e+05	1.12929352800000e+09	
+15	8.52165000000000e+05	1.27054181300000e+09	
+16	9.72126000000000e+05	1.41114005100000e+09	
+17	1.10054400000000e+06	1.62999137900000e+09	
+18	1.23748700000000e+06	1.79266160300000e+09	
+</data>
+</table>
+<multiLayer>
+Graph1	1	1	6/28/10 9:18 PM
+geometry	492	0	510	430	
+WindowLabel		2
+Margins	5	5	5	5
+Spacing	5	5
+LayerCanvasSize	417	324
+Alignement	0	0
+<graph>
+ggeometry	5	5	491	371
+PlotTitle	DataSet PeorCaso	#000000	4228
+<Antialiasing>1</Antialiasing>
+Background	#ffffff	255
+Margin	0
+Border	0	#000000
+grid	0	0	0	0	#0000ff	0	0.5	#a0a0a4	2	0.4	#0000ff	0	0.5	#a0a0a4	2	0.4	0	0	2	0	0
+EnabledAxes	1	1	1	1	
+AxesTitles	n*n*log(n)	tiempos[nanosegs]			
+AxesTitleColors	#000000	#000000	#000000	#000000	
+AxesTitleAlignment	5124	5124	5124	5124
+AxesTitleDistance	2	2	2	2
+TitleFont	Sans	12	75	0	0	0
+ScaleFont0	Sans	10	75	0	0	0
+ScaleFont1	Sans	10	75	0	0	0
+ScaleFont2	Sans	10	75	0	0	0
+ScaleFont3	Sans	10	75	0	0	0
+AxisFont0	Sans	10	50	0	0	0
+AxisFont1	Sans	10	50	0	0	0
+AxisFont2	Sans	10	50	0	0	0
+AxisFont3	Sans	10	50	0	0	0
+EnabledTickLabels	1	1	1	1	
+AxesColors	#000000	#000000	#000000	#000000
+AxesNumberColors	#3a3935	#3a3935	#3a3935	#3a3935
+AxesBaseline	0	0	0	0	
+CanvasBackground	#ffffff	255
+curve	Table1_1	Table1_2	1	0	#000000	0	1	7	3	#000000	#000000	0	#000000	14	1	2	0	0	18	1
+scale	0	-500000000	2000000000	0	8	5	0	0
+scale	1	-500000000	2000000000	0	8	5	0	0
+scale	2	-200000	1400000	0	8	5	0	0
+scale	3	-200000	1400000	0	8	5	0	0
+LabelsFormat	0	4	0	4	0	4	0	4	
+AxisType	0	0	0	0	
+MajorTicks	1	1	1	1	
+MinorTicks	1	1	1	1	
+TicksLength	5	9
+DrawAxesBackbone	1
+AxesLineWidth	1
+LabelsRotation	0	0
+<Legend>
+<Frame>1</Frame>
+<Color>#000000</Color>
+<FrameWidth>1</FrameWidth>
+<LineStyle>0</LineStyle>
+<x>-151807.22891566</x>
+<y>1909420289.8551</y>
+<right>325301.204819277</right>
+<bottom>1646739130.43478</bottom>
+<attachTo>0</attachTo>
+<Text>
+\l(1)GrafosCompletos
+</Text>
+<Font>Sans	10	50	0	0	0</Font>
+<TextColor>#000000</TextColor>
+<Background>#ffffff</Background>
+<Alpha>0</Alpha>
+<Angle>0</Angle>
+<AutoUpdate>1</AutoUpdate>
+<TeXOutput>0</TeXOutput>
+</Legend>
+</graph>
+</multiLayer>
+<open>1</open>
