@@ -203,12 +203,9 @@ candidato Grafo::findCandidato(const set<nodo_id>& cq) {
     candidato res;
     res.puntaje = 0;
     set<nodo_id> posibles = this->vecindad(cq);
-    cout << "hay " << posibles.size() << " posibles" << endl;
     for(it_set v = posibles.begin(); v != posibles.end(); v++) {
         nodo_id op = this->findOpuesto(*v, cq);
         // op es el opuesto a v
-        cout << "densidad de v: " << getNodo(*v).densidad << endl;
-        cout << "puntaje: " << getNodo(*v).densidad - getNodo(op).densidad << endl;
         if(getNodo(*v).densidad - getNodo(op).densidad > res.puntaje) {
             // poner a v es mejor que dejar a c. y mejor que cambiar
             // a los anteriores. (res.puntaje >= 0)
