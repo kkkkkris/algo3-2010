@@ -37,7 +37,7 @@ void Grafo::desconectarVertices(uint v1, uint v2) {
     }
 }*/
 
-set<uint> Grafo::maxClique(uint maxIteraciones) {
+set<uint> Grafo::maxClique(uint maxIteraciones, float valoracionDelta, float valoracionRepetidos) {
 	uint k = 0; //cantidad de iteraciones transcurridas desde que no se actualiza la mejor solucion
 	set<uint> sol; //solucion actual
 	set<uint> mejorSol; //mejor solucion encontrada
@@ -75,7 +75,7 @@ set<uint> Grafo::maxClique(uint maxIteraciones) {
 		calcularCandidatos(sol, candidatos);
         
 		if (candidatos.size()>0) {
-			uint c = elegirCandidatoExpansion(candidatos, vecesUsado);
+			uint c = elegirCandidatoExpansion(candidatos, vecesUsado, valoracionDelta, valoracionRepetidos);
 			sol.insert(c);
 			/*
             listaTabuInsert.push_back(c);
@@ -89,7 +89,7 @@ set<uint> Grafo::maxClique(uint maxIteraciones) {
 		else
 		{
 			if (sol.size()>1) {
-				uint c = elegirCandidatoContraccion(sol, vecesUsado);
+				uint c = elegirCandidatoContraccion(sol, vecesUsado, valoracionDelta, valoracionRepetidos);
 				sol.erase(sol.find(c));
 				/*
                 listaTabuDelete.push_back(c);
@@ -186,12 +186,17 @@ list<uint> interseccion(const list<uint>& s1, const list<uint>& s2) {
  * 
  * @param s: conjunto de nodos donde cada uno es vecino a todos los del clique.
  * @param vecesUsado: vector que indica, para cada nodo, cuantas veces fue usado en un clique o solucion temporal
+ * @param valoracionDelta: valoracion que se le da a la componente delta o densidad en la funcion a maximizar
+ * @param valoracionRepetidos: valoracion que se le da a la componente repetidos en la funcion a maximizar
  **/
-uint Grafo::elegirCandidatoExpansion(const list<uint>& s, const vector<uint>& vecesUsado) {
+uint Grafo::elegirCandidatoExpansion(const list<uint>& s, const vector<uint>& vecesUsado, float valoracionDelta, float valoracionRepetidos) {
 	uint nodoElegido = *(s.begin());
+    float fElegido   = valoracionDelta*densidad[nodoElegido] - valoracionRepetidos*vecesUsado[nodoElegido];
 	for (list<uint>::const_iterator it = s.begin(); it!=s.end() ; it++) {
-        if ((densidad[*it]-vecesUsado[*it]) > (densidad[nodoElegido]-vecesUsado[nodoElegido])) {
+        float fv = valoracionDelta*densidad[*it] - valoracionRepetidos*vecesUsado[*it];
+        if ( fv > fElegido) {
             nodoElegido = *it;
+            fElegido = valoracionDelta*densidad[nodoElegido] - valoracionRepetidos*vecesUsado[nodoElegido];
         }
     }
     
@@ -205,13 +210,17 @@ uint Grafo::elegirCandidatoExpansion(const list<uint>& s, const vector<uint>& ve
  * 
  * @param s: solucion actual (clique)
  * @param vecesUsado: vector que indica para cada nodo, cuantas veces fue usado en una solucion intermedia
+ * @param valoracionDelta: valoracion que se le da a la componente delta o densidad en la funcion a maximizar
+ * @param valoracionRepetidos: valoracion que se le da a la componente repetidos en la funcion a maximizar
  **/
-uint Grafo::elegirCandidatoContraccion(const set<uint>& s, const vector<uint>& vecesUsado) {
+uint Grafo::elegirCandidatoContraccion(const set<uint>& s, const vector<uint>& vecesUsado, float valoracionDelta, float valoracionRepetidos) {
 	uint nodoElegido = *(s.begin());
-    
+    float fElegido   = valoracionDelta*densidad[nodoElegido] + valoracionRepetidos*vecesUsado[nodoElegido];
     for (set<uint>::const_iterator it = s.begin(); it!=s.end(); it++) {        
-        if ((densidad[*it]+vecesUsado[*it]) > (densidad[nodoElegido] + vecesUsado[nodoElegido])) {
+        float fv = valoracionDelta*densidad[*it] + valoracionRepetidos*vecesUsado[*it];
+        if (fv > fElegido) {
             nodoElegido = *it;
+            fElegido = valoracionDelta*densidad[nodoElegido] + valoracionRepetidos*vecesUsado[nodoElegido];
         }
     }
 

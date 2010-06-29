@@ -25,8 +25,8 @@ int main(int argc, char* argv[]) {
     const char* entrada 	= argv[1];
     const char* salida 		= argv[2];
     int maxIter				= atoi(argv[3]);
-    //double alpha 			= atof(argv[3]);
-    //double beta 			= atof(argv[4]);
+    double alpha 			= atof(argv[3]);
+    double beta 			= atof(argv[4]);
     
     //Lista de grafos
     list<Grafo> listaGrafos;
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
         tiempos.push_back(pair<long long, time_tt>(n*(n+m), min_time));
         */    
         
-        maxClique = ((*it).maxClique(maxIter)).size();
+        maxClique = ((*it).maxClique(maxIter, alpha, beta)).size();
         resultados.push_back(maxClique);
         cout << maxClique << endl;
     }
