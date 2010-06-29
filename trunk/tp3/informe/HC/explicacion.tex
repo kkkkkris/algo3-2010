@@ -1,0 +1,43 @@
+Nuestra heurística constructiva se basa en una idea de densidades dentro del grafo ,y consiste en orientar la búsqueda del clique m'aximo priorizando las zonas de mayor densidad.
+Esta medida de densidad es asignada a cada nodo antes de comenzar el algoritmo y se define de la siguiente manera :
+la densidad del nodo i esta dada por el promedio de los grados de todos sus vecinos y el mismo , es decir   $\displaystyle \delta(i) = \frac{\sum_{j=1,j-vecino-i}^{n} grado(j) + grado(i)}{grado(i)+1} $
+
+Una vez calculadas las densidades de todos los nodos, tomamos el nodo de mayor densidad y empezamos la b'usqueda del cliqu'e m'aximo que contiene a ese nodo,insert'andolo en el conjunto soluci'on Cq e insert'ando a todos sus vecinos en una cola de prioridad S(prioridad de m'axima densidad).
+La cola de prioridad S contendr'a durante todo el algoritmo a todos los candidatos posibles a formar parte del cliqu'e obtenido hasta el momento Cq.
+Una vez vac'ia S el algoritmo termina, en el peor caso el cliqu'e m'aximo es el grafo completo y todos los nodos son en alg'un momento insertados en S y luego quitados e insertados en Cq.
+
+\begin{verbatim}
+generarDensidad()										O(n*n)
+	
+merge(nodo i,S,Cq)										O(n*log(|Cq|))	        
+     para todo w vecino de i 
+        si(w no esta en Cq y no fue encolado en S)
+          encolar w en S
+fin
+
+expandirClique(Cq,S)								
+    mientras S no vac'ia					 			
+        w=tope de S									
+        Si esClique(w,Cq)       O(|Cq|)				
+            insertar w en Cq    O(log(|Cq|))  } * O(n) = O(n*n*log(|Cq|)) = O(n*n*log(n)))
+            merge(w,S,Cq)       O(n*log(|Cq|))		
+        desencolar w de S		              
+fin												
+									
+HC()										 	
+    generarDensidad()           O(n*n)		   	
+    insertar nodoMax en Cq      O(1)            } = O (n*n*log(n)) 	
+    merge(NodoMax,S,Cq)         O(n)			   
+    expandirClique(Cq,S)        O(n*n*log(n))	 	
+fin												
+
+\end{verbatim}
+La funci'on merge itera en peor caso sobre n-1 vecinos y para cada uno pregunta si est'a en Cq ,lo cual tiene un costo de log(|Cq|) seg'un referencia de la funci'on count de set de STL. 
+Podemos observar que la complejidad de la funci'on expandirClique determina que el peor caso para el algoritmo HC es el grafo completo, ya que la misma itera sobre el conjunto S de los candidatos sin repetir hasta que 'este quede vac'io; en cada iteraci'on, Cq aumenta en uno (w) y se mergean los vecinos de w a S.
+La complejidad nos queda expresada as'i ,donde i es el tama'no de Cq que se va incrementando en cada interaci'on y los 3 terminos de la sumatoria corresponden a las funciones esClique,insertar y merge dentro del ciclo
+
+$\displaystyle \sum_{i=1}^{n} i + log(i) + n*log(i) <= \frac{n(n-1)}{2}+\sum_{i=1}^{n} (n+1)*log(i) <=$  
+ 
+$\displaystyle  <= \frac{n(n-1)}{2}+(n+1)*log(i!) <= \frac{n(n-1)}{2}+(n+1)*n*log(n) $
+
+Luego la complejidad de HC es O(n*n) + O(1) + O(n) + O(n*n*log(n)) = O(n*n*log(n))  

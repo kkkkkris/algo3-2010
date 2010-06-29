@@ -1,7 +1,19 @@
-\begin{tabular}{|l|l|l|l|l|l|} 
+Se realizaron ejecuciones del algoritmo para distintos datasets de grafos de diversos tama'nos y tipo de construcci'on, y se tomaron los tiempos de las mismas.
+La siguiente es una tabla con los tama'nos de clique hallado con la Heur'istica Constructiva y tama'no del clique m'aximo .
+\footnote{
+En http://cs.hbg.psu.edu/benchmarks/clique.html	
+
+SAN (From Laura Sanchis laura@cs.colgate.edu) Instances based on her "Test Case Construction for Vertex Cover Problem," DIMACS Workshop on Computational Support for Discrete Mathematics, March 1992 along with more recent work that will be part of a technical report to be published. The generator generates instances with known clique size.
+
+BROCK (From Mark Brockington brock@cs.ualberta.ca) Instances from Mark Brockington and Joe Culberson's generator that attempts to $"hide"$ cliques in a graph where the expected clique size is much smaller. For more instances, see their generator in graph/contributed/brockington.
+
+PHAT (From Patrick Soriano and Michel Gendreau patrick@crt.umontreal.ca) Random problems generated with the p hat generator which is a generalization of the classical uniform random graph generator. Uses 3 parameters: n, the number of nodes, and a and b, two density parameters verifying 0 $<=$ a $<=$ b $<=$ 1. Generates problem instances having wider node degree spread and larger clique sizes. Reference: "Solving the Maximum Clique Problem Using a Tabu Search Approach", Annals of Operations Research 41, 385-403 (1993).
+}
+
+\begin{tabular}{|l|r|r|c|c|r|} 
 \hline \multicolumn{6}{|c|}{Data Sets} \\ 
 \hline
-Parametros & n & m & Cliquemax & Clique hallado & Tiempos \\ 
+Parametros & n & m & Cliquemax & Clique hallado & Tiempos[nanoseg] \\ 
 \hline \multirow{12}{*}{Brock} 
 & 200 & 14834 & 21& 16& 221802186 \\
 & 200 & 9876& 12& 8&116371318 \\
@@ -42,18 +54,11 @@ Parametros & n & m & Cliquemax & Clique hallado & Tiempos \\
 \hline 
 \end{tabular} 
 
+Se observa en la tabla una buena performance del algoritmo, para los grafos de SAN se encontraron cliques de poco mas del 50$%$del tama'no del clique m'aximo, mientras que para los de BROCK que fueron construidos intentando esconder cliques de mayor tama'no en grafos donde se esperan encontrar cliques m'as chicos, la performance es todav'ia un poco mejor. 
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
+ 
+El siguiente es el gr'afico de los tiempos de corrida en funcion de n*n*log(n), donde podemos comprobar la complejidad calculada anteriormente.
+ 
+\includegraphics[scale=0.8]{HC/PeorCaso.png}
 
 
