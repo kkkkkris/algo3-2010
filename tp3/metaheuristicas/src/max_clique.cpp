@@ -61,9 +61,9 @@ int main(int argc, char* argv[]) {
                 timer.empezar();
                 cliquemax = (*it)->HL();
                 /** debug **********/
-                string valido = (*it)->validar(cliquemax)? "si":"no";
+                /*string valido = (*it)->validar(cliquemax)? "si":"no";
                 cout << "es valido?: " << valido << endl;
-                cout<< "Clique max : " << cliquemax << endl;
+                cout<< "Clique max : " << cliquemax << endl;*/
                 /**********************/
                 timer.terminar();
                 //escribo la medicion con el formato n  time(en nanosegundos)
