@@ -12,107 +12,95 @@ typedef unsigned long int time_tt;
 
 using namespace std;
 
-void leerEntrada(const char *nombreArchivo, list<Grafo>& listaCiudades);
-void escribirSalida(const char *nombreArchivo, list<uint>& listaResultados);
+Grafo* leerGrafoDeEntrada(ifstream& archivo);
+void escribirSalida(const char *nombreArchivo, list<set<uint> >& listaResultados);
 time_tt getNanosegundos();
 
 int main(int argc, char* argv[]) {
-    if(argc < 3){
+    if(argc < 4){
         cout << "Parametros insuficientes" << endl;
         return 1;
     }
+
+    int maxIter				= atoi(argv[1]);
+    const char* modoDelta   = argv[2];
+    uint largoTabu          = atoi(argv[3]);
     
-    const char* entrada 	= argv[1];
-    const char* salida 		= argv[2];
-    int maxIter				= atoi(argv[3]);
-    double alpha 			= atof(argv[3]);
-    double beta 			= atof(argv[4]);
-    
-    //Lista de grafos
-    list<Grafo> listaGrafos;
     //Leemos los grafos
-    leerEntrada(entrada, listaGrafos);
+    ifstream datos("Tp3.in");
     
-    list<uint> resultados;
+    list<set<uint> > resultados;
     list<pair<long long, time_tt> > tiempos;
     
-    for(list<Grafo>::iterator it = listaGrafos.begin(); it!=listaGrafos.end(); it++) {
+    while(datos.good()) {
+        Grafo *g = leerGrafoDeEntrada(datos);
         time_tt min_time;
-        uint maxClique = 0;
-        
-        /*
-        for(int k=0; k<5; k++){
-            time_tt start = getNanosegundos();
-            esOrientable = it->esOrientable();
-            time_tt finish = getNanosegundos();
-            if(k==0){
-                min_time = finish-start;
-            }
-            else{
-                if(finish-start < min_time){
+        set<uint> maxClique;
+                
+        if (g) {
+            for(int k=0; k<5; k++){
+                time_tt start = getNanosegundos();
+                maxClique = g->maxClique(maxIter, modoDelta[0], largoTabu);
+                time_tt finish = getNanosegundos();
+                if(k==0){
                     min_time = finish-start;
                 }
+                else{
+                    if(finish-start < min_time){
+                        min_time = finish-start;
+                    }
+                }
             }
+            uint n = g->getCantidadVertices();
+            uint m = g->getCantidadAristas();
+            
+            //maxClique = g->maxClique(maxIter, modoDelta[0], largoTabu);
+            resultados.push_back(maxClique);
+            cout << maxClique.size() << " " << n << " " << m << " " << min_time << endl;
+            
+            delete g;
         }
-        uint n = it->getCantidadVertices();
-        uint m = it->getCantidadAristas();
-        tiempos.push_back(pair<long long, time_tt>(n*(n+m), min_time));
-        */    
-        
-        maxClique = ((*it).maxClique(maxIter, alpha, beta)).size();
-        resultados.push_back(maxClique);
-        cout << maxClique << endl;
     }
     
-    escribirSalida(salida, resultados);
+    escribirSalida("Tp3TS.out", resultados);
     
-    /*
-    ofstream o("tiempos");
-    if(o.good()){
-        for(list<pair<long long, time_tt> >::iterator it = tiempos.begin(); it!=tiempos.end(); it++){
-            o << it->first << "\t" << it->second << endl;
-        }
-        o.close();
-    }
-    */
     return 0;
 }
 
-void leerEntrada(const char *nombreArchivo, list<Grafo>& listaGrafos) {
-    ifstream datos(nombreArchivo);
-    while(datos.good()) {
-        int n;
-        //Leemos la cantidad de esquinas
-        datos >> n;
-        if(n>0) {
-            //Nuevo grafo
-            Grafo g(n);
-            //Leemos los nodos
-            for(int i=0; i<n; i++) {
-                //Leemos la cantidad de vecinos
-                uint vecinos;
-                datos >> vecinos;
-                for(uint j=0; j<vecinos; j++) {
-                    uint v;
-                    datos >> v ;
-                    g.conectarVertices(i, v-1);
-                }
+Grafo* leerGrafoDeEntrada(ifstream& datos) {
+    int n=0;
+    //Leemos la cantidad de esquinas
+    datos >> n;
+    if(n>0) {
+        Grafo *g = new Grafo(n);
+        //Leemos los nodos
+        for(int i=0; i<n; i++) {
+            //Leemos la cantidad de vecinos
+            uint vecinos;
+            datos >> vecinos;
+            for(uint j=0; j<vecinos; j++) {
+                uint v;
+                datos >> v ;
+                g->conectarVertices(i, v-1);
             }
-            listaGrafos.push_back(g);
         }
-        else {
-            break;
-        }
+        return g;
     }
-    
-    datos.close();    
+    else {
+        return NULL;
+    }
 }
 
-void escribirSalida(const char *nombreArchivo, list<uint>& resultados) {
+void escribirSalida(const char *nombreArchivo, list<set<uint> >& resultados) {
     ofstream salida(nombreArchivo);
     if(salida.good()) {
-        for(list<uint>::iterator it = resultados.begin(); it!=resultados.end(); it++) {
-            salida << (*it) << endl;
+        for(list<set<uint> >::iterator it = resultados.begin(); it!=resultados.end(); it++) {
+            salida << (*it).size() << endl;
+            salida << "N";
+            for (set<uint>::iterator its = it->begin(); its != it->end(); its++) {
+                salida << " " << *its;
+            }
+            salida << endl;
         }
         salida.close();
     }
