@@ -11,7 +11,9 @@ Por otro lado definimos $\displaystyle \delta$2 para el nodo i como la suma de l
 
 Como primera instancia pensamos $ \delta2(i)$ sin embargo consideramos que había casos en los que la suma de los grados de los nodos vecinos no nos orientaba bien hacia cliques máximos, podría caer a explorar nodos con muchos vecinos(tipo estrella) pero que no formaban cliques, por lo tanto surgió la idea del $ \delta1(i)$ con el que probamos en primer lugar.
 Este tiene la particularidad de que incluye en el promedio el grado del nodo actual, con lo cual dados dos nodos con igual promedio entre sus vecinos (por ej uno con 1 solo vecino de grado 3 y otro con 10 vecinos de grado 3)prioriza al que tiene mayor grado (el de 10). 
-Sin embargo luego de hacer corridas con ambos deltas, observamos que si bien salvábamos esos casos, había otros en los que era mejor utilizar el  $ \delta2(i)$ ,tal como se puede observar en la tabla de resultados.
+
+Sin embargo luego de hacer corridas con ambos deltas, observamos que si bien salvábamos esos casos, había otros en los que era mejor utilizar el  $ \delta2$ ,tal como se puede observar en la tabla de resultados(ver dataset p-hat). 
+Un caso patologico para el $\delta1$ puede ser uno en el que el delta de un nodo aumenta mucho debido a que tiene nodos vecinos con grados altos pero éste tiene grado chico y no forma clique, luego en ese caso conviene volcarse a elegir el nodo con $ \delta2$ mayor.
 
 Una vez calculadas las densidades de todos los nodos, tomamos el nodo de mayor densidad y empezamos la búsqueda del cliqué máximo que contiene a ese nodo,insertándolo en el conjunto solución Cq e insertando a todos sus vecinos en una cola de prioridad S(prioridad de máxima densidad).
 La cola de prioridad S contendrá durante todo el algoritmo a todos los candidatos posibles a formar parte del cliqué obtenido hasta el momento Cq.
