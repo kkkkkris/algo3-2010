@@ -1,4 +1,4 @@
-Para lograr una solucion al problema de MAX_CLIQUE para un grafo $G(V,E)$, implementamos una heurística constructiva y otra local. Tanto la heurística constructiva como la heurística local se basan en una idea de densidades dentro del grafo y consiste en orientar la búsqueda del clique máximo priorizando las zonas de mayor densidad. Para ello definimos una familia de funciones que llamaremos $delta: V \longrightarrow \mathbb R$, la cual intenta mostrar la densidad del grafo para cualquier $Nodo n \in V$.
+Para lograr una solucion al problema de MAX\_CLIQUE para un grafo $G(V,E)$, implementamos una heurística constructiva y otra local. Tanto la heurística constructiva como la heurística local se basan en una idea de densidades dentro del grafo y consiste en orientar la búsqueda del clique máximo priorizando las zonas de mayor densidad. Para ello definimos una familia de funciones que llamaremos $delta: V \longrightarrow \mathbb R$, la cual intenta mostrar la densidad del grafo para cualquier $Nodo n \in V$.
 Para la heurística constructiva definimos como función objetivo en primeria instancia maximizar el tamaño del clique, y en segundo maximizar el valor de delta para el nodo que se agrega. Mientras que para la heurística local, se maximizó primero el tamaño del clique, y luego la sumatoria de los deltas de los nodos pertenecientes al clique, lo que permitio intercambiar nodos del clique por otros con mayor $delta$ sin necesidad de achicar el clique.
 Experimentamos con 2 medidas diferentes de densidad, definidas como $\delta$1 y $\delta$2, que son asignadas a cada nodo antes de comenzar el algoritmo.
 Definimos $\displaystyle \delta$1 para el nodo i  como el promedio de los grados de todos sus vecinos y de el mismo ,
@@ -12,9 +12,15 @@ Por otro lado definimos $\displaystyle \delta$2 para el nodo i como la suma de l
 Como primera instancia pensamos $ \delta2(i)$ sin embargo consideramos que había casos en los que la suma de los grados de los nodos vecinos no nos orientaba bien hacia cliques máximos, podría caer a explorar nodos con muchos vecinos(tipo estrella) pero que no formaban cliques, por lo tanto surgió la idea del $ \delta1(i)$ con el que probamos en primer lugar.
 Este tiene la particularidad de que incluye en el promedio el grado del nodo actual, con lo cual dados dos nodos con igual promedio entre sus vecinos (por ej uno con 1 solo vecino de grado 3 y otro con 10 vecinos de grado 3)prioriza al que tiene mayor grado (el de 10). 
 
+%RESULTADOS %%%
 Sin embargo luego de hacer corridas con ambos deltas, observamos que si bien salvábamos esos casos, había otros en los que era mejor utilizar el  $ \delta2$ ,tal como se puede observar en la tabla de resultados(ver dataset p-hat). 
 Un caso patologico para el $\delta1$ puede ser uno en el que el delta de un nodo aumenta mucho debido a que tiene nodos vecinos con grados altos pero éste tiene grado chico y no forma clique, luego en ese caso conviene volcarse a elegir el nodo con $ \delta2$ mayor.
+%%%%%%%%%%%%%%
+\subsubsection{Complejidad}
+Analizaremos las complejidades temporales usando el modelo uniforme de ambas heurísticas.
 
+\textbf{Heurística Constructiva}\\
+\\
 Una vez calculadas las densidades de todos los nodos, tomamos el nodo de mayor densidad y empezamos la búsqueda del cliqué máximo que contiene a ese nodo,insertándolo en el conjunto solución Cq e insertando a todos sus vecinos en una cola de prioridad S(prioridad de máxima densidad).
 La cola de prioridad S contendrá durante todo el algoritmo a todos los candidatos posibles a formar parte del cliqué obtenido hasta el momento Cq.
 Una vez vacía S el algoritmo termina, en el peor caso el cliqué máximo es el grafo completo y todos los nodos son en algún momento insertados en S y luego quitados e insertados en Cq.
@@ -54,4 +60,8 @@ $\displaystyle \sum_{i=1}^{n} i + log(i) + n*log(i) <= \frac{n(n-1)}{2}+\sum_{i=
 $\displaystyle  <= \frac{n(n-1)}{2}+(n+1)*log(i!) <= \frac{n(n-1)}{2}+(n+1)*n*log(n) $
 
 Luego la complejidad de HC es O(n*n) + O(1) + O(n) + O(n*n*log(n)) = O(n*n*log(n))  
+
+\textbf{Heurística Local}
+
+La heurística Local se define como un algoritmo que se mueve de clique maximal en clique maximal. Recibe al iniciar una clique maximal, luego establece un conjunto de posibles candidatos para reemplazar a algun vértice del clique, sin achicarlo. Estos nuevos nodos tienen la propiedad de estar conectados con todos menos algun vértice del grafo. En caso de que exista algun candidato que aumente la suma total de $delta$ en el grafo, se lo intercambia por su "opuesto".
 
