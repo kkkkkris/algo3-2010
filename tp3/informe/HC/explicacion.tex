@@ -1,4 +1,5 @@
-Nuestra heurística constructiva se basa en una idea de densidades dentro del grafo y consiste en orientar la búsqueda del clique máximo priorizando las zonas de mayor densidad.
+Para tratar de solucionar el problema de MAX_CLIQUE para un grafo $G(V,E)$ Tanto la heurística constructiva como la heurística local se basan en una idea de densidades dentro del grafo y consiste en orientar la búsqueda del clique máximo priorizando las zonas de mayor densidad. Para ello definimos una familia de funciones que llamaremos $delta: V \longrightarrow \mathbb R$, la cual intenta mostrar la densidad del grafo para cualquier $Nodo n \in V$.
+Para la heurística constructiva definimos como función objetivo en primeria instancia maximizar el tamaño del clique, y en segundo maximizar el valor 
 Experimentamos con 2 medidas diferentes de densidad, definidas como $\delta$1 y $\delta$2, 
 que son asignadas a cada nodo antes de comenzar el algoritmo.
 Definimos $\displaystyle \delta$1 para el nodo i  como el promedio de los grados de todos sus vecinos y de el mismo ,
@@ -9,7 +10,7 @@ Por otro lado definimos $\displaystyle \delta$2 para el nodo i como la suma de l
 	
    $\displaystyle \delta2(i) = {\sum_{j=1,j-vecino-i}^{n} grado(j) + grado(i)}$
 
-En un principio pensamos el $ \delta2(i)$ sin embargo consideramos que había casos en los que la suma de los grados de los nodos vecinos no nos orientaba bien hacia cliques máximos, podría caer a explorar nodos con muchos vecinos(tipo estrella) pero que no formaban cliques, por lo tanto surgió la idea del $ \delta1(i)$ con el que probamos en primer lugar.
+Como primera instancia pensamos $ \delta2(i)$ sin embargo consideramos que había casos en los que la suma de los grados de los nodos vecinos no nos orientaba bien hacia cliques máximos, podría caer a explorar nodos con muchos vecinos(tipo estrella) pero que no formaban cliques, por lo tanto surgió la idea del $ \delta1(i)$ con el que probamos en primer lugar.
 Este tiene la particularidad de que incluye en el promedio el grado del nodo actual, con lo cual dados dos nodos con igual promedio entre sus vecinos (por ej uno con 1 solo vecino de grado 3 y otro con 10 vecinos de grado 3)prioriza al que tiene mayor grado (el de 10). 
 Sin embargo luego de hacer corridas con ambos deltas, observamos que si bien salvábamos esos casos, había otros en los que era mejor utilizar el  $ \delta2(i)$ ,tal como se puede observar en la tabla de resultados.
 
