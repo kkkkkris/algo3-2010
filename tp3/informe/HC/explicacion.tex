@@ -63,5 +63,60 @@ Luego la complejidad de HC es O(n*n) + O(1) + O(n) + O(n*n*log(n)) = O(n*n*log(n
 
 \textbf{Heurística Local}
 
-La heurística Local se define como un algoritmo que se mueve de clique maximal en clique maximal. Recibe al iniciar una clique maximal, luego establece un conjunto de posibles candidatos para reemplazar a algun vértice del clique, sin achicarlo. Estos nuevos nodos tienen la propiedad de estar conectados con todos menos algun vértice del grafo. En caso de que exista algun candidato que aumente la suma total de $delta$ en el grafo, se lo intercambia por su "opuesto".
+La heurística Local se define como un algoritmo que se mueve de clique maximal en clique maximal. Recibe al iniciar una clique maximal, luego establece un como vecindad a un conjunto de nodos para reemplazar a algun vértice del clique, sin cambiar su tamaño. Estos nuevos nodos tienen la propiedad de estar conectados con todos menos algun vértice del clique. En caso de que exista algun nodo en esta vecindad que aumente la suma total de $delta$ en el clique, se lo intercambia por su "opuesto". Donde el opuesto se refiere al nodo del clique no conectado con este candidato. A este último paso lo llamamos "desplazamiento". Luego de cada desplazamiento exitoso, esto significa haber reemplazado algun nodo, se intenta expandir. Si no se pudo desplazar no tiene sentido expandir, ya que el grafo es maximal, mientras que si no pudimos ni desplazar ni expandir el algoritmo terminó.
+
+
+\begin{verbatim}
+
+
+set vecindad(clique) {
+    multiset vecindad
+    set resultado
+    //de todos los posibles nodos vecinos.
+    para cada c en clique				// O(n)
+		para cada v en vecinos(c)		// O(n)
+			vecindad.agregar(v)			// O(log(n))
+		fin para
+	fin para
+	para cada n de vecindad				// O(n)
+		si multiset.cantidad(n) == clique.tamaño
+			resultado.insert(n)			// O(log(n))
+		fin si
+	fin para
+	return resultado
+}
+
+
+findCandidato(clique) {
+	candidato res;
+    res.delta = 0;
+    posibles = vecindad(cq); 			//O(n*n)
+    para cada v en posibles :			//O(n)
+        opuesto = findOpuesto(v, clique);	//O(n)
+        // op es el opuesto a v
+        si delta(v) - delta(opuesto) > res.delta
+			// poner a v es mejor que dejar a opuesto. y mejor que cualquier anterior (res.delta >= 0)
+            res.nuevo = v;
+            res.viejo = opuesto;
+			res.delta = delta(v) - delta(opuesto);
+        fin si
+    fin para
+    return res;
+
+}
+
+HL() {
+	clique = HC();
+	candidato = findCandidato(clique)
+	mientras res.delta > 0
+		clique.erase(opuesto(candidato))	//O(log(n))
+		clique.add(candidato)				//O(log(n))
+		pqDelta S; 		//cola de prioridad ordenada por delta
+		merge(clique.dameUno(),S,clique);	//O(n)
+		expandClique(clique, S)				//O(n*n*log(n))
+		candidato = findCandidato(clique)	//O(n*n)			
+	fin mientras
+    return clique;
+}
+\end{verbatim}
 
