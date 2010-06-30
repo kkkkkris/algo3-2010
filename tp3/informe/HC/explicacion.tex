@@ -63,7 +63,7 @@ Luego la complejidad de HC es O(n*n) + O(1) + O(n) + O(n*n*log(n)) = O(n*n*log(n
 
 \textbf{Heurística Local}
 
-La heurística Local se define como un algoritmo que se mueve de clique maximal en clique maximal. Recibe al iniciar una clique maximal, luego establece un como vecindad a un conjunto de nodos para reemplazar a algun vértice del clique, sin cambiar su tamaño. Estos nuevos nodos tienen la propiedad de estar conectados con todos menos algun vértice del clique. En caso de que exista algun nodo en esta vecindad que aumente la suma total de $delta$ en el clique, se lo intercambia por su "opuesto". Donde el opuesto se refiere al nodo del clique no conectado con este candidato. A este último paso lo llamamos "desplazamiento". Luego de cada desplazamiento exitoso, esto significa haber reemplazado algun nodo, se intenta expandir. Si no se pudo desplazar no tiene sentido expandir, ya que el grafo es maximal, mientras que si no pudimos ni desplazar ni expandir el algoritmo terminó.
+La heurística Local se define como un algoritmo que se mueve de clique maximal en clique maximal. Recibe al iniciar una clique maximal, luego establece un como vecindad a un conjunto de nodos para reemplazar a algun vértice del clique, sin cambiar su tamaño. Estos nuevos nodos tienen la propiedad de estar conectados con todos menos algun vértice del clique. En caso de que exista algun nodo en esta vecindad que aumente la suma total de $delta$ en el clique, se lo intercambia por su "opuesto". Donde el opuesto se refiere al nodo del clique no conectado con este candidato. A este último paso lo llamamos "desplazamiento". Luego de cada desplazamiento exitoso, esto significa haber reemplazado algun nodo, se intenta expandir. Si no se pudo desplazar no tiene sentido expandir, ya que el grafo es maximal, mientras que si no pudimos ni desplazar ni expandir el algoritmo terminó. A continuación el pseudocódico de las funciones principales.
 
 
 \begin{verbatim}
@@ -79,7 +79,7 @@ set vecindad(clique) {
 		fin para
 	fin para
 	para cada n de vecindad				// O(n)
-		si multiset.cantidad(n) == clique.tamaño
+		si multiset.cantidad(n) == clique.tamaño	// O(n*log(n))
 			resultado.insert(n)			// O(log(n))
 		fin si
 	fin para
@@ -90,7 +90,7 @@ set vecindad(clique) {
 findCandidato(clique) {
 	candidato res;
     res.delta = 0;
-    posibles = vecindad(cq); 			//O(n*n)
+    posibles = vecindad(cq); 			//O(n*n*log(n)*log(n))
     para cada v en posibles :			//O(n)
         opuesto = findOpuesto(v, clique);	//O(n)
         // op es el opuesto a v
@@ -106,17 +106,27 @@ findCandidato(clique) {
 }
 
 HL() {
-	clique = HC();
-	candidato = findCandidato(clique)
-	mientras res.delta > 0
-		clique.erase(opuesto(candidato))	//O(log(n))
-		clique.add(candidato)				//O(log(n))
+	clique = HC();	// O(n*n*log(n))
+	candidato = findCandidato(clique) // O(n*n*log(n)*log(n))
+	mientras candidato.delta > 0		//O(n)
+		clique.erase(candidato.viejo)	//O(log(n))
+		clique.add(candidato.nuevo)				//O(log(n))
 		pqDelta S; 		//cola de prioridad ordenada por delta
-		merge(clique.dameUno(),S,clique);	//O(n)
+		merge(clique.dameUno(),S,clique);	//O(n*n*log(n))
 		expandClique(clique, S)				//O(n*n*log(n))
-		candidato = findCandidato(clique)	//O(n*n)			
+		candidato = findCandidato(clique)	//O(n*n*log(n)*log(n))			
 	fin mientras
     return clique;
 }
 \end{verbatim}
 
+Recordamos que son cotas bastantes groseras, son a modo ilustrativo para ver que la heurística tiene complejidad polinomial. Para cada iteración que itera sobre nodos se considera que toma instrucciones proporcionales a la cantidad de nodos, cuando la mayoría de las veces es en proporción al tamaño de la clique. Las complejidades de los TADs como conjuntos o multiconjuntos son las complejidades de la implementación de tales tipos en la libreria estandard de C++ \footnote{http://www.cplusplus.com/}.
+Utilizando algebra de Ordenes podemos llegar facilmente a que la complejidad del algoritmo (HL) para el peor caso es $O(n^4 \times log(n)) $.
+
+\subsubsection{Variantes}
+
+\textbf{Heurística Local}
+
+Como variantes al algoritmo propuesto también surgió la idea de buscar en la vecindad, no solo nodos con  $k-1$ vecinos en común con el clique (clique de tamaño $k$). Sino también cliques entre los nodos vecinos a la clique que tuvieran $k-l$ vecinos en comun con el clique (otra vez $l$ tamaño de este nuevo clique. Pero algoritimicamente esto nos resultó muy dificultoso.
+\\
+Por otro lado también surgió la idea de utilizar un clique maximal inicial distinto al entregado por la Heurística Constructiva. Pero esto representaba implementar todo un nuevo algoritmo para hallar cliques con algun criterio distinto.
