@@ -12,6 +12,7 @@ class Grafo {
         Grafo(map<int, list<int> >);
         ~Grafo();
         int length();
+        int aristas();
         void mostrar();
         void maxClique(list<int>* nodos_ids, bool mejorado);
     private:

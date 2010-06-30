@@ -347,7 +347,10 @@ bool Grafo::sonAdyacentes(nodo_id i, nodo_id j) {
     return adyacentes;
 }
 
-
 int Grafo::length(){
     return size;
+}
+
+int Grafo::aristas(){
+    return m;
 }   
