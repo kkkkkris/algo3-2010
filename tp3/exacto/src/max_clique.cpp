@@ -12,19 +12,19 @@
 
 using namespace std;
 
-string usage = "uso:  ./maxclique entrada salida [optimizado]";
+string usage = "uso:  ./maxclique entrada salida [tiempos] [optimizado]";
 
 int main(int argc, char* argv[]) {
     
-    if(argc < 3 || argc > 4){
+    if(argc < 3 || argc > 5){
         print("bad arguments");
         print(usage);
         return 1;
     }
     const char* entrada = argv[1];
     const char* salida = argv[2];
-    bool mejorado = argc == 4; 
-    //ofstream testingOutput((string(entrada)+string(".times")).c_str());
+    bool mejorado = argc == 5;
+    ofstream testingOutput(argv[3]);
     string contenido = leerArchivo(entrada);
     list<Grafo*> instancias =  parsearInstancias(contenido);
     Timer timer;
@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
     string resultados = "";
     list<int>* nodos_ids = NULL;
     int i = 1;
+    int tam;
     cout << "\n";
     for(list<Grafo*>::iterator it = instancias.begin(); it != instancias.end(); it++) {
         cout << "Grafo #" << i << endl;
@@ -42,9 +43,10 @@ int main(int argc, char* argv[]) {
         (*it)->maxClique(nodos_ids, mejorado);
         timer.terminar();
         //escribo la medicion con el formato n  time(en nanosegundos)
-        /*if(testingOutput.good()){
-            testingOutput << (*it)->length() << "\t" << timer.getUltimaMedicion() << endl;
-        }*/
+        if(testingOutput.good()){
+            tam = (*it)->length() + (*it)->aristas();
+            testingOutput << tam << "\t" << timer.getUltimaMedicion() << endl;
+        }
         aux << nodos_ids->size();
         resultado = aux.str() + "\n" + "N ";
         for(list<int>::iterator itS = nodos_ids->begin(); itS != nodos_ids->end(); itS++){
@@ -61,8 +63,6 @@ int main(int argc, char* argv[]) {
         i++;
         delete (*it);
     }
-    //string t("tiempos");
-    //escribirArchivo( (t + string(entrada)).c_str(), timer.tiempos());
     
     if(escribirArchivo(salida, resultados)){
         print("error escribiendo archivo");

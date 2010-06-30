@@ -1,0 +1,5 @@
+La estructura del grafo está dada por un arreglo de nodos, donde cada posición es el $id-1$ del nodo que contiene. A su vez los nodos tienen su propio $id$ y una listas con los de sus vecinos. Cabe aclarar que $1 \leq id \leq n$ donde $n$ es la cantidad de nodos del grafo.
+
+A la hora de realizar las mejoras tuvimos que agregar más información a la estructura. Al grafo le añadimos $m$, es decir la cantidad de aristas. Además incorporamos a cada nodo su orden de presedencia para ser pivote (siempre elige al que tiene el menor). Esto permite cambiar facilmente el criterio de elección y además mejora la performance en nuestro caso, ya que le damos el orden al crear el grafo de acuerdo a su cantidad de vecinos y nunca más nos tenemos que preocupar por recorrer el grafo para obtener esta información. 
+
+Para implementar el algoritmo de Bron–Kerbosch decidimos no utilizar conjuntos, sino listas. La razón es que nos permite realizar las operaciones de conjunto a nosotros según la conveniencia del caso.

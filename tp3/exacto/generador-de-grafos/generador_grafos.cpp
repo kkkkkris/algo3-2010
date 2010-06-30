@@ -18,6 +18,7 @@ public:
     bool sonAdyacentes(int i, int j);
     void reducirGrado(int i, int g);
     int getGrado(int i);
+    int size();
     bool isDirac();
     bool isOre();
 private:
@@ -27,8 +28,8 @@ private:
 };
 
 int main(int argc, char* argv[]){
-    if(argc < 6){
-        cout << "usage: " << argv[0] << " salida min max proba=1..100 consider-optimizations=true|false" << endl;
+    if(argc < 5){
+        cout << "usage: " << argv[0] << " salida min max proba=1..100" << endl;
         return 1;
     }
     
@@ -40,69 +41,42 @@ int main(int argc, char* argv[]){
     int max = atoi(argv[3]);
     //La probabilidad de que un nodo tenga muchos vecinos es random
     int proba = atoi(argv[4]);
-    //generar grafos que no cumplan los casos de optimizacion
-    bool considerarOptimizaciones = true;
-    if(strcmp("true", argv[5])){
-        cout << "NO considerando optimizaciones" << endl;
-        considerarOptimizaciones = false;
-    }
     //archivo de salida
     ofstream salida(argv[1]);
     
     //Generamos grafos entre min y max vertices
+    int sumGrados;
     for(int n = min; n <= max ; n++){
         cout << "Generando grafo de " << n << " vertices" << flush;
-        //generamos 10 grafos con n vertices
-        for(int k = 0; k < 10; k++){
+        //generamos 5 grafos con n vertices
+        for(int k = 0; k < 5; k++){
             //coloco la cantidad de vertices del grafo
             salida << "   " << n << endl;
             //generamos el grafo
             Grafo g(n);
+            sumGrados = 0;
             for(int i=0; i<n ;i++){
                 for(int j=i+1; j<n; j++){
                     if((rand() % 100) < proba){
                         g.conectar(i,j);
+                        sumGrados++;
                     }
                 }
             }
             
-            if(considerarOptimizaciones){          
-                if(g.isDirac()){
-                    bool dirac = true;
-                    for(int i=0; i<n && dirac; i++){
-                        if( g.getGrado(i) >= (n/2 + n%2) ){
-                            g.reducirGrado(i, g.getGrado(i)-(n/2 + n%2)+1);
-                            dirac = false;
-                        }
-                    }    
-                }
-                
-                if(g.isOre()){
-                    bool ore = true;
-                    for(int i=0; i<n && ore; i++){
-                        for(int j=i+1; j<n && ore; j++){
-                            if(g.getGrado(i)+g.getGrado(j) >= n){
-                                //reduzco el grado del que tiene mas grado
-                                if(g.getGrado(i)>g.getGrado(j)){
-                                    g.reducirGrado(i, g.getGrado(i)+g.getGrado(j)-n+1);
-                                }
-                                else{
-                                    g.reducirGrado(j, g.getGrado(i)+g.getGrado(j)-n+1);
-                                }
-                                ore = false;
-                            }
-                        }
-                    }
-                }
-                /*
-                //detectamos vertices con grado < 2            
-                for(int i=0; i<n; i++){
-                    if(g.getGrado(i)<2){
-                        
-                    }
-                }    
-                */
+            // si no tiene aristas le agrego una
+            if(sumGrados == 0){
+                int posicionAgregar = rand() % n;
+                g.conectar(posicionAgregar, posicionAgregar==n-1?0:posicionAgregar+1);
             }
+            // si es completo saco al menos una arista
+            else if(sumGrados == (g.size())*(g.size()-1)){
+                int cantABorrar = rand() % n;
+                if(cantABorrar == 0){cantABorrar = n;}
+                for(int b = 0; b < cantABorrar; b++){
+                    g.reducirGrado(b, 1);
+                }
+			}
             
             //escribo los nodos
             for(int i=0; i<n; i++){
@@ -166,6 +140,10 @@ int Grafo::getGrado(int i){
 
 bool Grafo::sonAdyacentes(int i, int j){
     return adyacencia[i][j];
+}
+
+int Grafo::size(){
+    return tam;
 }
 
 void Grafo::reducirGrado(int i, int g){
