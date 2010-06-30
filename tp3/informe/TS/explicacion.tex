@@ -65,22 +65,22 @@ Mientras quede un nodo sin visitar
   k=0
   Si k==maxIter
   {
-    s = encontrar solucion nueva
+    s = encontrar solucion nueva: O(n)
     reinicializar lista tabu
     k = 0
   }
 
-  calcular N(s)
+  calcular N(s) : O(m log n)
   
   Si hay elementos en N+(s)
   {
-    s=s' con s' en N+(s) tal que f_1 es maxima para s'
+    s=s' con s' en N+(s) tal que f_1 es maxima para s' : O(n*lt)
   }
   si no
   {
     Si hay elementos en N-(s)
     {
-      s=s' con s' en N-(s) tal que f_2 es maxima para s'
+      s=s' con s' en N-(s) tal que f_2 es maxima para s' : O (n+lt)
     }
     si no
     {
@@ -88,17 +88,25 @@ Mientras quede un nodo sin visitar
     }
   }
 
-  Si s es mejor que mejorSol, actualizar mejorSol
+  Si s es mejor que mejorSol, actualizar mejorSol : O(n)
   Si no lo es, k++
 
-  Actualizar mejorSolGlobal
+  Actualizar mejorSolGlobal : O(n)
 }
 
-return mejorSol
-    
+return mejorSol   
 \end{verbatimtab}
 \end{scriptsize}
 
+Respecto a la complejidad computacional y el peor caso, no es sencillo pensar en un peor caso. Podemos pensar que los casos malos para esta, y las demás 
+heurísticas presentadas en el trabajo, son aquellos cuyas cliqués no están compuestas por nodos con valores de $\delta^{*}$. Como siempre intentamos maximizar 
+el valor de $\delta$, es esperable que el error cometido sea mayor. \\
+Para la complejidad daremos una cota que, si bien es grosera, prueba que el método es polinomial (o pseudo-polinomial ya que depende de los valores de los 
+parámetros de entrada). Podemos acotar por $n$ la cantidad de iteraciones del ciclo principal que termina cuando se han visitado todos los nodos. Dentro del ciclo 
+podemos pensar que realizamos $(n-1)$ expansiones o contracciones, hasta llegar a la solución más grande posible, y luego una cantidad $maxIter$ de iteraciones 
+en las cuales no habrá mejora y al finalizar realizamos una diversificación. El costo de expansión o contracción es el costo de calcular los candidatos más el costo de elegir el mejor para realizar la operación. Esto es, la suma de $O(m logn)+O(n*lt)$. Podemos asumir que $m>n$ (es decir, asumimos grafos conexos) y que $lt>log(n)$. Entonces nos queda que el costo de cada iteración del ciclo principal es $O((n-1)*maxIter*(m*lt))$. Esto repetido las $n$ veces que asumimos como cota 
+superior nos da una complejidad total de $O(n^2 m\,maxIter\,lt)$.\footnote{Las complejidades fueron tomadas usando las estructuras de c++ de STL, tanto listas como 
+sets. Para ver detalladamente como intervienen estas estructuras, remitirse al código fuente donde cada llamada esta acompañada de su complejidad en el peor caso.}
 
 
 

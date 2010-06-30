@@ -1,4 +1,156 @@
-Se adjunta con el trabajo un script bash que se usó para correr los tests llamado \textit{test.sh}, junto con un \textit{Tp3.in} que contiene los casos de prueba usados.\\
-El programa no solo informa en Tp3TS.out el resultado con el formato indicado, sino que por consola informa el tamaño del clique máximo, n, m y el tiempo más corto de 5 corridas iguales (en nanosegundos).
-Para la entrega esta porción de código está comentada, pero si se quieren repetir los tests, descomentar esa parte, recompilar el tp, y correr test.sh (que guarda todo lo mostrado por consola en 
-el archivo tests_resultados).
+Se adjunta con el trabajo un script bash que se usó para correr los tests llamado \textit{test.sh}, junto con los grafos usados como prueba. \\
+El programa no solo informa en \textit{salida} el resultado con el formato indicado, sino que por consola informa el tamaño del clique máximo encontrado, n, m, maxIter, modoDelta, tabuLargo y el tiempo más corto de 5 corridas iguales (en nanosegundos).\\
+Para la entrega, la sección de código que realiza las 5 iteraciones esta está comentada, pero si se quieren repetir los tests, descomentar esa parte, recompilar el tp, y correr test.sh.
+
+\begin{tabular}{|l|c|c|c|c|c|c|c|} 
+\hline \multicolumn{8}{|c|}{Pruebas usando $\delta^{1}$} \\
+\hline
+Entrada & n & m & Cliquemax & Clique encontrado & maxIter & largoTabu & Tiempo\\ 
+\hline
+brock\_200\_1 & 200 & 14834 & 21 & 17 & 20 & 20 & 131502090\\ 
+\hline
+brock\_200\_2 & 200 & 9876 & 12 & 9 & 10 & 20 & 62151723\\ 
+\hline
+brock\_200\_3 & 200 & 12048 & 15 & 11 & 10 & 20 & 72731267\\ 
+\hline
+brock\_200\_4 & 200 & 13089 & 17 & 13 & 20 & 20 & 109476177\\ 
+\hline
+brock\_400\_1 & 400 & 59723 & 27 & 21 & 20 & 20 & 534445832\\ 
+\hline
+brock\_400\_2 & 400 & 59786 & 29 & 20 & 20 & 20 & 535837102\\ 
+\hline
+brock\_400\_3 & 400 & 59681 & 31 & 20 & 5 & 20 & 309916573\\ 
+\hline
+brock\_400\_4 & 400 & 59765 & 33 & 21 & 20 & 20 & 531741120\\ 
+\hline
+c-fat200-1 & 200 & 1534 & 12 & 12 & 5 & 20 & 20969278\\ 
+\hline
+c-fat200-2 & 200 & 3235 & 24 & 24 & 5 & 20 & 31801707\\ 
+\hline
+c-fat200-5 & 200 & 8473 & 58 & 58 & 5 & 20 & 100397236\\ 
+\hline
+c-fat500-10 & 500 & 46627 & 126 & 126 & 5 & 20 & 865552719\\ 
+\hline
+c-fat500-1 & 500 & 4459 & 14 & 14 & 5 & 20 & 120454179\\ 
+\hline
+c-fat500-2 & 500 & 9139 & 26 & 26 & 5 & 20 & 141290326\\ 
+\hline
+c-fat500-5 & 500 & 23191 & 64 & 64 & 5 & 20 & 278490344\\ 
+\hline
+johnson16-2-4 & 120 & 5460 & 8 & 8 & 5 & 20 & 23928609\\ 
+\hline
+johnson32-2-4 & 496 & 107880 & $>16$ & 16 & 5 & 20 & 625007275\\ 
+\hline
+johnson8-2-4 & 28 & 210 & 4 & 4 & 5 & 20 & 949526\\ 
+\hline
+johnson8-4-4 & 70 & 1855 & 14 & 14 & 5 & 20 & 9195755\\ 
+\hline
+keller4 & 171 & 9435 & 11 & 9 & 10 & 20 & 66401017\\ 
+\hline
+p\_hat300-1 & 300 & 10933 & 8 & 7 & 20 & 20 & 112978109\\ 
+\hline
+p\_hat300-2 & 300 & 21928 & 25 & 21 & 40 & 50 & 269245924\\ 
+\hline
+p\_hat300-3 & 300 & 33390 & 36 & 29 & 10 & 20 & 224612918\\ 
+\hline
+p\_hat500-1 & 500 & 31569 & 9 & 8 & 30 & 20 & 349132668\\ 
+\hline
+p\_hat500-2 & 500 & 62946 & 36 & 15 & 20 & 20 & 511871478\\ 
+\hline
+p\_hat500-3 & 500 & 93800 & - & 35 & 30 & 20 & 1052708254\\ 
+\hline
+p\_hat700-1 & 700 & 60999 & $>11$ & 7 & 5 & 20 & 386125433\\ 
+\hline
+p\_hat700-2 & 700 & 121728 & - & 18 & 20 & 20 & 1097950184\\ 
+\hline
+p\_hat700-3 & 700 & 183010 & - & 47 & 50 & 50 & 2868009529\\ 
+\hline
+\end{tabular}
+
+\begin{tabular}{|l|c|c|c|c|c|c|c|} 
+\hline \multicolumn{8}{|c|}{Pruebas usando $\delta^{2}$} \\
+\hline
+Entrada & n & m & Cliquemax & Clique encontrado & maxIter & largoTabu & Tiempo\\ 
+\hline
+brock\_200\_1 & 200 & 14834 & 21 & 17 & 20 & 20 & 158748493\\ 
+\hline
+brock\_200\_2 & 200 & 9876 & 12 & 10 & 10 & 20 & 69025074\\ 
+\hline
+brock\_200\_3 & 200 & 12048 & 15 & 12 & 10 & 20 & 78046044\\ 
+\hline
+brock\_200\_4 & 200 & 13089 & 17 & 14 & 20 & 20 & 120506001\\ 
+\hline
+brock\_400\_1 & 400 & 59723 & 27 & 21 & 20 & 20 & 577912970\\ 
+\hline
+brock\_400\_2 & 400 & 59786 & 29 & 21 & 20 & 20 & 577083163\\ 
+\hline
+brock\_400\_3 & 400 & 59681 & 31 & 20 & 5 & 20 & 340946660\\ 
+\hline
+brock\_400\_4 & 400 & 59765 & 33 & 20 & 20 & 20 & 580861245\\  
+\hline
+c-fat200-1 & 200 & 1534 & 12 & 12 & 5 & 20 & 20918608\\ 
+\hline
+c-fat200-2 & 200 & 3235 & 24 & 24 & 5 & 20 & 31758671\\ 
+\hline
+c-fat200-5 & 200 & 8473 & 58  & 58 & 5 & 20 & 100464182\\ 
+\hline
+c-fat500-10 & 500 & 46627 & 126 & 126 & 5 & 20 & 862613118\\ 
+\hline
+c-fat500-1 & 500 & 4459 & 14 & 14 & 5 & 20 & 120132470\\ 
+\hline
+c-fat500-2 & 500 & 9139 & 26  & 26 & 5 & 20 & 140900447\\
+\hline
+c-fat500-5 & 500 & 23191 & 64 & 64 & 5 & 20 & 278169740\\ 
+\hline
+johnson16-2-4 & 120 & 5460 & 8 & 8 & 5 & 20 & 23813916\\ 
+\hline
+johnson32-2-4 & 496 & 107880 & $>16$  & 16 & 5 & 20 & 622279321\\ 
+\hline
+johnson8-2-4 & 28 & 210 & 4 & 4 & 5 & 20 & 948459\\ 
+\hline
+johnson8-4-4 & 70 & 1855 & 14 & 14 & 5 & 20 & 9205394\\ 
+\hline
+keller4 & 171 & 9435 & 11 & 7 & 5 & 20 & 48116169\\
+\hline
+p\_hat300-1 & 300 & 10933 & 8  & 7 & 5 & 20 & 82806586\\ 
+\hline
+p\_hat300-2 & 300 & 21928 & 25 & 24 & 30 & 20 & 354180500\\
+\hline
+p\_hat300-3 & 300 & 33390 & 36 & 32 & 30 & 20 & 529597926\\ 
+\hline
+p\_hat500-1 & 500 & 31569 & 9 & 9 & 10 & 20 & 314852699\\ 
+\hline
+p\_hat500-2 & 500 & 62946 & 36 & 32 & 30 & 20 & 980688330\\
+\hline
+p\_hat500-3 & 500 & 93800 & -  & 43 & 50 & 20 & 1944957500\\ 
+\hline
+p\_hat700-1 & 700 & 60999 & $>11$ & 9 & 10 & 20 & 634976158\\ 
+\hline
+p\_hat700-2 & 700 & 121728 & -  & 39 & 40 & 20 & 2290888256\\ 
+\hline
+p\_hat700-3 & 700 & 183010 & -  & 55 & 5 & 20 & 1495634065\\ 
+\hline
+\end{tabular}
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+

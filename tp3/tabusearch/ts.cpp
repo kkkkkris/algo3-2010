@@ -17,17 +17,20 @@ void escribirSalida(const char *nombreArchivo, list<set<uint> >& listaResultados
 time_tt getNanosegundos();
 
 int main(int argc, char* argv[]) {
-    if(argc < 4){
+    if(argc < 6){
         cout << "Parametros insuficientes" << endl;
         return 1;
     }
 
-    int maxIter				= atoi(argv[1]);
-    const char* modoDelta   = argv[2];
-    uint largoTabu          = atoi(argv[3]);
+	const char *entrada		= argv[1];
+	const char *salida		= argv[2];
+    int maxIter				= atoi(argv[3]);
+    const char* modoDelta   = argv[4];
+    uint largoTabu          = atoi(argv[5]);
     
     //Leemos los grafos
-    ifstream datos("Tp3.in");
+    //ifstream datos("Tp3.in");
+    ifstream datos(entrada);
     
     list<set<uint> > resultados;
     list<pair<long long, time_tt> > tiempos;
@@ -38,7 +41,8 @@ int main(int argc, char* argv[]) {
         set<uint> maxClique;
                 
         if (g) {
-            for(int k=0; k<5; k++){
+            /*
+			for(int k=0; k<5; k++){
                 time_tt start = getNanosegundos();
                 maxClique = g->maxClique(maxIter, modoDelta[0], largoTabu);
                 time_tt finish = getNanosegundos();
@@ -50,13 +54,13 @@ int main(int argc, char* argv[]) {
                         min_time = finish-start;
                     }
                 }
-            }
+            }*/
             uint n = g->getCantidadVertices();
             uint m = g->getCantidadAristas();
             
             //maxClique = g->maxClique(maxIter, modoDelta[0], largoTabu);
             resultados.push_back(maxClique);
-            cout << maxClique.size() << " " << n << " " << m << " " << min_time << endl;
+            cout << maxClique.size() << " " << n << " " << m << " " << maxIter << " " << modoDelta << " " << largoTabu << " " << min_time << endl;
             
             delete g;
         }
