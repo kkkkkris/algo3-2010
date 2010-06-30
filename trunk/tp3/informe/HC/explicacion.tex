@@ -123,6 +123,8 @@ HL() {
 Recordamos que son cotas bastantes groseras, son a modo ilustrativo para ver que la heurística tiene complejidad polinomial. Para cada iteración que itera sobre nodos se considera que toma instrucciones proporcionales a la cantidad de nodos, cuando la mayoría de las veces es en proporción al tamaño de la clique. Las complejidades de los TADs como conjuntos o multiconjuntos son las complejidades de la implementación de tales tipos en la libreria estandard de C++ \footnote{http://www.cplusplus.com/}.
 Utilizando algebra de Ordenes podemos llegar facilmente a que la complejidad del algoritmo (HL) para el peor caso es $O(n^4 \times log(n)) $.
 
+En las pruebas que realizamos no pudimos encontrar ninguna vez en que mejorara a la Heuristica Constructiva. De todas formas creemos que los grafos para los que dará soluciones malas seguramente serán muy parecidos a los grafos en los cuales la Heurística Constructiva también le ocurra.
+
 \subsubsection{Variantes}
 
 \textbf{Heurística Local}
@@ -130,3 +132,4 @@ Utilizando algebra de Ordenes podemos llegar facilmente a que la complejidad del
 Como variantes al algoritmo propuesto también surgió la idea de buscar en la vecindad, no solo nodos con  $k-1$ vecinos en común con el clique (clique de tamaño $k$). Sino también cliques entre los nodos vecinos a la clique que tuvieran $k-l$ vecinos en comun con el clique (otra vez $l$ tamaño de este nuevo clique. Pero algoritimicamente esto nos resultó muy dificultoso.
 \\
 Por otro lado también surgió la idea de utilizar un clique maximal inicial distinto al entregado por la Heurística Constructiva. Pero esto representaba implementar todo un nuevo algoritmo para hallar cliques con algun criterio distinto.
+
