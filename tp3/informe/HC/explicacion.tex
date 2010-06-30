@@ -1,7 +1,6 @@
 Para lograr una solucion al problema de MAX_CLIQUE para un grafo $G(V,E)$, implementamos una heurística constructiva y otra local. Tanto la heurística constructiva como la heurística local se basan en una idea de densidades dentro del grafo y consiste en orientar la búsqueda del clique máximo priorizando las zonas de mayor densidad. Para ello definimos una familia de funciones que llamaremos $delta: V \longrightarrow \mathbb R$, la cual intenta mostrar la densidad del grafo para cualquier $Nodo n \in V$.
-Para la heurística constructiva definimos como función objetivo en primeria instancia maximizar el tamaño del clique, y en segundo maximizar el valor 
-Experimentamos con 2 medidas diferentes de densidad, definidas como $\delta$1 y $\delta$2, 
-que son asignadas a cada nodo antes de comenzar el algoritmo.
+Para la heurística constructiva definimos como función objetivo en primeria instancia maximizar el tamaño del clique, y en segundo maximizar el valor de delta para el nodo que se agrega. Mientras que para la heurística local, se maximizó primero el tamaño del clique, y luego la sumatoria de los deltas de los nodos pertenecientes al clique, lo que permitio intercambiar nodos del clique por otros con mayor $delta$ sin necesidad de achicar el clique.
+Experimentamos con 2 medidas diferentes de densidad, definidas como $\delta$1 y $\delta$2, que son asignadas a cada nodo antes de comenzar el algoritmo.
 Definimos $\displaystyle \delta$1 para el nodo i  como el promedio de los grados de todos sus vecinos y de el mismo ,
 
    $\displaystyle \delta1(i) = \frac{\sum_{j=1,j-vecino-i}^{n} grado(j) + grado(i)}{grado(i)+1} $
