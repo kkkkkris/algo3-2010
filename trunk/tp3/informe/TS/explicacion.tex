@@ -1,0 +1,104 @@
+\subsubsection{Tabú Search}
+El esquema básico de tabú search se puede describir como:
+\begin{itemize}
+ \item Elegir una solución inicial de $X$, donde $X$ es el conjunto sobre el cual se quiere maximizar o minimizar alguna función.
+\item Iterar sobre $X$ hasta terminar de alguna forma, esperando haber mejorado la solución inicial.
+\end{itemize}
+Sin embargo, no está permitido moverse desde una solución hacia cualquier otra, ya que caeríamos en el posible caso de recorrer todas las soluciones y es 
+lo que intentamos evitar al usar una heurística. Para ello se define, dada una solución $s$, el conjunto $N(s) \subset\ X$, llamado vecindad de $s$ (Neighborhood). 
+La vecindad constituye un conjunto de soluciones acotado hacia las cuales es posible moverse a partir de $s$. \\
+Se define además una función objetivo $f$ que se utiliza para decidir cuál de las soluciones $s' \in N(s)$ será elegida. Aquí debemos hacer una diferencia con otras heurística 
+como \textit{búsqueda local}. Tabú search permite moverse de una solución $s$ a una $s'$ que sea peor, con la esperanza de encontrar una mejor en el futuro.\\
+Sin embargo es posible que se caiga en un ciclo. Al empeorar la solución actual, inmediatamente la mejor solución a la que podemos ir es la que acabamos de descartar. Para evitar 
+esto se introduce el concepto de \textit{lista tabú}. Dicha lista (no necesariamente es única) informa al algorítmo sobre los movimientos o cambios recientes, con la esperanza de evitar 
+repetir movimientos y moverse hacia soluciones no exploradas.
+
+\subsubsection{TS aplicado a MCP}
+El siguiente algorítmo esta basado en el propuesto por Patrick Soriano y Michel Gendreau.\footnote{\textit{Tabú Search algorithm for the Maximun Clique Problem}, DIMACS Series in Discrete Mathematics and Theoretical Computer science, Volume 26, 1996}.
+Lo primero que definimos será el conjunto $X$ sobre el cual buscaremos las soluciones. A diferencia de la heurística local que se mueve sobre el conjunto de cliqués maximales, 
+para TS usaremos el conjunto de cliqués (incluyendo a los maximales, claro está). Definido entonces $X$ como el conjunto de los cliqués en para algun grafo $G=(V,E)$, el problema 
+se puede expersar como ${max}_{S \in X}\{|S|\}$. \\
+Para hacer las cosas más claras, podemos pensar al conjunto $N(s)$ (para alguna solución $s$) como $N^{+}(s) \cup N^{-}(s)$, donde:
+\begin{itemize}
+  \item $N^{+}(s) = \{s' \in X | s'= s \cup \{v\}, v\in C(s) \}$
+  \item $N^{-}(s) = \{s' \in X | s'= s \smallsetminus \{v\}, v\in s \}$
+\end{itemize}
+Con $C(s)=\{v \in s | $ \textit{v es vecino de todos los nodos en s} $\}$.\\
+Teniendo a la vecindad expresada como la unión de esos dos conjuntos, queda claro que siempre que haya elementos en $N^{+}(s)$, deberemos movernos hacia alguna solución de este 
+conjunto, y sólo cuando no haya más elementos allí, deberemos explorar $N^{-}(s)$. Sin embargo la función objetivo $f(s)=|s|$ no nos ayuda para decidir hacia cual de todos los elementos 
+de alguno de estos dos conjuntos nos movemos. Para ello es necesario definir alguna forma auxiliar y es aca donde introducimos la lista tabú. Nuestra lista tabú no será del tipo 
+\textit{almacenar los últimos nodos agregados}, sino que guardaremos información para cada nodo según vayan siendo utilizados o quitados de la solución temporal. Esta información 
+nos permitirá evitar caer en repeticiones, mientras que es bastante sencilla y permite determinar la información en $O(1)$. \\
+Usaremos dos listas de tamaño $lt$ (largo tabú, parámetro de nuestro algoritmo). La lista contendrá información de los últimos $lt$ nodos usados (tanto para expandir como contraer). Dicha información consta de 
+la cantidad de veces que el nodo fue usado, y la cantidad de veces que fue usado consecutivamente para la solución actual.\\
+Las funciones auxiliares para determinar qué nodo ingresa a la solución o cual sale son versiones simplificadas de las propuestas por Patrick y Gendreau, así como también el algorítmo 
+\footnote{Patrick y Gendreau proponen en su artículo 3 versiones de TS, dos determinísticas y una ``probabilística''} ya que decidimos mantener la misma idea central en todas las heurísticas 
+que es el uso de la función $\delta^{*}(v)$ \footnote{En sus dos versiones $\delta^{1}(v)$ y $\delta^{2}(v)$ como se definieron para la heurística constructiva}.
+\begin{itemize}
+  \item $f_1(v) = \delta^{*}(v) - \alpha(v)$
+  \item $f_2(v) = \delta^{*}(v) + \beta(v)$
+\end{itemize}
+$\alpha(v)$ se define como la cantidad de veces que el nodo $v$ fue usado como parte de una solución, mientras que $\beta(v)$ como la cantidad de veces consecutivas que $v$ formó parte 
+de la solución actual. \\ 
+La lista tabú entonces nos permite calcular $\alpha$ y $\beta$ para todo $v$ usado recientemente. Cuando un nodo $v$ ingresa al cliqué, $\beta(b)=1$, mientras 
+que para todo el resto del clique, tiene un valor mayor, por lo que al decidir en algún momento qué nodo sale, $v$ tendrá más posibilidades de quedarse que los nodos más viejos 
+(algo similar a una cola FIFO). Sin embargo, consideramos además su valor $\delta$, ya que además queremos quitar un nodo denso, pues sus vecinos no estaban siendo usados para expandir el cliqué
+y tal vez pueda usarlos para forma una nueva. Para el caso de la expansión, el algorítmo se comporta de forma golosa. \\
+El procedimiento además admite un último parámetro: la cantidad de iteraciones máximas que deben ocurrir sin generar una solución mejor antes de \textit{diversificar}. Es decir, 
+si el algorítmo, expandiendo y contrayendo la solución actual no logra mejorar en una cierta cantidad de iteraciones, entonces comenzamos de nuevo, partiendo de un nodo que no hayamos visitado nunca. 
+Esto último no sólo permite encontrar soluciones mejores que tal vez no se hubieran encontrado esperando que el algoritmo llegara a ellas a través de $N(s)$, sino que además nos 
+asegura que \underline{al menos usaremos todos los nodos en alguna solución}. Esta observación es importante, ya que nos permite garantizar que TS \underline{termina}, pues, en el peor 
+caso, construirá $n$ soluciones de tamaño 1, iterando sobre cada una de ellas una cantidad de veces $maxIter$.\footnote{En realidad hemos optimizado el algoritmo para que esto no ocurra. Si 
+se tiene una solución maximal de 1 elemento, inmediantamente se diversifica. No así para casos más grandes, como 2 o 3, ya que decidir no es tan trivial.}. Para llevar cuenta 
+de los nodos que aún no han sido visitados existe un arreglo que indica para cada nodo si ya fue visitado alguna vez. \\
+A continuación mostramos el pseudocódigo:
+\begin{scriptsize}
+\begin{verbatimtab}
+Inicializar listas y vectores
+Calcular delta para todo v en G
+
+mejorSol = {}
+mejorSolGlobal = {}
+
+Mientras quede un nodo sin visitar
+{
+  k=0
+  Si k==maxIter
+  {
+    s = encontrar solucion nueva
+    reinicializar lista tabu
+    k = 0
+  }
+
+  calcular N(s)
+  
+  Si hay elementos en N+(s)
+  {
+    s=s' con s' en N+(s) tal que f_1 es maxima para s'
+  }
+  si no
+  {
+    Si hay elementos en N-(s)
+    {
+      s=s' con s' en N-(s) tal que f_2 es maxima para s'
+    }
+    si no
+    {
+      no podemos expandir ni contraer, por lo tanto goto: diversificar!
+    }
+  }
+
+  Si s es mejor que mejorSol, actualizar mejorSol
+  Si no lo es, k++
+
+  Actualizar mejorSolGlobal
+}
+
+return mejorSol
+    
+\end{verbatimtab}
+\end{scriptsize}
+
+
+
+

@@ -1,19 +1,26 @@
- #!/bin/bash
+#!/bin/bash
 
-MAX_ITER_LIST="100 200 300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500 1600 1700"
-root="casos_test/"
+MAX_ITER_LIST="5 10 20 30 40 50"
+MAX_TABU_LIST="20 50 100 200"
 
 echo "iniciando testing..."
 
-for grafo in $(ls $root)
+for lt in $MAX_TABU_LIST
 do
-	echo $root$grafo
-	echo $grafo >> test_resultado
-	for k in $MAX_ITER_LIST
-	do
-		echo $k
-		./ts $root$grafo resultado $k >> test_resultado
-	done
-done
+    for k in $MAX_ITER_LIST
+    do
+        rm "tests_resultados"
+        touch "tests_resultados"
+        echo "modo p - maxIter: "$k" maxTabu: "$lt
+        ./ts $k p $lt >> "tests_resultados"
+    done
 
+    for k in $MAX_ITER_LIST
+    do
+        rm "tests_resultados"
+        touch "tests_resultados"
+        echo "modo s - maxIter: "$k" maxTabu: "$lt
+        ./ts $k s $lt >> "tests_resultados"
+    done
+done
 echo "testing finalizando!"
