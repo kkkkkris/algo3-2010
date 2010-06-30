@@ -1,0 +1,56 @@
+Para el algoritmo exacto, luego de pensar, leer e ingestigar un poco, encontramos el de Bron–Kerbosch. Es un algoritmo recursivo de backtraking, que en principio está pensado para encontrar todos los cliqués maximales, pero nosotros lo modificamos para que busque el máximo, nos vamos quedando con el más grande de los cliqués maximales encontrados.
+
+La idea básica del algoritmo es ir formando cliqués maximales, partiendo de un nodo y revisando qué vecinos están conectados entre sí. Para eso usa tres conjuntos de nodos:
+\begin{itemize}
+\item $R$ son los nodos del cliqué maximal actual.
+\item $P$ son los nodos que quedan por revisar.
+\item $X$ son los nodos que fueron revisados o descartados.
+\end{itemize}
+
+Se comienza con $R$ y $X$ inicializados en vacío, y $P$ con el conjunto de nodos del grafo. Luego, para cada vértice $v \in P$ se llama a la función recursivamente con $R \, \cup \, \lbrace v \rbrace$, $P \, \cap \, N_{v}$ y $X \, \cap \, N_{v}$. De esta forma, se analiza el subgrafo determinado por $v$ y sus vecinos. Finalmente, después de la llamada recursiva, se elimina $v$ de $P$ y se agrega a $X$ (con esto se lo está "marcando como revisado"). Si en algún momento $P$ no tiene ningún elemento, quiere decir que no quedan nodos por recorer. Pero si además $X$ tampoco, entonces $R$ es un cliqué maximal ya que no se descartó ningún nodo dentro del subconjunto que se estaba analizando.
+
+Para clarificar un poco la idea del algoritmo realizamos un pseudocódigo:\\
+
+\begin{algorithm}{MaxCliqueSinMejoras}{\param{in}{R}{Conj(int)}, \, \param{in}{P}{Conj(int)}, \, \param{in}{X}{Conj(int)}, \, \param{out}{res}{Conj(int)}}{}
+	\begin{IF}{(P = \emptyset \wedge X = \emptyset)}
+		\begin{IF}{(\sharp R > \sharp res)}
+    			res \= R
+		\end{IF}
+	\end{IF}\\
+	\VAR{v \!: int}\\
+    \begin{FOR}{v \in P}
+    	MaxCliqueSinMejoras(R \cup \lbrace v \rbrace, \, P \cap N_{v}, \, X \cap N_{v}) \\
+		P \= P \setminus \lbrace v \rbrace\\
+		X \= X \cup \lbrace v \rbrace
+	\end{FOR}
+\end{algorithm}
+
+A partir de esta base comenzamos a hacer mejoras. En primera instancia notamos que hay casos borde en que no vale la pena llamar al algoritmo de Bron–Kerbosch, ya que la solución es trivial. Estos son los siguientes:
+\begin{itemize}
+\item Cuando $V_{G} = \emptyset$ se devuelve $\emptyset$.
+\item Si $E_{G} = \emptyset$, entonces el cliqué máximo va a ser un nodo cualquiera (decidimos devolver siempre el de id $1$).
+\item Con $2 * m = n * (n-1)$ tenemos un grafo completo, es decir que el máx-cliqué va a ser todo el grafo.
+\end{itemize}
+
+La segunda mejora es la realmente importante, su esencia es reducir la cantidad de llamados recursivos del algoritmo de Bron–Kerbosch. Con ese objetivo se agrega un pivote $u$, que es elegido entre los elementos de $P \cup X$. Luego, en vez de recorrer $P$, se itera sobre $P \setminus N_{u}$. La idea es que cada cliqué maximal debe contener a $u$ o a uno de sus no vecinos. Así nos ahorramos buscar entre los vecinos del pivote, ya que van a ser analizados cuando se inspeccione a $u$. Es decir que lo que se logra es no meternos a ver casos de cliqués no maximales.
+
+La elección del pivote es importante, ya que debe hacerse de forma tal que efectivamente reduzca la cantidad de llamadas recursivas a la función. En función de esto decidimos que el nodo de mayor grado (o uno cualquiera de ellos si hay más de uno) sea el pivote. De esta manera se itera un subconjunto de nodos mínimo, ya que se maximiza el tamaño de $N_{u}$.
+
+Para aclarar esta mejora actualizamos el pseudocódigo anterior: \\
+
+\begin{algorithm}{MaxClique}{\param{in}{R}{Conj(int)}, \, \param{in}{P}{Conj(int)}, \, \param{in}{X}{Conj(int)}, \, \param{out}{res}{Conj(int)}}{}
+	\begin{IF}{(P = \emptyset \wedge X = \emptyset)}
+		\begin{IF}{(\sharp R > \sharp res)}
+    			res \= R
+		\end{IF}
+	\end{IF}\\
+	\VAR{u, v \!: int}\\
+	u \= elegirPivote(P \cup X) \\
+    \begin{FOR}{v \in P \setminus N_{u}}
+    	MaxClique(R \cup \lbrace v \rbrace, \, P \cap N_{v}, \, X \cap N_{v}) \\
+		P \= P \setminus \lbrace v \rbrace\\
+		X \= X \cup \lbrace v \rbrace
+	\end{FOR}
+\end{algorithm}
+
+Por último vamos a analizar la complejidad del algoritmo en el peor caso. En un principio nos resultó muy complicado encontrar una buena cota, así que estuvimos investigando, y encontramos un paper (http://www.springerlink.com/content/c32k820wkt5m48k0/) donde se prueba que a lo sumo existen $3^{n/3}$ cliqués maximales en un grafo. Teniendo en cuenta este resultado, y como las mejoras del algoritmo nos garantizan no analizar cliqués no maximales, entonces se van a realizar $3^{n/3}$ llamados recursivos en el peor caso. Con lo cual, la complejidad en el peor caso es $O(3^{n/3})$.
